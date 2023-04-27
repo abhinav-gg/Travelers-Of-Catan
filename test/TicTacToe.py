@@ -9,4 +9,13 @@ t : play with the Terminal""")
     quit()
 
 if __name__ == "__main__":
-    pass
+    if len(argv) != 2:
+        usage()
+    elif argv[1] == 'g':
+        ui = Gui()
+    elif argv[1] == 't':
+        ui = Terminal()
+    else:
+        usage()
+
+    ui.run()
