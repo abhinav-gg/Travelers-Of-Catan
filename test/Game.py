@@ -60,11 +60,20 @@ class Game:
                 return p
         return None
 
+    def at(self,row,col):
+        row,col = self._validate(row,col)
+        return self._board[row][col]
+
     @property
     def player(self):
         return self._player
 
+    @staticmethod
+    def dim():
+        return Game._DIM
+
 if __name__ == "__main__":
     g = Game()
     print(g)
+    print(g.dim())
 
