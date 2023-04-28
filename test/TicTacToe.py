@@ -1,11 +1,10 @@
-from Ui import Gui, Terminal, SGui
+from Ui import Gui, Terminal
 from sys import argv
 
 def usage():   
     print(f"""
-Usage: {argv[0]} [g | t | s]
+Usage: {argv[0]} [g | t]
 g : play with the GUI
-s : play with the Simple GUI
 t : play with the Terminal""")
     quit()
 
@@ -14,9 +13,13 @@ if __name__ == "__main__":
         usage()
     elif argv[1] == 'g':
         ui = Gui()
-    elif argv[1] == 's':
-        ui = SGui()
     elif argv[1] == 't':
+        ui = Terminal()
+    else:
+        usage()
+
+    ui.run()
+lif argv[1] == 't':
         ui = Terminal()
     else:
         usage()
