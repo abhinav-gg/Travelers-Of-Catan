@@ -73,7 +73,63 @@ class Game:
         return Game._DIM
 
 if __name__ == "__main__":
-    g = Game()
-    print(g)
-    print(g.dim())
+    pass
+    # g = Game()
+    # print(g)
+    # print(g.dim())
 
+
+
+
+"A class that generate a Py simple GUI for tic tac toe"
+# Path: test\GameGUI.py
+from tkinter import *
+from tkinter import messagebox
+class GameUI:
+    def __init__(self, game):
+        self._game = game
+        self._root = Tk()
+        self._root.title("Tic Tac Toe")
+        self._buttons = [[None for _ in range(Game.dim())] for _ in range(Game.dim())]
+        for row in range(Game.dim()):
+            for col in range(Game.dim()):
+                cmd = lambda r=row, c=col: self._play_and_refresh(r,c)
+                self._buttons[row][col] = Button(self._root, command=cmd, width=3, height=1)
+                self._buttons[row][col].grid(row=row, column=col)
+        self._status = Label(self._root, text="{} turn to play".format(self._game.player))
+        self._status.grid(row=Game.dim(), columnspan=Game.dim())
+        self._root.mainloop()
+
+    def _play_and_refresh(self, row, col):
+        try:
+            self._game.play(row+1, col+1)
+            self._refresh()
+            winner = self._game.winner
+            if winner is not None:
+                if winner is Game.DRAW:
+                    messagebox.showinfo("Game Over", "It's a draw")
+                else:
+                    messagebox.showinfo("Game Over", "{} wins!".format(winner))
+                self._root.destroy()
+        except GameError as e:
+            messagebox.showerror("Error", e)
+
+    def _refresh(self):
+        for row in range(Game.dim()):
+            for col in range(Game.dim()):
+                text = self._game.at(row+1, col+1)
+                self._buttons[row][col]["text"] = text
+        self._status["text"] = "{} turn to play".format(self._game.player)
+
+    def _check_winner(self):
+        winner = self._game.winner
+        if winner is not None:
+            if winner is Game.DRAW:
+                messagebox.showinfo("Game Over", "It's a draw")
+            else:
+                messagebox.showinfo("Game Over", "{} wins!".format(winner))
+            self._root.destroy()
+    
+if __name__ == "__main__":
+    g = Game()
+    ui = GameUI(g)
