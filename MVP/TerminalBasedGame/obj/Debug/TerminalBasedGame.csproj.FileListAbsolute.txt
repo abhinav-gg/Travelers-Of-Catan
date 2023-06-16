@@ -1,0 +1,8 @@
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.csproj.AssemblyReference.cache
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.csproj.SuggestedBindingRedirects.cache
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.csproj.CoreCompileInputs.cache
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.exe.config
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.exe
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.pdb
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.exe
+C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.pdb
