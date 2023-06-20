@@ -16,6 +16,40 @@ namespace App
         }
     }
 
+
+    class GamePlayLoop
+    {
+        int turn = 0;
+        int MAXplayer = 0;
+        public int[] victoryPoints;
+
+        public GamePlayLoop(int MAXplayer)
+        {
+            this.MAXplayer = MAXplayer;
+            victoryPoints = new int[MAXplayer];
+        }
+
+        public void startGame()
+        {
+
+            Console.WriteLine("Game Started");
+            while (true)
+            {
+                
+                takeTurn();
+                
+            }
+        }
+
+        public void takeTurn()
+        {
+            turn++;
+            turn = turn % MAXplayer;
+        }
+
+
+    }
+
 }
 
 
@@ -32,19 +66,65 @@ namespace TerminalBasedGame
         {
             this.i = i;
         }
+
+        public string getResource()
+        {
+            return resources[i];
+        }
+
+    }
+
+    class Node
+    {
+        public List<Node> neighbours;
+        private BuildingStatus status;
+
+        public Node(BuildingStatus status)
+        {
+            this.status = status;
+        }
     }
 
     class HexagonUnit
     {
-        private Resource r;
+        private Resource m_resource;
+        private Node[] nodes = new Node[6];
+
+
+        public HexagonUnit(Resource R)
+        {
+            m_resource = R;
+
+
+            for (int i = 0; i < 6; i++)
+            {
+                nodes[i] = new Node(new BuildingStatus(0));
+                nodes[i].neighbours.Add(nodes[(i + 1) % 6]);
+                nodes[i].neighbours.Add(nodes[(i + 5) % 6]);
+            }
+
+        }
+
+        
+
+        public string getResource()
+        {
+            return m_resource.getResource();
+        }
+
     }
 
     class Board
     {
 
+        private HexagonUnit[] board;
 
-        public void Mn()
+        public Board()
         {
+            for (int i = 0; i < 25; i++)
+            {
+                board[i] = new HexagonUnit(new Resource(0));
+            }
         }
     }
 
