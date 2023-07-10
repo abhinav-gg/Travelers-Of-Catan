@@ -13,6 +13,14 @@ namespace App
 
         public static void Main(string[] args)
         {
+
+
+            TerminalBasedGame.HexagonUnit i = new TerminalBasedGame.HexagonUnit(new TerminalBasedGame.Resource());
+            i.position = new Vector3(0, 0, 0);
+            Console.WriteLine(i.GetNeighbours());
+
+            //
+
             Console.WriteLine("Welcome to Game! Key [ENTER] to begin...");
             Console.ReadLine();
             GamePlayLoop game = new GamePlayLoop(2);
@@ -26,7 +34,6 @@ namespace App
             string[] pos = playerPos.Split(',');
             return new Vector3(int.Parse(pos[0]), int.Parse(pos[1]), int.Parse(pos[2]));
         }
-
 
     }
 
@@ -43,6 +50,13 @@ namespace App
             victoryPoints = new int[MAXplayer];
         }
 
+
+        public void CreateGrid() 
+        {
+
+
+        }
+
         public void startGame()
         {
 
@@ -57,8 +71,12 @@ namespace App
 
         public void takeTurn()
         {
+            string input = "";
             turn++;
             turn = turn % MAXplayer;
+            Console.WriteLine("Player " + turn + "'s turn");
+            input = Console.ReadLine();
+
         }
 
 
@@ -94,19 +112,29 @@ namespace TerminalBasedGame
                 // even
                 
                 
-                yield return position + new Vector3(1, 0, 0);
-                yield return position + new Vector3(0, -1, 0);
-                yield return position + new Vector3(0, 0, 1);
-
-            }
-            else
-            {
                 yield return position + new Vector3(-1, 0, 0);
                 yield return position + new Vector3(0, 1, 0);
                 yield return position + new Vector3(0, 0, -1);
 
             }
+            else
+            {
+                yield return position + new Vector3(1, 0, 0);
+                yield return position + new Vector3(0, -1, 0);
+                yield return position + new Vector3(0, 0, 1);
+
+            }
             yield return new Vector3();
+        }
+
+
+        public static bool inRange(Vector3 pos)
+        {
+            // asign constants
+            bool inRangei = pos.X > -9 && pos.X < 0;
+            bool inRangej = pos.Y > -6 && pos.X < 0;
+            bool inRangek = pos.Z > -5 && pos.X < 5;
+            return inRangei && inRangej && inRangek;
         }
 
 
@@ -154,6 +182,9 @@ namespace TerminalBasedGame
             for (int i = 0; i < 25; i++)
             {
                 board[i] = new HexagonUnit(new Resource(0));
+
+                //board[i].position = new Vector3(i % 5, i / 5, 0);
+
             }
         }
 
@@ -209,17 +240,25 @@ namespace TerminalBasedGame
             this.i = i;
         }
 
+        public Resource()
+        {
+            CreateRandomResource();
+        }
+
         public string getResourceString()
         {
             return resources[i];
         }
 
-        public Resource GenerateRandomResource() 
+        public void CreateRandomResource() 
         { 
             Random rnd = new Random();
-            return new Resource(rnd.Next(0, resources.Length));
+            i = rnd.Next(0, resources.Length);
         }
 
     }
+
+
+
 
 }
