@@ -14,11 +14,6 @@ namespace App
         public static void Main(string[] args)
         {
 
-
-            TerminalBasedGame.HexagonUnit i = new TerminalBasedGame.HexagonUnit(new TerminalBasedGame.Resource());
-            i.position = new Vector3(0, 0, 0);
-            Console.WriteLine(i.GetNeighbours());
-
             //
 
             Console.WriteLine("Welcome to Game! Key [ENTER] to begin...");
@@ -27,13 +22,23 @@ namespace App
             game.startGame();
         }
 
-
         public static Vector3 GetNextPosition()
         {
+
+            Console.WriteLine("Enter your next position in the form of x,y,z");
             string playerPos =  Console.ReadLine();
             string[] pos = playerPos.Split(',');
             return new Vector3(int.Parse(pos[0]), int.Parse(pos[1]), int.Parse(pos[2]));
         }
+
+
+
+
+
+
+
+
+
 
     }
 
@@ -43,6 +48,24 @@ namespace App
         int turn = 0;
         int MAXplayer = 0;
         public int[] victoryPoints;
+
+        public static int ConvertToVictoryPoints(string entityName)
+        {
+
+            IDictionary<string, int> victoryPoints = new Dictionary<string, int>()
+            {
+                {"Road", 3}, 
+                {"Wall", 2},
+                {"Village", 5 },
+                {"City", 10 }
+            }; // store as JSON in Unity Version
+
+
+
+            return victoryPoints[entityName];
+
+
+        }
 
         public GamePlayLoop(int MAXplayer)
         {
@@ -71,16 +94,84 @@ namespace App
 
         public void takeTurn()
         {
-            string input = "";
+
+            Vector3 inp;
+            Console.WriteLine("Player " + turn + "'s turn");
+            inp = MainFunc.GetNextPosition();
+
+
+
             turn++;
             turn = turn % MAXplayer;
-            Console.WriteLine("Player " + turn + "'s turn");
-            input = Console.ReadLine();
+            
 
         }
 
+    }
+
+
+
+    class Player
+    {
+        private int playerNumber;
+        private int victoryPoints;
+        private int[] resources;
+        private int[] buildings;
+        private int[] connections;
+
+        public Player(int playerNumber)
+        {
+            this.playerNumber = playerNumber;
+            victoryPoints = 0;
+            resources = new int[5];
+            buildings = new int[4];
+            connections = new int[3];
+        }
+
+        public void addVictoryPoints(int points)
+        {
+            victoryPoints += points;
+        }
+
+        public void addResource(int resource, int amount)
+        {
+            resources[resource] += amount;
+        }
+
+        public void addBuilding(int building, int amount)
+        {
+            buildings[building] += amount;
+            GamePlayLoop.ConvertToVictoryPoints(building.ToString());//find out where to get string name
+
+        }
+
+        public void addConnection(int connection, int amount)
+        {
+            connections[connection] += amount;
+        }
+
+        public int getVictoryPoints()
+        {
+            return victoryPoints;
+        }
+
+        public int getResource(int resource)
+        {
+            return resources[resource];
+        }
+
+        public int getBuilding(int building)
+        {
+            return buildings[building];
+        }
+
+        public int getConnection(int connection)
+        {
+            return connections[connection];
+        }
 
     }
+
 
 }
 
@@ -109,8 +200,6 @@ namespace TerminalBasedGame
             int sum = (int)(position.X + position.Y + position.Z);
             if (sum % 2 == 0)
             {
-                // even
-                
                 
                 yield return position + new Vector3(-1, 0, 0);
                 yield return position + new Vector3(0, 1, 0);
@@ -124,17 +213,36 @@ namespace TerminalBasedGame
                 yield return position + new Vector3(0, 0, 1);
 
             }
-            yield return new Vector3();
         }
 
 
         public static bool inRange(Vector3 pos)
         {
+            // i will probably just hard code all of these values in the game so this isnt needed for the final version
+
+            /// i range -8 - 0
+            /// j range 
+            /// k range -5 - 0
+
             // asign constants
             bool inRangei = pos.X > -9 && pos.X < 0;
             bool inRangej = pos.Y > -6 && pos.X < 0;
             bool inRangek = pos.Z > -5 && pos.X < 5;
             return inRangei && inRangej && inRangek;
+        }
+
+        public static bool isNeighbours(Node pos1, Node pos2)
+        {
+
+            if (pos1.GetNeighbours().Contains(pos2.position))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
 
@@ -143,48 +251,38 @@ namespace TerminalBasedGame
     class HexagonUnit
     {
         public Vector3 position;
-        private Resource m_resource;
-        private Node[] nodes = new Node[6];
+        public Resource resource;
 
-        public HexagonUnit(Resource R)
+        public HexagonUnit(Resource R, int x, int y, int z)
         {
-            m_resource = R;
-
-
-            for (int i = 0; i < 6; i++)
-            {
-                nodes[i] = new Node(new BuildingStatus(0));
-            }
-
+            resource = R;
         }
 
-        public IEnumerable<Vector3> GetNeighbours()
-        {
-            yield return position + new Vector3(1, 0, 0);
-            yield return position + new Vector3(0, 1, 0);
-            yield return position + new Vector3(0, 0, 1);
-            yield return position + new Vector3(-1, 0, 0);
-            yield return position + new Vector3(0, -1, 0);
-            yield return position + new Vector3(0, 0, -1);
 
-        }  
-
-       
     }
 
     class Board
     {
 
-        private HexagonUnit[] board;
+        private HexagonUnit[] board = new HexagonUnit[19];
 
         public Board()
         {
-            for (int i = 0; i < 25; i++)
+            int i = 0;
+            for (int x = -2; x < 3; x++)
             {
-                board[i] = new HexagonUnit(new Resource(0));
-
-                //board[i].position = new Vector3(i % 5, i / 5, 0);
-
+                for (int y = -2; y < 3; y++)
+                {
+                    for (int z = -2; z < 3; z++)
+                    {
+                        if (x + y + z == 0)
+                        {
+                            HexagonUnit unit = new HexagonUnit(new Resource(), x, y, z);
+                            board[i] = unit;
+                            i++;
+                        }
+                    }
+                }
             }
         }
 
@@ -197,7 +295,17 @@ namespace TerminalBasedGame
                     return unit;
                 }
             }
-            return null;
+            return null; // if no unit is found on grid
+        }
+
+        public void ShowBoard()
+        {
+            foreach (HexagonUnit unit in board)
+            {
+                Console.WriteLine(unit);
+                Console.WriteLine(unit.position);
+                Console.WriteLine(unit.resource);
+            }
         }
 
 
@@ -233,7 +341,7 @@ namespace TerminalBasedGame
     class Resource
     {
         private int i;
-        private string[] resources = { "Wood", "Brick", "Wheat", "Sheep", "Ore" };
+        private string[] resources = { "Wood", "Brick", "Wheat", "Resource4", "Resource5" };
 
         public Resource(int i)
         {
@@ -257,8 +365,5 @@ namespace TerminalBasedGame
         }
 
     }
-
-
-
 
 }

@@ -6,3 +6,11 @@ C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\bin\D
 C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.pdb
 C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.exe
 C:\Users\agupta1\Documents\GitHub\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.pdb
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.exe.config
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.exe
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\bin\Debug\TerminalBasedGame.pdb
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.csproj.AssemblyReference.cache
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.csproj.SuggestedBindingRedirects.cache
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.csproj.CoreCompileInputs.cache
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.exe
+D:\KneePain\A-Level-Coursework\MVP\TerminalBasedGame\obj\Debug\TerminalBasedGame.pdb
