@@ -4,7 +4,8 @@ using System.Numerics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using TerminalBasedGame;
+using App;
 
 namespace App
 {
@@ -14,6 +15,7 @@ namespace App
         public static void Main(string[] args)
         {
 
+            //Console.WriteLine(Connection.Hash(new Vector3(1, 0, -1), new Vector3(-1, 0, 1)));
             //
 
             Console.WriteLine("Welcome to Game! Key [ENTER] to begin...");
@@ -48,6 +50,7 @@ namespace App
         int turn = 0;
         int MAXplayer = 0;
         public int[] victoryPoints;
+        public Board board;
 
         public static int ConvertToVictoryPoints(string entityName)
         {
@@ -71,6 +74,9 @@ namespace App
         {
             this.MAXplayer = MAXplayer;
             victoryPoints = new int[MAXplayer];
+
+            board = new Board();
+
         }
 
 
@@ -98,7 +104,7 @@ namespace App
             Vector3 inp;
             Console.WriteLine("Player " + turn + "'s turn");
             inp = MainFunc.GetNextPosition();
-
+            board.ShowBoard();
 
 
             turn++;
@@ -185,11 +191,11 @@ namespace TerminalBasedGame
     class Node
     {
         public Vector3 position;
-        private BuildingStatus status;
+        public BuildingStatus status = new BuildingStatus();
 
-        public Node(BuildingStatus status)
+        public Node(int x, int y, int z)
         {
-            this.status = status;
+            position = new Vector3(x, y, z);
         }
 
 
@@ -201,34 +207,18 @@ namespace TerminalBasedGame
             if (sum % 2 == 0)
             {
                 
-                yield return position + new Vector3(-1, 0, 0);
+                yield return position + new Vector3(1, 0, 0);
                 yield return position + new Vector3(0, 1, 0);
-                yield return position + new Vector3(0, 0, -1);
+                yield return position + new Vector3(0, 0, 1);
 
             }
             else
             {
-                yield return position + new Vector3(1, 0, 0);
+                yield return position + new Vector3(-1, 0, 0);
                 yield return position + new Vector3(0, -1, 0);
-                yield return position + new Vector3(0, 0, 1);
+                yield return position + new Vector3(0, 0, -1);
 
             }
-        }
-
-
-        public static bool inRange(Vector3 pos)
-        {
-            // i will probably just hard code all of these values in the game so this isnt needed for the final version
-
-            /// i range -8 - 0
-            /// j range 
-            /// k range -5 - 0
-
-            // asign constants
-            bool inRangei = pos.X > -9 && pos.X < 0;
-            bool inRangej = pos.Y > -6 && pos.X < 0;
-            bool inRangek = pos.Z > -5 && pos.X < 5;
-            return inRangei && inRangej && inRangek;
         }
 
         public static bool isNeighbours(Node pos1, Node pos2)
@@ -245,6 +235,11 @@ namespace TerminalBasedGame
             
         }
 
+        public override string ToString()
+        {
+            return $"{status} at {position}";
+        }
+
 
     }
 
@@ -256,8 +251,13 @@ namespace TerminalBasedGame
         public HexagonUnit(Resource R, int x, int y, int z)
         {
             resource = R;
+            position = new Vector3(x, y, z);
         }
 
+        public override string ToString()
+        {
+            return $"{resource} at {position}";
+        }
 
     }
 
@@ -265,9 +265,17 @@ namespace TerminalBasedGame
     {
 
         private HexagonUnit[] board = new HexagonUnit[19];
+        private Node[] nodes = new Node[54];
+
+
+        // adjacenecy list for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
+        public Dictionary<string, Connection> connections = new Dictionary<string, Connection>();
+        // string key will be the return from the Connection.Hash() function
 
         public Board()
         {
+
+            
             int i = 0;
             for (int x = -2; x < 3; x++)
             {
@@ -284,6 +292,23 @@ namespace TerminalBasedGame
                     }
                 }
             }
+
+            i = 0;
+            for (int x = -2; x < 4; x++)
+            {
+                for (int y = -2; y < 4; y++)
+                {
+                    for (int z = -2; z < 4; z++)
+                    {
+                        if ((x + y + z == 1) || (x + y + z == 2))
+                        {
+                            Node n = new Node(x, y, z);
+                            nodes[i] = n;
+                            i++;
+                        }
+                    }
+                }
+            }
         }
 
         public HexagonUnit GetUnitAtPosition(Vector3 pos)
@@ -295,20 +320,27 @@ namespace TerminalBasedGame
                     return unit;
                 }
             }
-            return null; // if no unit is found on grid
+            return null;
         }
 
         public void ShowBoard()
         {
+
+            Console.WriteLine("Hexes:");
+
             foreach (HexagonUnit unit in board)
             {
                 Console.WriteLine(unit);
-                Console.WriteLine(unit.position);
-                Console.WriteLine(unit.resource);
             }
+
+            Console.WriteLine("Nodes:");
+
+            foreach (Node u in nodes)
+            {
+                Console.WriteLine(u);
+            }
+            Console.WriteLine(43);
         }
-
-
 
     }
 
@@ -316,23 +348,41 @@ namespace TerminalBasedGame
     {
         private int i;
         private string[] statuses = { "Empty", "City", "Village", "Highway Man" };
+        private Player occupant;
 
-        public BuildingStatus(int i)
+
+
+        public BuildingStatus(int i = 0)
         {
             this.i = i;
+        }
+
+
+        public override string ToString()
+        {
+            return statuses[i];
         }
 
     }
 
-    class ConnectionStatus
+    class Connection
     {
-        private int i;
-        private string[] statuses = { "Empty", "Road", "Wall" };
+        public static readonly string[] statuses = { "Empty", "Road", "Wall" };
+        private int i = 0;
+        private Player occupant;
 
-        public ConnectionStatus(int i)
+
+        public static string Hash(Vector3 v1, Vector3 v2)
+        {
+            return $"{Math.Min(v1.X, v2.X)}{Math.Max(v1.X, v2.X)},{Math.Min(v1.Y, v2.Y)}{Math.Max(v1.Y, v2.Y)},{Math.Min(v1.Z, v2.Z)}{Math.Max(v1.Z, v2.Z)}";
+        }
+
+        public Connection(int i, Player occupant)
         {
             this.i = i;
+            this.occupant = occupant;
         }
+
 
     }
 
@@ -340,8 +390,10 @@ namespace TerminalBasedGame
 
     class Resource
     {
+        public static readonly string[] resources = { "Wood", "Brick", "Wheat", "Resource4", "Resource5" };
+        private static readonly Random rng = new Random();
         private int i;
-        private string[] resources = { "Wood", "Brick", "Wheat", "Resource4", "Resource5" };
+
 
         public Resource(int i)
         {
@@ -353,15 +405,16 @@ namespace TerminalBasedGame
             CreateRandomResource();
         }
 
-        public string getResourceString()
-        {
+        public override string ToString() 
+        { 
             return resources[i];
         }
 
-        public void CreateRandomResource() 
+
+        public void CreateRandomResource() // turn this into a static generator
         { 
-            Random rnd = new Random();
-            i = rnd.Next(0, resources.Length);
+            // Console.WriteLine(rnd.Next(0, resources.Length));
+            i = rng.Next(0, resources.Length);
         }
 
     }
