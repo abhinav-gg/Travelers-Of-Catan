@@ -34,14 +34,6 @@ namespace App
         }
 
 
-
-
-
-
-
-
-
-
     }
 
 
@@ -75,8 +67,6 @@ namespace App
             this.MAXplayer = MAXplayer;
             victoryPoints = new int[MAXplayer];
 
-            board = new Board();
-
         }
 
 
@@ -88,7 +78,8 @@ namespace App
 
         public void startGame()
         {
-
+            board = new Board();
+            board.ShowBoard();
             Console.WriteLine("Game Started");
             while (true)
             {
@@ -104,8 +95,6 @@ namespace App
             Vector3 inp;
             Console.WriteLine("Player " + turn + "'s turn");
             inp = MainFunc.GetNextPosition();
-            board.ShowBoard();
-
 
             turn++;
             turn = turn % MAXplayer;
@@ -116,22 +105,19 @@ namespace App
     }
 
 
-
     class Player
     {
         private int playerNumber;
         private int victoryPoints;
         private int[] resources;
-        private int[] buildings;
-        private int[] connections;
+        private Node[] buildings; // Node
+        private Connection[] connections;
 
         public Player(int playerNumber)
         {
             this.playerNumber = playerNumber;
             victoryPoints = 0;
             resources = new int[5];
-            buildings = new int[4];
-            connections = new int[3];
         }
 
         public void addVictoryPoints(int points)
@@ -144,16 +130,16 @@ namespace App
             resources[resource] += amount;
         }
 
-        public void addBuilding(int building, int amount)
+        public void addBuilding(Node building, int amount)
         {
-            buildings[building] += amount;
+            //buildings[building] += amount;
             GamePlayLoop.ConvertToVictoryPoints(building.ToString());//find out where to get string name
 
         }
 
         public void addConnection(int connection, int amount)
         {
-            connections[connection] += amount;
+            //connections[connection] += amount;
         }
 
         public int getVictoryPoints()
@@ -164,16 +150,6 @@ namespace App
         public int getResource(int resource)
         {
             return resources[resource];
-        }
-
-        public int getBuilding(int building)
-        {
-            return buildings[building];
-        }
-
-        public int getConnection(int connection)
-        {
-            return connections[connection];
         }
 
     }
@@ -339,7 +315,6 @@ namespace TerminalBasedGame
             {
                 Console.WriteLine(u);
             }
-            Console.WriteLine(43);
         }
 
     }
