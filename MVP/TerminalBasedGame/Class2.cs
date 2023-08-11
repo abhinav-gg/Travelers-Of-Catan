@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using App;
 using System.Collections;
+using System.Diagnostics.Contracts;
 
 
 // Path: Class1.cs
@@ -21,7 +22,7 @@ namespace NEAGame
             new Vector3( 3, -1, -1),
             new Vector3(-2,  2,  2) 
         };
-
+        private readonly int WinningVictoryPoints = 10;
 
         private Board board;
         private int turn = 0;
@@ -45,15 +46,15 @@ namespace NEAGame
 
         }
 
-        public static IDictionary<int, int> GetCostOfUpgrade(string entityName)
+        public static Dictionary<int, int> GetCostOfUpgrade(string entityName)
         {
             //        public static readonly string[] resources = { "Wood", "Brick", "Wheat", "Sheep", "Ore" };
 
-            IDictionary<string, Dictionary<int, int>> purchaseCost = new Dictionary<string, Dictionary<int, int>>()
+            Dictionary<string, Dictionary<int, int>> purchaseCost = new Dictionary<string, Dictionary<int, int>>()
             {
-                {"Road", new Dictionary<int, int>()     { { 0, 1 }, { 1, 1 }, { 2, 0 }, { 3, 0 }, { 4, 1 } } },
+                {"Road", new Dictionary<int, int>()     { { 0, 1 }, { 1, 1 }, { 2, 0 }, { 3, 1 }, { 4, 0 } } },
                 {"Wall", new Dictionary<int, int>()     { { 0, 0 }, { 1, 5 }, { 2, 0 }, { 3, 0 }, { 4, 0 } } },
-                {"Village", new Dictionary<int, int>()  { { 0, 3 }, { 1, 1 }, { 2, 3 }, { 3, 3 }, { 4, 1 } } },
+                {"Village", new Dictionary<int, int>()  { { 0, 3 }, { 1, 1 }, { 2, 3 }, { 3, 3 }, { 4, 2 } } },
                 {"City", new Dictionary<int, int>()     { { 0, 1 }, { 1, 3 }, { 2, 1 }, { 3, 0 }, { 4, 4 } } }  
             };
             // store as JSON in Unity Version
@@ -70,7 +71,7 @@ namespace NEAGame
 
             foreach (int i in Enumerable.Range(0, MAXplayer))
             {
-                gamePlayers[i] = new Player(i, StartingCoords[i]);
+                gamePlayers[i] = new Player(i, TerminalGame.GetUserNameInput(i+1), StartingCoords[i]);
             }
 
         }
@@ -78,10 +79,13 @@ namespace NEAGame
 
         public void startGame()
         {
+
+            bool gameOngoing = true;
+
             board = new Board();
             board.ShowBoard();
             Console.WriteLine("Game Started");
-            while (true)
+            while (gameOngoing)
             {
                 currentPlayer = gamePlayers[turn];
 
@@ -90,16 +94,108 @@ namespace NEAGame
             }
         }
 
+        public void CheckWinner()
+        {
+            foreach (Player p in gamePlayers)
+            {
+                if (p.getVictoryPoints() >= WinningVictoryPoints)
+                {
+                    Console.WriteLine("Player " + p.playerName + " has won the game");
+                    return;
+                }
+            }
+        }
+
         public void takeTurn()
+        {
+
+            currentPlayer.hasMoved = false;
+            Console.WriteLine($"{currentPlayer.playerName}'s turn");
+
+            gatherResources();
+
+
+            while (true)
+            {
+                Console.WriteLine("Enter Option:\n a) Show Position\n b) Move Player\n c) Show Victory Points\n d) Check Inventory\n e) Make Purchase\n f) Offer Trade\n g) End Turn");
+                int response = TerminalGame.GetUserLetterInput(7);
+
+                switch (response)
+                {
+                    case 1:
+                        Console.WriteLine($"You are currently at {currentPlayer.position}");
+                        break;
+
+
+
+                    case 2:
+                        if (currentPlayer.hasMoved)
+                        {
+                            Console.WriteLine("You have already moved this turn");
+                            break;
+                        }
+                        movePlayer();
+                        break;
+
+                    case 3:
+                        Console.WriteLine("You have " + currentPlayer.getVictoryPoints() + " victory points");
+                        break;
+
+
+                    case 4:
+                        foreach (var entry in currentPlayer.getResources())
+                        {
+                            Console.WriteLine($"You have {entry.Value} {entry.Key}");
+                        }
+                        break;
+
+                    case 5:
+
+                        // hard part
+
+
+                        CheckWinner();
+                        break;
+
+
+                    case 6:
+                        break; // not a mandatory feature so may be implemented at a later stage
+
+                    case 7:
+                        turn++;
+                        turn = turn % MAXplayer;
+                        Console.WriteLine("Ending Turn");
+                        return;
+                }
+
+
+            }
+
+        }
+
+        public void gatherResources()
+        {
+            foreach (Vector3 u in board.GetNodeAtPosition(currentPlayer.position).GetHexNeighbours())
+            {
+                if (board.GetHexAtPosition(u) != null)
+                {
+                    currentPlayer.addResource(board.GetHexAtPosition(u).resource);
+                }
+            }
+
+        }
+
+        public void movePlayer()
         {
             bool valid = false;
             Vector3 inp;
-            Console.WriteLine("Player " + (turn + 1) + "'s turn");
-            Console.WriteLine($"You are currently at {currentPlayer.position}");
             while (!valid)
             {
                 Console.WriteLine("Where would you like to move?");
                 inp = TerminalGame.GetUserPositionInput();
+
+                if (inp.X == 1000) { return; } // Exit Code
+
                 if (board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours().ToList().Contains(inp) && board.GetNodeAtPosition(inp) != null)
                 {
                     currentPlayer.position = inp;
@@ -112,32 +208,27 @@ namespace NEAGame
                     Console.WriteLine("That position is not valid");
                 }
             }
-            // processing inputs
-
-
-
-
-
-            turn++;
-            turn = turn % MAXplayer;
-
-
+            currentPlayer.hasMoved = true;
         }
+            
     }
 
     class Player
     {
-        private int playerNumber;
         private int victoryPoints;
-        private Dictionary<int, int> resources;
-        private Node[] buildings; // Node
-        private Connection[] connections;
+        private Dictionary<Resource, int> resources = new Dictionary<Resource, int>();
+        private List<Node> buildings = new List<Node>(); // Node
+        private List<Connection> connections;
+        private int playerNumber;
+        public string playerName;
+        public bool hasMoved = false;
 
         public Vector3 position;
 
-        public Player(int playerNumber, Vector3 origin)
+        public Player(int playerNumber, string playerName, Vector3 origin)
         {
             this.playerNumber = playerNumber;
+            this.playerName = playerName;
             victoryPoints = 0;
             position = origin;
         }
@@ -147,16 +238,12 @@ namespace NEAGame
             victoryPoints += points;
         }
 
-        public void addResource(int resource, int amount)
-        {
-            resources[resource] += amount;
-        }
 
-        public void addBuilding(Node building, int amount)
+        public void addBuilding(Node building)
         {
-            //buildings[building] += amount;
+
             TravelersOfCatan.ConvertToVictoryPoints(building.ToString());
-            //find out where to get string name
+            
 
         }
 
@@ -170,9 +257,19 @@ namespace NEAGame
             return victoryPoints;
         }
 
-        public int getResource(int resource)
+        public void makePurchase() { } //requires parameter of a map and shoudl deduct necessary resources from player
+        public void addResource(Resource resource)
         {
-            return resources[resource];
+            if (!resources.ContainsKey(resource))
+            {
+                resources.Add(resource, 0);
+            }
+            resources[resource] += 1;
+        }
+
+        public Dictionary<Resource, int> getResources()
+        {
+            return resources;
         }
 
     }
@@ -309,7 +406,7 @@ namespace NEAGame
             }
         }
 
-        public HexagonUnit GetUnitAtPosition(Vector3 pos)
+        public HexagonUnit GetHexAtPosition(Vector3 pos)
         {
             foreach (HexagonUnit unit in board)
             {
@@ -333,7 +430,7 @@ namespace NEAGame
             return null;
         }
 
-        public void ShowBoard()
+        public void ShowBoard() // move function to class1.cs
         {
 
             Console.WriteLine("Hexes:");
