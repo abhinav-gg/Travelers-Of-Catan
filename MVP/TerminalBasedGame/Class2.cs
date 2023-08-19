@@ -46,6 +46,11 @@ namespace NEAGame
 
         }
 
+        public static string GetPurchaseID(int i)
+        {
+            return new string[] { "Road", "Wall", "Village", "City" }[i];
+        }
+
         public static Dictionary<int, int> GetCostOfUpgrade(string entityName)
         {
             //        public static readonly string[] resources = { "Wood", "Brick", "Wheat", "Sheep", "Ore" };
@@ -72,6 +77,7 @@ namespace NEAGame
             foreach (int i in Enumerable.Range(0, MAXplayer))
             {
                 gamePlayers[i] = new Player(i, TerminalGame.GetUserNameInput(i+1), StartingCoords[i]);
+
             }
 
         }
@@ -82,13 +88,34 @@ namespace NEAGame
 
             bool gameOngoing = true;
 
+            Console.WriteLine("Loarding Board...");
+
             board = new Board();
-            board.ShowBoard();
+
+            foreach (Player current in gamePlayers)
+            {
+                // IMPORTANT: players start with resources and buildings
+
+                BuildingStatus capital = new BuildingStatus("City", current);
+                board.GetNodeAtPosition(current.position).status = capital;
+
+                foreach (int j in Enumerable.Range(0, 5))
+                {
+                    current.addResource(new Resource(j), 10);
+                }
+
+
+            }
+
+
             Console.WriteLine("Game Started");
+            board.ShowBoard();
+
+
             while (gameOngoing)
             {
                 currentPlayer = gamePlayers[turn];
-
+                gatherResources();
                 takeTurn();
 
             }
@@ -111,16 +138,18 @@ namespace NEAGame
 
             currentPlayer.hasMoved = false;
             Console.WriteLine($"{currentPlayer.playerName}'s turn");
-
-            gatherResources();
-
-
             while (true)
             {
-                Console.WriteLine("Enter Option:\n a) Show Position\n b) Move Player\n c) Show Victory Points\n d) Check Inventory\n e) Make Purchase\n f) Offer Trade\n g) End Turn");
-                int response = TerminalGame.GetUserLetterInput(7);
 
-                switch (response)
+
+                Console.WriteLine("Enter Option:\n a) Show Current Position\n b) Move Player\n c) Show Victory Points\n d) Check Inventory\n e) Show Costs\n f) Make Purchase\n g) Show Board\n h) Show Board Connections\n i) Enter Trading\n j) End Turn");
+
+
+                // add more options and make it easier to read
+
+                int response = TerminalGame.GetUserLetterInput(9);
+
+                switch (response) // TODO: remove switch case into seperate functions as Unity does not support switch case
                 {
                     case 1:
                         Console.WriteLine($"You are currently at {currentPlayer.position}");
@@ -149,19 +178,40 @@ namespace NEAGame
                         }
                         break;
 
+
                     case 5:
 
-                        // hard part
+                        // show cost of all items
+
+                        foreach (int i in Enumerable.Range(0, 4))
+                        {
+                            Console.WriteLine(GetPurchaseID(i) + ":");
+                            printCostOfItem(GetPurchaseID(i));
+                        }
 
 
-                        CheckWinner();
                         break;
 
 
                     case 6:
-                        break; // not a mandatory feature so may be implemented at a later stage
+
+                        makePurchase();
+                        break;
+
 
                     case 7:
+                        board.ShowBoard();
+                        break;
+
+                    case 8:
+                        board.ShowBoardConnections();
+                        break;
+
+                    case 9:
+                        Console.WriteLine("Entering Trades");
+                        break; // not a mandatory feature so may be implemented at a later stage
+
+                    default:
                         turn++;
                         turn = turn % MAXplayer;
                         Console.WriteLine("Ending Turn");
@@ -171,6 +221,15 @@ namespace NEAGame
 
             }
 
+        }
+
+        public void printCostOfItem(string item)
+        {
+            Dictionary<int, int> cost = GetCostOfUpgrade(item);
+            foreach (var entry in cost)
+            {
+                Console.WriteLine($"You need {entry.Value} {entry.Key.ToString()}");
+            }
         }
 
         public void gatherResources()
@@ -185,6 +244,159 @@ namespace NEAGame
 
         }
 
+        public void makePurchase()
+        {
+            Console.WriteLine("What would you like to purchase?\n a) Road\n b) Wall\n c) Village\n d) City");
+
+            int purchase = TerminalGame.GetUserLetterInput(4) - 1;
+            Dictionary<int, int> cost = GetCostOfUpgrade(GetPurchaseID(purchase));
+            bool canAfford = true;
+            foreach (var entry in cost)
+            {
+                if (currentPlayer.getResources()[new Resource(entry.Key)] < entry.Value)
+                {
+                    canAfford = false;
+                }
+            }
+            if (!canAfford)
+            {
+                Console.WriteLine("You cannot afford this purchase");
+            }
+            else
+            {
+
+                if (!checkIfCanPurchase(GetPurchaseID(purchase)))
+                {
+                    Console.WriteLine("You cannot purchase this item from your current position");
+                    return;
+                }
+
+                Vector3 otherpos = new Vector3();
+                if (GetPurchaseID(purchase) == "Road" || GetPurchaseID(purchase) == "Wall") // if the purchase is a road or wall, ask for a position to place it
+                {
+                    bool valid = false;
+                    while (!valid)
+                    {
+                        Console.WriteLine("Where would you like this item to connect to?");
+                        otherpos = TerminalGame.GetUserPositionInput();
+                        if (board.GetNodeAtPosition(otherpos).GetNodeNeighbours().Contains(currentPlayer.position))
+                        {
+                            valid = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You cannot place a road here");
+                        }
+                        // TODO: give only the valid options
+
+                    }
+                }
+                else
+                {
+                    otherpos = currentPlayer.position;
+                }
+
+                Console.WriteLine("You are purchasing a " + GetPurchaseID(purchase) + " for:");
+                printCostOfItem(GetPurchaseID(purchase));
+                if (!TerminalGame.GetUserConfirm()) { return; }
+
+                foreach (var entry in cost)
+                {
+                    currentPlayer.removeResource(new Resource(entry.Key), entry.Value);
+                }
+
+                switch (GetPurchaseID(purchase))
+                {
+                    case "Road":
+                        board.SetConnection(currentPlayer.position, otherpos, "Road", currentPlayer);
+                        currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos));
+                        break;
+                    case "Wall":
+                        board.SetConnection(currentPlayer.position, otherpos, "Wall", currentPlayer);
+                        currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos));
+                        break;
+                    case "Village":
+                        board.GetNodeAtPosition(currentPlayer.position).status = new BuildingStatus("Village", currentPlayer);
+                        currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
+                        break;
+                    case "City":
+                        board.GetNodeAtPosition(currentPlayer.position).status = new BuildingStatus("City", currentPlayer);
+                        currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
+                        break;
+                }
+
+                Console.WriteLine("Purchase Successful");
+            }
+            CheckWinner();
+        }
+
+        public bool checkIfCanPurchase(string item)
+        {
+
+
+            if (item == "Road")
+            {
+                foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+                {
+                    if (board.GetNodeAtPosition(nPos) == null) { continue; }
+                    if (board.GetNodeAtPosition(nPos).status.occupant == currentPlayer)
+                    {
+                        if (board.GetConnection(currentPlayer.position, nPos) == null)
+                        {
+                            return true;
+                        }
+                        
+                    }
+                }
+            }
+            else if (item == "Wall")
+            {
+                foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+                {
+                    if (board.GetNodeAtPosition(nPos) == null) { continue; }
+                    if (board.GetConnection(currentPlayer.position, nPos) == null)
+                    {
+                            return true;
+                    }
+                }
+            }
+
+
+            /// THEORETICALLY group wall and road together and check if there is a connection between the two nodes as this code is common
+
+
+            else if (item == "Village")
+            {
+
+                if (!board.GetNodeAtPosition(currentPlayer.position).isEmpty())
+                {
+                    Console.WriteLine("You cannot place a village here as there is already an establishment on this Node");
+                    return false;
+                }
+                foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+                {
+                    Connection con = board.GetConnection(currentPlayer.position, nPos);
+                    if (con.GetOccupant() == currentPlayer && con.GetStatus() == "Road")
+                    {
+                        return true;
+                    }
+
+                }
+
+                Console.WriteLine("You cannot place a village here as there is no road connecting to this Node");
+
+            }
+            else if (item == "City")
+            {
+                if ((board.GetNodeAtPosition(currentPlayer.position).status.occupant == currentPlayer) && (board.GetNodeAtPosition(currentPlayer.position).status.ToString() == "Village"))
+                { 
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void movePlayer()
         {
             bool valid = false;
@@ -194,9 +406,9 @@ namespace NEAGame
                 Console.WriteLine("Where would you like to move?");
                 inp = TerminalGame.GetUserPositionInput();
 
-                if (inp.X == 1000) { return; } // Exit Code
+                if (inp.X == 1000) { return; } // Exit Code passed from CLI
 
-                if (board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours().ToList().Contains(inp) && board.GetNodeAtPosition(inp) != null)
+                if ((board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours().ToList().Contains(inp) && board.GetNodeAtPosition(inp) != null) || currentPlayer.playerName == "test") // test is for testing purposes only, remove when live
                 {
                     currentPlayer.position = inp;
                     Console.WriteLine("You have moved to " + currentPlayer.position);
@@ -216,13 +428,24 @@ namespace NEAGame
     class Player
     {
         private int victoryPoints;
-        private Dictionary<Resource, int> resources = new Dictionary<Resource, int>();
-        private List<Node> buildings = new List<Node>(); // Node
-        private List<Connection> connections;
-        private int playerNumber;
-        public string playerName;
-        public bool hasMoved = false;
+        private Dictionary<Resource, int> resources = new Dictionary<Resource, int>() {
+            { new Resource(0), 0 },
+            { new Resource(1), 0 },
+            { new Resource(2), 0 },
+            { new Resource(3), 0 },
+            { new Resource(4), 0 }
+        };
 
+        /// <summary>
+        private List<Node> buildings = new List<Node>(); //
+        private List<Connection> connections; //
+        /// Unused for now however may be useful for future features
+        /// </summary>
+
+        private int playerNumber; // useful as a UID for the player allowing the same name in testing
+        public string playerName;
+
+        public bool hasMoved = false;
         public Vector3 position;
 
         public Player(int playerNumber, string playerName, Vector3 origin)
@@ -233,7 +456,7 @@ namespace NEAGame
             position = origin;
         }
 
-        public void addVictoryPoints(int points)
+        private void addVictoryPoints(int points)
         {
             victoryPoints += points;
         }
@@ -241,15 +464,16 @@ namespace NEAGame
 
         public void addBuilding(Node building)
         {
-
-            TravelersOfCatan.ConvertToVictoryPoints(building.ToString());
-            
+            buildings.Add(building);
+            addVictoryPoints(TravelersOfCatan.ConvertToVictoryPoints(building.status.ToString()));
 
         }
 
-        public void addConnection(int connection, int amount)
+
+        public void addConnection(Connection connection)
         {
-            //connections[connection] += amount;
+            connections.Add(connection);
+            addVictoryPoints(TravelersOfCatan.ConvertToVictoryPoints(connection.GetStatus()));
         }
 
         public int getVictoryPoints()
@@ -257,19 +481,24 @@ namespace NEAGame
             return victoryPoints;
         }
 
-        public void makePurchase() { } //requires parameter of a map and shoudl deduct necessary resources from player
-        public void addResource(Resource resource)
+        public void addResource(Resource resource, int count = 1)
         {
-            if (!resources.ContainsKey(resource))
-            {
-                resources.Add(resource, 0);
-            }
-            resources[resource] += 1;
+            resources[resource] += count;
+        }
+
+        public void removeResource(Resource resource, int amount = 1)
+        {
+            resources[resource] -= amount;
         }
 
         public Dictionary<Resource, int> getResources()
         {
             return resources;
+        }
+
+        public override string ToString()
+        {
+            return playerName;
         }
 
     }
@@ -329,6 +558,10 @@ namespace NEAGame
 
         }
 
+        public bool isEmpty()
+        {
+            return status.ToString() == "Empty";
+        }
 
         public override string ToString()
         {
@@ -448,25 +681,77 @@ namespace NEAGame
             }
         }
 
+        public void ShowBoardConnections()
+        {
+            foreach (KeyValuePair<string, Connection> entry in connections)
+            {
+                Console.WriteLine(entry.Key + ": " + entry.Value);
+            }
+        }
+
+
+        public Connection GetConnection(Vector3 v1, Vector3 v2)
+        {
+            string key = Connection.Hash(v1, v2);
+            if (connections.ContainsKey(key))
+            {
+                return connections[key];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        public void SetConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
+        {
+            
+            string key = Connection.Hash(v1, v2);
+            connections.Add(key, new Connection(Connection.GetID(status), currentPlayer));
+
+        }
+
     }
 
     class BuildingStatus
     {
-        private int i;
-        private string[] statuses = { "Empty", "City", "Village", "Highway Man" };
-        private Player occupant;
+        public int i;
+        private string[] statuses = { "Empty", "Village", "City", "Highway Man" };
+        public Player occupant;
 
 
 
-        public BuildingStatus(int i = 0)
+        public BuildingStatus(string i = "Empty", Player o = null)
         {
-            this.i = i;
+            this.i = Array.IndexOf(statuses, i);
+            occupant = o;
+        
+        }
+
+        public void UpgradeVillage()
+        {
+            if (i == 1)
+            {
+                i ++;
+            }
+            else
+            {
+                Console.WriteLine("You can't upgrade a city");
+            }
         }
 
 
         public override string ToString()
         {
-            return statuses[i];
+            if (occupant != null)
+            {
+                return $"{statuses[i]} owned by {occupant}";
+            }
+            else
+            {
+                return $"{statuses[i]}";
+            }
         }
 
     }
@@ -483,12 +768,36 @@ namespace NEAGame
             return $"{Math.Min(v1.X, v2.X)}{Math.Max(v1.X, v2.X)},{Math.Min(v1.Y, v2.Y)}{Math.Max(v1.Y, v2.Y)},{Math.Min(v1.Z, v2.Z)}{Math.Max(v1.Z, v2.Z)}";
         }
 
+        public static int GetID(string status)
+        {
+            return Array.IndexOf(statuses, status);
+        }
+
         public Connection(int i, Player occupant)
         {
             this.i = i;
             this.occupant = occupant;
         }
 
+        public Connection()
+        {
+
+        }
+
+        public Player GetOccupant()
+        {
+            return occupant;
+        }
+        public string GetStatus()
+        {
+            return statuses[i];
+        }
+
+
+        public override string ToString()
+        {
+            return $"{statuses[i]} Owmed by {occupant.ToString()}";
+        }
 
     }
 
@@ -526,6 +835,24 @@ namespace NEAGame
             // Console.WriteLine(rnd.Next(0, resources.Length));
             i = rng.Next(0, resources.Length);
         }
+
+        public override bool Equals(System.Object otherItem)
+        {
+            if (otherItem == null)
+            {
+                return false;
+            }
+
+            Resource otherResource = otherItem as Resource;
+
+            return (i == otherResource.i);
+        }
+
+        public override int GetHashCode()
+        {
+            return i;
+        }
+
 
     }
 

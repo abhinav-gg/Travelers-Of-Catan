@@ -100,6 +100,27 @@ namespace App
             return input;
         }
 
+
+
+        public static bool GetUserConfirm() {             
+            string input;
+            Console.WriteLine($"Enter Y/N:");
+            input = Console.ReadLine();
+            if (input.ToUpper() == "Y")
+            {
+                return true;
+            }
+            else if (input.ToUpper() == "N")
+            {
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input, please try again");
+                return GetUserConfirm();
+            }
+        }
+
     }
 
 }
