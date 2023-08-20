@@ -147,7 +147,7 @@ namespace NEAGame
 
                 // add more options and make it easier to read
 
-                int response = TerminalGame.GetUserLetterInput(9);
+                int response = TerminalGame.GetUserLetterInput(10);
 
                 switch (response) // TODO: remove switch case into seperate functions as Unity does not support switch case
                 {
@@ -796,7 +796,7 @@ namespace NEAGame
 
         public override string ToString()
         {
-            return $"{statuses[i]} Owmed by {occupant.ToString()}";
+            return $"{statuses[i]} Owned by {occupant.ToString()}";
         }
 
     }
