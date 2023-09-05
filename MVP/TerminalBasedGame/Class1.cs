@@ -9,7 +9,20 @@ using NEAGame;
 
 namespace App
 {
-    public static class TerminalGame
+
+
+    public interface UserInterface
+    {
+        int GetUserPlayerInput(int MaxPlayer);
+        int GetUserLetterInput(int options);
+        int GetUserChoice(Object[] options);
+        string GetUserNameInput(int who);
+        bool GetUserConfirm();
+        void CreatePopup(string message);
+    }
+        
+
+    public class TerminalGame
     {
 
         public static void Main(string[] args)
@@ -53,7 +66,7 @@ namespace App
         }
 
 
-        public static int GetUserPlayer(int MaxPlayer)
+        int GetUserPlayerInput(int MaxPlayer)
         {
             int player;
             Console.WriteLine($"Enter The Player 1-{MaxPlayer}");
@@ -65,7 +78,7 @@ namespace App
             catch
             {
                 Console.WriteLine("Invalid input, please try again");
-                return GetUserPlayer(MaxPlayer);
+                return GetUserPlayerInput(MaxPlayer);
             }
             return player;
         }
@@ -90,6 +103,36 @@ namespace App
                 return GetUserLetterInput(options);
             }
             
+        }
+
+
+        public static int GetUserChoice(Object[] options)
+        {
+
+            string letter;
+            int i = 1;
+            foreach (Object option in options)
+            {
+                Console.WriteLine($" {(char)(i + 64)}) {option}");
+                i++;
+            }
+            Console.WriteLine($"Enter The Letter A-{(char)(options.Length + 64)}");
+            letter = Console.ReadLine();
+            try
+            {
+                i = letter.ToUpper()[0] - 64;
+                if (letter.Length > 1 || i < 0 || i > options.Length)
+                {
+                    throw new ArgumentOutOfRangeException("User Input Out Of Range");
+                }
+                return i;
+            }
+            catch
+            {
+                Console.WriteLine("Invalid input, please try again");
+                return GetUserChoice(options);
+            }
+
         }
 
         public static string GetUserNameInput(int who)
@@ -119,6 +162,11 @@ namespace App
                 Console.WriteLine("Invalid input, please try again");
                 return GetUserConfirm();
             }
+        }
+
+        public static void CreatePopup(string message)
+        {
+            Console.WriteLine(message);
         }
 
     }
