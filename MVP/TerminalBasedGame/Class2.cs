@@ -70,15 +70,19 @@ namespace NEAGame
 
         public TravelersOfCatan(int MAXplayer)
         {
+
+            MAXplayer = 2;
             this.MAXplayer = MAXplayer;
             victoryPoints = new int[MAXplayer];
             gamePlayers = new Player[MAXplayer];
+            gamePlayers[0] = new Player(0, TerminalGame.GetUserNameInput(1), StartingCoords[0]);
+            gamePlayers[1] = new AI(1, "AI", StartingCoords[1]);
 
-            foreach (int i in Enumerable.Range(0, MAXplayer))
-            {
-                gamePlayers[i] = new Player(i, TerminalGame.GetUserNameInput(i+1), StartingCoords[i]);
-
-            }
+            //foreach (int i in Enumerable.Range(0, MAXplayer))
+            //{
+            //    gamePlayers[i] = new Player(i, TerminalGame.GetUserNameInput(i+1), StartingCoords[i]);
+            //
+            //}
 
         }
 
@@ -519,7 +523,8 @@ namespace NEAGame
         /// Unused for now however may be useful for future features
         /// </summary>
 
-        private int playerNumber; // useful as a UID for the player allowing the same name in testing
+        protected bool isAI = false;
+        protected int playerNumber; // useful as a UID for the player allowing the same name in testing
         public string playerName;
 
         public bool hasMoved = false;
