@@ -27,8 +27,18 @@ namespace NEAGame
             return new Vector3(0, 0, 0);
         
         
-        
-        
+        }
+
+        public Vector4 Eval(TravelersOfCatan game)
+        {
+
+
+            return new Vector4(0, 0, 0, 0);
+        }
+
+        public Vector4 Minimax()
+        {
+            return new Vector4();
         }
 
 

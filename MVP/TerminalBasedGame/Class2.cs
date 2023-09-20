@@ -16,6 +16,8 @@ namespace NEAGame
     class TravelersOfCatan
     {
 
+        public static UI UserInterface;
+
         private readonly Vector3[] StartingCoords = new Vector3[] {
             new Vector3( 0,  3, -2),
             new Vector3( 1, -2,  3),
@@ -24,12 +26,12 @@ namespace NEAGame
         };
         private readonly int WinningVictoryPoints = 30;
 
-        private Board board;
         private int turn = 0;
         private int MAXplayer = 0;
-        private int[] victoryPoints;
-        private Player[] gamePlayers;
         private Player currentPlayer;
+        public int[] victoryPoints;
+        public Board board;
+        public Player[] gamePlayers;
 
         public static int ConvertToVictoryPoints(string entityName)
         {
@@ -71,16 +73,18 @@ namespace NEAGame
         public TravelersOfCatan(int MAXplayer)
         {
 
+            UserInterface = new TerminalUI();
+
             MAXplayer = 2;
             this.MAXplayer = MAXplayer;
             victoryPoints = new int[MAXplayer];
             gamePlayers = new Player[MAXplayer];
-            gamePlayers[0] = new Player(0, TerminalGame.GetUserNameInput(1), StartingCoords[0]);
+            gamePlayers[0] = new Player(0, UserInterface.GetUserNameInput(1), StartingCoords[0]);
             gamePlayers[1] = new AI(1, "AI", StartingCoords[1]);
 
             //foreach (int i in Enumerable.Range(0, MAXplayer))
             //{
-            //    gamePlayers[i] = new Player(i, TerminalGame.GetUserNameInput(i+1), StartingCoords[i]);
+            //    gamePlayers[i] = new Player(i, UserInterface.GetUserNameInput(i+1), StartingCoords[i]);
             //
             //}
 
@@ -92,7 +96,7 @@ namespace NEAGame
 
             bool gameOngoing = true;
 
-            //Console.WriteLine("Loarding Board...");
+            //TravelersOfCatan.UserInterface.CreatePopup("Loarding Board...");
 
             board = new Board();
 
@@ -135,7 +139,9 @@ namespace NEAGame
             {
                 if (p.getVictoryPoints() >= WinningVictoryPoints)
                 {
-                    Console.WriteLine("Player " + p.playerName + " has won the game");
+
+
+                    TravelersOfCatan.UserInterface.CreatePopup("Player " + p.playerName + " has won the game");
                     Console.ReadLine();
                     Environment.Exit(0);
                     return;
@@ -147,42 +153,42 @@ namespace NEAGame
         {
 
             currentPlayer.hasMoved = false;
-            Console.WriteLine($"{currentPlayer.playerName}'s turn");
+            TravelersOfCatan.UserInterface.CreatePopup($"{currentPlayer.playerName}'s turn");
             while (true)
             {
 
 
-                Console.WriteLine("Enter Option:\n a) Show Current Position\n b) Move Player\n c) Show Victory Points\n d) Check Inventory\n e) Show Costs\n f) Make Purchase\n g) Show Board\n h) Show Board Connections\n i) Enter Trading\n j) End Turn");
+                TravelersOfCatan.UserInterface.CreatePopup("Enter Option:\n a) Show Current Position\n b) Move Player\n c) Show Victory Points\n d) Check Inventory\n e) Show Costs\n f) Make Purchase\n g) Show Board\n h) Show Board Connections\n i) Enter Trading\n j) End Turn");
 
 
                 // add more options and make it easier to read
 
-                int response = TerminalGame.GetUserLetterInput(10);
+                int response = UserInterface.GetUserLetterInput(10);
 
                 switch (response) // TODO: remove switch case into seperate functions as Unity does not support switch case
                 {
                     case 1:
-                        Console.WriteLine($"You are currently at {currentPlayer.position}");
+                        TravelersOfCatan.UserInterface.CreatePopup($"You are currently at {currentPlayer.position}");
                         break;
 
                     case 2:
                         if (currentPlayer.hasMoved)
                         {
-                            Console.WriteLine("You have already moved this turn");
+                            TravelersOfCatan.UserInterface.CreatePopup("You have already moved this turn");
                             break;
                         }
                         movePlayer();
                         break;
 
                     case 3:
-                        Console.WriteLine("You have " + currentPlayer.getVictoryPoints() + " victory points");
+                        TravelersOfCatan.UserInterface.CreatePopup("You have " + currentPlayer.getVictoryPoints() + " victory points");
                         break;
 
 
                     case 4:
                         foreach (var entry in currentPlayer.getResources())
                         {
-                            Console.WriteLine($"You have {entry.Value} {entry.Key}");
+                            TravelersOfCatan.UserInterface.CreatePopup($"You have {entry.Value} {entry.Key}");
                         }
                         break;
 
@@ -191,7 +197,7 @@ namespace NEAGame
                         // show cost of all items
                         foreach (int i in Enumerable.Range(0, 4))
                         {
-                            Console.WriteLine(GetPurchaseID(i) + ":");
+                            TravelersOfCatan.UserInterface.CreatePopup(GetPurchaseID(i) + ":");
                             printCostOfItem(GetPurchaseID(i));
                         }
                         break;
@@ -211,13 +217,13 @@ namespace NEAGame
                         break;
 
                     case 9:
-                        Console.WriteLine("Entering Trades");
+                        TravelersOfCatan.UserInterface.CreatePopup("Entering Trades");
                         break; // not a mandatory feature so may be implemented at a later stage
 
                     default:
                         turn++;
                         turn = turn % MAXplayer;
-                        Console.WriteLine("Ending Turn");
+                        TravelersOfCatan.UserInterface.CreatePopup("Ending Turn");
                         return;
                 }
 
@@ -233,7 +239,7 @@ namespace NEAGame
             {
                 if (entry.Value > 0)
                 {
-                    Console.WriteLine($"You need {entry.Value} {Resource.resources[entry.Key]}");
+                    TravelersOfCatan.UserInterface.CreatePopup($"You need {entry.Value} {Resource.resources[entry.Key]}");
                 }
             }
         }
@@ -252,9 +258,9 @@ namespace NEAGame
 
         public void makePurchase()
         {
-            Console.WriteLine("What would you like to purchase?\n a) Road\n b) Wall\n c) Village\n d) City");
+            TravelersOfCatan.UserInterface.CreatePopup("What would you like to purchase?\n a) Road\n b) Wall\n c) Village\n d) City");
 
-            int purchase = TerminalGame.GetUserLetterInput(4) - 1;
+            int purchase = UserInterface.GetUserLetterInput(4) - 1;
             Dictionary<int, int> cost = GetCostOfUpgrade(GetPurchaseID(purchase));
             bool canAfford = true;
             foreach (var entry in cost)
@@ -266,7 +272,7 @@ namespace NEAGame
             }
             if (!canAfford)
             {
-                Console.WriteLine("You cannot afford this purchase");
+                TravelersOfCatan.UserInterface.CreatePopup("You cannot afford this purchase");
                 return;
             }
 
@@ -295,13 +301,13 @@ namespace NEAGame
                 {
                     currentPlayer.removeResource(new Resource(entry.Key), entry.Value);
                 }
-                Console.WriteLine("Purchase Successful");
+                TravelersOfCatan.UserInterface.CreatePopup("Purchase Successful");
                 CheckWinner();
 
             }
             else
             {
-                Console.WriteLine("Purchase Failed");
+                TravelersOfCatan.UserInterface.CreatePopup("Purchase Failed");
             }
 
         }
@@ -330,26 +336,26 @@ namespace NEAGame
 
             if (viableLocations.Count > 1)
             {
-                Console.WriteLine("Where would you like this road to connect?");
-                int index = TerminalGame.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
+                TravelersOfCatan.UserInterface.CreatePopup("Where would you like this road to connect?");
+                int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
                 otherpos = viableLocations[index];
                 
             }
             else if (viableLocations.Count == 1)
             {
                 otherpos = viableLocations[0];
-                Console.WriteLine($"You are purchasing a Road at {otherpos}");
+                TravelersOfCatan.UserInterface.CreatePopup($"You are purchasing a Road at {otherpos}");
             }
             else
             {
-                Console.WriteLine("You cannot purchase a road here");
+                TravelersOfCatan.UserInterface.CreatePopup("You cannot purchase a road here");
                 return false;
             }
 
-            Console.WriteLine("You are purchasing a Road which costs the following:");
+            TravelersOfCatan.UserInterface.CreatePopup("You are purchasing a Road which costs the following:");
             printCostOfItem("Road");
-            Console.WriteLine("Are you sure you want to purchase this?");
-            if (!TerminalGame.GetUserConfirm()) { return false; }
+            TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
+            if (!UserInterface.GetUserConfirm()) { return false; }
 
             board.SetConnection(currentPlayer.position, otherpos, "Road", currentPlayer);
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos));
@@ -376,26 +382,26 @@ namespace NEAGame
 
             if (viableLocations.Count > 1)
             {
-                Console.WriteLine("Where would you like this wall to connect?");
-                int index = TerminalGame.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
+                TravelersOfCatan.UserInterface.CreatePopup("Where would you like this wall to connect?");
+                int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
                 otherpos = viableLocations[index];
 
             }
             else if (viableLocations.Count == 1)
             {
                 otherpos = viableLocations[0];
-                Console.WriteLine($"You are purchasing a Wall at {otherpos}");
+                TravelersOfCatan.UserInterface.CreatePopup($"You are purchasing a Wall at {otherpos}");
             }
             else
             {
-                Console.WriteLine("You cannot purchase a wall here");
+                TravelersOfCatan.UserInterface.CreatePopup("You cannot purchase a wall here");
                 return false;
             }
 
-            Console.WriteLine("You are purchasing a Wall which costs the following:");
+            TravelersOfCatan.UserInterface.CreatePopup("You are purchasing a Wall which costs the following:");
             printCostOfItem("Wall");
-            Console.WriteLine("Are you sure you want to purchase this?");
-            if (!TerminalGame.GetUserConfirm()) { return false; }
+            TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
+            if (!UserInterface.GetUserConfirm()) { return false; }
 
             board.SetConnection(currentPlayer.position, otherpos, "Wall", currentPlayer);
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos));
@@ -408,7 +414,7 @@ namespace NEAGame
         {
             if (!board.GetNodeAtPosition(currentPlayer.position).isEmpty())
             {
-                TerminalGame.CreatePopup("You cannot place a village here as there is already an establishment on this Node");
+                UserInterface.CreatePopup("You cannot place a village here as there is already an establishment on this Node");
                 return false;
             }
 
@@ -425,14 +431,14 @@ namespace NEAGame
             if (!isConnected)
             {
 
-                Console.WriteLine("You cannot place a village here as there is no road connecting to this Node");
+                TravelersOfCatan.UserInterface.CreatePopup("You cannot place a village here as there is no road connecting to this Node");
                 return false;
             }
 
-            Console.WriteLine("You are purchasing a Village which costs the following:");
+            TravelersOfCatan.UserInterface.CreatePopup("You are purchasing a Village which costs the following:");
             printCostOfItem("Village");
-            Console.WriteLine("Are you sure you want to purchase this?");
-            if (!TerminalGame.GetUserConfirm()) { return false; }
+            TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
+            if (!UserInterface.GetUserConfirm()) { return false; }
 
             board.GetNodeAtPosition(currentPlayer.position).status = new BuildingStatus("Village", currentPlayer);
             currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
@@ -447,15 +453,15 @@ namespace NEAGame
             if (!(board.GetNodeAtPosition(currentPlayer.position).status.ToString() == "Village"))
             { 
 
-                Console.WriteLine("You cannot place a city here as you do not own a village on this Node");
+                TravelersOfCatan.UserInterface.CreatePopup("You cannot place a city here as you do not own a village on this Node");
                 return false;
                 
             }
 
-            Console.WriteLine("You are purchasing a City which costs the following:");
+            TravelersOfCatan.UserInterface.CreatePopup("You are purchasing a City which costs the following:");
             printCostOfItem("City");
-            Console.WriteLine("Are you sure you want to purchase this?");
-            if (!TerminalGame.GetUserConfirm()) { return false; }
+            TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
+            if (!UserInterface.GetUserConfirm()) { return false; }
 
             board.GetNodeAtPosition(currentPlayer.position).status.UpgradeVillage();
             currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
@@ -490,15 +496,15 @@ namespace NEAGame
 
             if (viableLocations.Count == 0)
             {
-                Console.WriteLine("Something went wrong... Sending you to your capital");
+                TravelersOfCatan.UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital().position;
                 return;
             }
 
-            Console.WriteLine("Where would you like to move?");
-            int index = TerminalGame.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
-            Console.WriteLine("Confirm this position?");
-            if (!TerminalGame.GetUserConfirm()) { return; }
+            TravelersOfCatan.UserInterface.CreatePopup("Where would you like to move?");
+            int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
+            TravelersOfCatan.UserInterface.CreatePopup("Confirm this position?");
+            if (!UserInterface.GetUserConfirm()) { return; }
             currentPlayer.position = viableLocations[index];
             currentPlayer.hasMoved = true;
             if (currentPlayer.playerName == "test") { currentPlayer.hasMoved = false; }
@@ -823,7 +829,7 @@ namespace NEAGame
             }
             else
             {
-                Console.WriteLine("You can't upgrade a city");
+                TravelersOfCatan.UserInterface.CreatePopup("You can't upgrade a city");
             }
         }
 

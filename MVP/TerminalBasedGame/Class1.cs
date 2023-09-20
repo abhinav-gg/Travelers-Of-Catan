@@ -10,37 +10,39 @@ using NEAGame;
 namespace App
 {
 
-
-    public interface UserInterface
+    public class MainClass
     {
-        int GetUserPlayerInput(int MaxPlayer);
-        int GetUserLetterInput(int options);
-        int GetUserChoice(Object[] options);
-        string GetUserNameInput(int who);
-        bool GetUserConfirm();
-        void CreatePopup(string message);
-    }
-        
-
-    public class TerminalGame
-    {
-
         public static void Main(string[] args)
         {
-
-            //Console.WriteLine(Connection.Hash(new Vector3(1, 0, -1), new Vector3(-1, 0, 1)));
-            //
-
 
             // change to accept player count
             Console.WriteLine("Welcome to Game! Key [ENTER] to begin...");
             Console.ReadLine();
             TravelersOfCatan game = new TravelersOfCatan(2); // 2 player game
 
-
-
             game.startGame();
+
+
         }
+    }
+
+
+    public interface UI
+    {
+
+
+        int GetUserLetterInput(int options);
+        int GetUserChoice(Object[] options);
+        string GetUserNameInput(int who);
+        bool GetUserConfirm();
+        void CreatePopup(string message);
+
+    }
+        
+
+    public class TerminalUI : UI
+    {
+
 
         public static Vector3 GetUserPositionInput()
         {
@@ -83,7 +85,7 @@ namespace App
             return player;
         }
 
-        public static int GetUserLetterInput(int options)
+        public int GetUserLetterInput(int options)
         {
             string letter;
             Console.WriteLine($"Enter The Letter A-{(char)(options + 64)}");
@@ -106,7 +108,7 @@ namespace App
         }
 
 
-        public static int GetUserChoice(Object[] options)
+        public int GetUserChoice(Object[] options)
         {
 
             string letter;
@@ -135,7 +137,7 @@ namespace App
 
         }
 
-        public static string GetUserNameInput(int who)
+        public string GetUserNameInput(int who)
         {
             string input;
             Console.WriteLine($"Enter Player {who}'s Name: ");
@@ -145,7 +147,7 @@ namespace App
 
 
 
-        public static bool GetUserConfirm() {             
+        public bool GetUserConfirm() {             
             string input;
             Console.WriteLine($"Enter Y/N:");
             input = Console.ReadLine();
@@ -164,7 +166,7 @@ namespace App
             }
         }
 
-        public static void CreatePopup(string message)
+        public void CreatePopup(string message)
         {
             Console.WriteLine(message);
         }
