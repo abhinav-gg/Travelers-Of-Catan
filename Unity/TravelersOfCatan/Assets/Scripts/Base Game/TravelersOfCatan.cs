@@ -156,6 +156,7 @@ namespace NEAGame
             currentPlayer.moves = 2; // initial moves per turn
 
             TravelersOfCatan.UserInterface.CreatePopup($"{currentPlayer.playerName}'s turn");
+            return;
             while (true)
             {
 
@@ -561,7 +562,16 @@ namespace NEAGame
                     {
                         if (x + y + z == 0)
                         {
-                            HexagonUnit unit = new HexagonUnit(Resource.GetRandom(), x, y, z);
+                            HexagonUnit unit;
+                            if (x == 0 && y == 0 && z == 0)
+                            {
+                                unit = new HexagonUnit(new Resource(0), x, y, z); // center of board is Empty in classical Catan
+                            }
+                            else
+                            {
+                                unit = new HexagonUnit(Resource.GetRandom(), x, y, z);
+
+                            }
                             board[i] = unit;
                             i++;
                         }
