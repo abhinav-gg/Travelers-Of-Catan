@@ -8,6 +8,7 @@ using App;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.IO.MemoryMappedFiles;
+using System.Runtime.CompilerServices;
 
 
 // Path: Class1.cs
@@ -48,8 +49,7 @@ namespace NEAGame
 
             UserInterface = new TerminalUI();
 
-            MAXplayer = 2;
-            this.MAXplayer = MAXplayer ;
+            this.MAXplayer = MAXplayer + MAXbot ;
             victoryPoints = new int[MAXplayer + MAXbot];
             gamePlayers = new Player[MAXplayer + MAXbot];
 
@@ -106,8 +106,8 @@ namespace NEAGame
             {
 
                 Building capital = new Building("City", current);
-                board.GetNodeAtPosition(current.position).status = capital;
-                current.addBuilding(board.GetNodeAtPosition(current.position));
+                board.GetNode(current.position).status = capital;
+                current.addBuilding(board.GetNode(current.position));
 
                 // give every player their starting resources
                 for (int i = 1; i < Resource.resources.Length; i++)
@@ -259,7 +259,7 @@ namespace NEAGame
 
         public void gatherResources()
         {
-            foreach (Vector3 u in board.GetNodeAtPosition(currentPlayer.position).GetHexNeighbours())
+            foreach (Vector3 u in board.GetNode(currentPlayer.position).GetHexNeighbours())
             {
                 if (board.GetHexAtPosition(u) != null)
                 {
@@ -327,34 +327,39 @@ namespace NEAGame
 
         public bool purchaseRoad()
         {
-            List<Vector3> viableLocations = new List<Vector3>();
-            bool canconnect = board.GetNodeAtPosition(currentPlayer.position).status.GetOccupant() == currentPlayer;
-            foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+            List<Node> viableLocations = new List<Node>();
+            bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer; // player must be standing on their own settlement to build a road
+            foreach (Connection con in board.GetNode(currentPlayer.position).GetConnections())
             {
-                if (board.GetNodeAtPosition(nPos) == null) { continue; }
-                if (board.GetConnection(currentPlayer.position, nPos) == null)
+                if (con.start.position != currentPlayer.position)
                 {
-                    if ((board.GetNodeAtPosition(nPos).status.GetOccupant() != null) && (board.GetNodeAtPosition(nPos).status.GetOccupant() != currentPlayer))
-                    {
-                        continue;
-                    }
-                    if (board.GetNodeAtPosition(nPos).status.GetOccupant() == currentPlayer || canconnect)
-                    {
-                        viableLocations.Add(nPos);
-                    }
+                    Console.WriteLine("Something went wrong..."); // this should never happen
                 }
+                if (con.GetOccupant() != null)
+                {
+                    continue; // can not build a road on existing connections of any sort
+                }
+                else if ((con.end.status.GetOccupant() != currentPlayer) && (con.end.status.GetOccupant() != null))
+                {
+                    continue; // The enemy controls the settlement at the end of this road
+                }
+                else
+                {
+                    viableLocations.Add(con.end);
+                }
+
             }
 
-            Vector3 otherpos;
+            Node otherpos;
 
-            if (viableLocations.Count > 1)
+            if (viableLocations.Count > 1 && canconnect)
             {
                 TravelersOfCatan.UserInterface.CreatePopup("Where would you like this road to connect?");
                 int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
                 otherpos = viableLocations[index];
                 
             }
-            else if (viableLocations.Count == 1)
+            else if (viableLocations.Count == 1 && canconnect)
             {
                 otherpos = viableLocations[0];
                 TravelersOfCatan.UserInterface.CreatePopup($"You are purchasing a Road at {otherpos}");
@@ -370,8 +375,8 @@ namespace NEAGame
             TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
-            board.SetConnection(currentPlayer.position, otherpos, "Road", currentPlayer);
-            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos));
+            board.UpdateConnection(currentPlayer.position, otherpos.position, "Road", currentPlayer);
+            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos.position));
 
             return true;
 
@@ -379,19 +384,24 @@ namespace NEAGame
 
         public bool purchaseWall()
         {
-            List<Vector3> viableLocations = new List<Vector3>();
-            foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+            List<Node> viableLocations = new List<Node>();
+            foreach (Connection con in board.GetNode(currentPlayer.position).GetConnections())
             {
-                if (board.GetNodeAtPosition(nPos) == null) { continue; }
-                if (board.GetConnection(currentPlayer.position, nPos) == null)
+                if (con.start.position != currentPlayer.position)
                 {
-
-                    viableLocations.Add(nPos);
-
+                    Console.WriteLine("Something went wrong..."); // this should never happen
+                }
+                if (con.GetOccupant() != null)
+                {
+                    continue; // can not build a wall on existing connections of any sort
+                }
+                else // do not care who owns the settlement at the end of this wall
+                {
+                    viableLocations.Add(con.end);
                 }
             }
 
-            Vector3 otherpos;
+            Node otherpos;
 
             if (viableLocations.Count > 1)
             {
@@ -411,13 +421,13 @@ namespace NEAGame
                 return false;
             }
 
-            TravelersOfCatan.UserInterface.CreatePopup("You are purchasing a Wall which costs the following:");
+            TravelersOfCatan.UserInterface.CreatePopup("You are purchasing a permanent Wall which costs the following:");
             printCostOfItem("Wall");
             TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
-            board.SetConnection(currentPlayer.position, otherpos, "Wall", currentPlayer);
-            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos));
+            board.UpdateConnection(currentPlayer.position, otherpos.position, "Wall", currentPlayer);
+            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos.position));
 
             return true;
 
@@ -425,14 +435,14 @@ namespace NEAGame
 
         public bool purchaseVillage()
         {
-            if (!board.GetNodeAtPosition(currentPlayer.position).isEmpty())
+            if (!board.GetNode(currentPlayer.position).isEmpty())
             {
                 UserInterface.CreatePopup("You cannot place a village here as there is already an establishment on this Node");
                 return false;
             }
 
             bool isConnected = false;
-            foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+            foreach (Vector3 nPos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
                 Connection con = board.GetConnection(currentPlayer.position, nPos);
                 if (con.GetOccupant() == currentPlayer && con.GetStatus() == "Road")
@@ -453,8 +463,8 @@ namespace NEAGame
             TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
-            board.GetNodeAtPosition(currentPlayer.position).status = new Building("Village", currentPlayer);
-            currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
+            board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer);
+            currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
 
             return true;
 
@@ -463,7 +473,7 @@ namespace NEAGame
         public bool purchaseCity()
         {
 
-            if (!(board.GetNodeAtPosition(currentPlayer.position).status.ToString() == "Village"))
+            if (!(board.GetNode(currentPlayer.position).status.ToString() == "Village"))
             { 
 
                 TravelersOfCatan.UserInterface.CreatePopup("You cannot place a city here as you do not own a village on this Node");
@@ -476,8 +486,8 @@ namespace NEAGame
             TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
-            board.GetNodeAtPosition(currentPlayer.position).status.UpgradeVillage();
-            currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
+            board.GetNode(currentPlayer.position).status.UpgradeVillage();
+            currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
 
             return true;
         }
@@ -485,25 +495,20 @@ namespace NEAGame
         public void movePlayer()
         {
 
-            List<Vector3> viableLocations = new List<Vector3>();
+            List<Node> viableLocations = new List<Node>();
 
-            foreach (Vector3 nPos in board.GetNodeAtPosition(currentPlayer.position).GetNodeNeighbours())
+            foreach (Connection con in board.GetNode(currentPlayer.position).GetConnections())
             {
-                if (board.GetNodeAtPosition(nPos) == null) { continue; }
-
-                if (board.GetConnection(currentPlayer.position, nPos) != null
-                    && board.GetConnection(currentPlayer.position, nPos).GetOccupant() != currentPlayer)
+                if ((con.GetOccupant() != currentPlayer) && (con.GetOccupant() != null)) 
                 {
-                    continue;
-                    
+                    continue; // the enemy controls this road or wall
+                }
+                else if ((con.end.status.GetOccupant() != currentPlayer) && (con.end.status.GetOccupant() != null))
+                {
+                    continue; // The enemy controls the settlement at the end of this road
                 }
 
-                if ((board.GetNodeAtPosition(nPos).status.GetOccupant() != currentPlayer)
-                    && (board.GetNodeAtPosition(nPos).status.GetOccupant() != null))
-                {
-                    continue;
-                }
-                viableLocations.Add(nPos);
+                viableLocations.Add(con.end);
                     
             }
 
@@ -511,15 +516,15 @@ namespace NEAGame
             {
                 TravelersOfCatan.UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital().position;
-                return;
+                return; // this should not happen unless you get boxed in by the clever opponent!
             }
 
             TravelersOfCatan.UserInterface.CreatePopup("Where would you like to move?");
             int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
             TravelersOfCatan.UserInterface.CreatePopup("Confirm this position?");
             if (!UserInterface.GetUserConfirm()) { return; }
-            currentPlayer.position = viableLocations[index];
-            currentPlayer.moves -= 1;
+            currentPlayer.position = viableLocations[index].position;
+            currentPlayer.moves -= 1; // update to accounts for travelling costs
 
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
         }
@@ -539,7 +544,7 @@ namespace NEAGame
     {
 
         private HexagonUnit[] board = new HexagonUnit[19];
-        private Node[] nodes = new Node[54]; 
+        Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>(); 
         // array of nodes and hexagon centers in graph. Fixed length means no need to resize
         public Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>(); 
         // nested dictionary for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
@@ -578,24 +583,32 @@ namespace NEAGame
                             Node n = new Node(x, y, z);
 
                             // register a list of all existing connections for the AI to use
-                            foreach (Connection con in n.RegisterConnections()) 
-                            {
-                                if (!connections.ContainsKey(con.start))
-                                {
-                                    connections.Add(con.start, new Dictionary<Vector3, Connection>());
-                                }
-                                connections[con.start].Add(con.end, con);
-                            }
 
 
 
-
-                            nodes[i] = n;
+                            nodes.Add(new Vector3(x, y, z), n);
                             i++;
                         }
                     }
                 }
             }
+
+            foreach (Node n in nodes.Values)
+            {
+                n.RegisterConnections(this);
+                foreach (Connection con in n.GetConnections())
+                {
+                    if (!connections.ContainsKey(con.start.position))
+                    {
+                        connections.Add(con.start.position, new Dictionary<Vector3, Connection>());
+                    }
+                    connections[con.start.position].Add(con.end.position, con);
+                }
+
+            }
+
+
+
         }
 
 
@@ -611,16 +624,18 @@ namespace NEAGame
             return null;
         }
 
-        public Node GetNodeAtPosition(Vector3 pos)
+        public Node GetNode(Vector3 pos)
         {
-            foreach (Node node in nodes)
-            {
-                if (node.position == pos)
-                {
-                    return node;
-                }
-            }
-            return null;
+            
+            if (nodes.ContainsKey(pos))
+                return nodes[pos];
+            else
+                return null;
+        }
+
+        public Node[] GetAllNodes()
+        {
+            return nodes.Values.ToArray();
         }
 
         public void ShowBoard() 
@@ -635,7 +650,7 @@ namespace NEAGame
 
             TravelersOfCatan.UserInterface.CreatePopup("Nodes:");
 
-            foreach (Node u in nodes)
+            foreach (Node u in nodes.Values)
             {
                 TravelersOfCatan.UserInterface.CreatePopup(u.ToString());
             }
@@ -675,17 +690,11 @@ namespace NEAGame
         }
 
 
-        public void SetConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
+        public void UpdateConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
         {
-            var x = connections[v1];
-            if (x == null)
-            {
-                return;
-            }
-            else
-            {
-                x[v2] = new Connection(v1, v2, 0, status, currentPlayer);
-            }
+            Connection x = connections[v1][v2];
+            x.SetOccupant(currentPlayer);
+            x.SetStatus(status);
         }
 
     }
@@ -753,7 +762,6 @@ namespace NEAGame
 
         public void addResource(Resource resource, int amount = 1)
         {
-            Console.WriteLine(resource);
             resources[resource] += amount;
         }
 
@@ -772,6 +780,11 @@ namespace NEAGame
             return playerName;
         }
 
+        public void Trade()
+        {
+
+        }
+
     }
 
 
@@ -788,16 +801,22 @@ namespace NEAGame
             
         }
 
-        public IEnumerable<Connection> RegisterConnections()
+
+        public void RegisterConnections(Board gameBoard)
         {
-            foreach (Vector3 v in GetHexNeighbours())
+            foreach(Vector3 v in GetNodeNeighbours())
             {
-                Connection con = new Connection(this.position, v);
-                if (con != null)
+                if (gameBoard.GetNode(v) != null)
                 {
-                    yield return con;
+                    Console.WriteLine("Adding connection" + this + v);
+                    connections.Add(v, new Connection(this, gameBoard.GetNode(v)));
                 }
             }
+        }
+
+        public List<Connection> GetConnections()
+        {
+            return Enumerable.ToList<Connection>(connections.Values);
         }
 
 
@@ -851,7 +870,15 @@ namespace NEAGame
 
         public override string ToString()
         {
-            return $"{status} at {position}";
+            if (!status.IsEmpty())
+            {
+                return $"{status} at {position}";
+
+            }
+            else
+            {
+                return position.ToString();
+            }
         }
 
 
@@ -861,13 +888,13 @@ namespace NEAGame
     class Connection
     {
         public static readonly string[] statuses = { "Empty", "Road", "Wall" };
-        public Vector3 start;
-        public Vector3 end;
+        public Node start;
+        public Node end;
         private int i = 0;
         private Player occupant;
 
 
-        public Connection(Vector3 Start, Vector3 End, int i = 0, string status = "", Player occupant = null)
+        public Connection(Node Start, Node End, int i = 0, string status = "", Player occupant = null)
         {
             this.i = i;
             if (status != "")
@@ -879,14 +906,73 @@ namespace NEAGame
             this.end = End;
         }
 
+        public static bool operator ==(Connection c1, Connection c2)
+        {
+            if (c1 is null)
+            {
+                if (c2 is null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return c1.Equals(c2);
+        }
+
+        public static bool operator !=(Connection c1, Connection c2)
+        {
+            if (c1 is null)
+            {
+                if (c2 is null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return c1.Equals(c2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != typeof(Connection))
+            {
+                return false;
+            }
+            Connection otherConnection = obj as Connection;
+            if (otherConnection.start == start && otherConnection.end == end) 
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
 
         public Player GetOccupant()
         {
             return occupant;
         }
+
+        public void SetOccupant(Player p)
+        {
+            occupant = p;
+        }
+
         public string GetStatus()
         {
             return statuses[i];
+        }
+
+        public void SetStatus(string status)
+        {
+            i = Array.IndexOf(statuses, status);
         }
 
         public int GetWalkingCost(Player otherPlayer)
@@ -916,7 +1002,7 @@ namespace NEAGame
 
         public override string ToString()
         {
-            return $"{statuses[i]} Owned by {occupant}";
+            return $"{statuses[i]} Owned by {occupant} Which connects {start} to {end}";
         }
 
     }
@@ -966,7 +1052,10 @@ namespace NEAGame
             }
         }
 
-
+        public bool IsEmpty()
+        {
+            return i == 0;
+        }
         public override string ToString()
         {
             if (occupant != null)
