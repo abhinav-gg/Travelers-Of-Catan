@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using App;
 using System.Collections;
 using System.Diagnostics.Contracts;
+using System.IO.MemoryMappedFiles;
 
 
 // Path: Class1.cs
@@ -17,6 +18,13 @@ namespace NEAGame
     {
 
         public static UI UserInterface;
+        public static IDictionary<string, int> victoryPointConvertor = new Dictionary<string, int>()
+            {
+                {"Road", 2},
+                {"Wall", 1},
+                {"Village", 4 },
+                {"City", 10 }
+            };
 
         private readonly Vector3[] StartingCoords = new Vector3[] {
             new Vector3( 0,  3, -2),
@@ -24,7 +32,8 @@ namespace NEAGame
             new Vector3( 3, -1, -1),
             new Vector3(-2,  2,  2) 
         };
-        private readonly int WinningVictoryPoints = 30;
+        private int WinningVictoryPoints = 30; // allow this to be passed into the constructor
+        private int StartingResourceCount = 10;
 
         private int turn = 0;
         private int MAXplayer = 0;
@@ -33,18 +42,29 @@ namespace NEAGame
         public Board board;
         public Player[] gamePlayers;
 
-        public static int ConvertToVictoryPoints(string entityName)
+
+        public TravelersOfCatan(int MAXplayer, int MAXbot)
         {
 
-            IDictionary<string, int> victoryPoints = new Dictionary<string, int>()
+            UserInterface = new TerminalUI();
+
+            MAXplayer = 2;
+            this.MAXplayer = MAXplayer ;
+            victoryPoints = new int[MAXplayer + MAXbot];
+            gamePlayers = new Player[MAXplayer + MAXbot];
+
+            foreach (int i in Enumerable.Range(0, MAXplayer))
             {
-                {"Road", 2},
-                {"Wall", 1},
-                {"Village", 4 },
-                {"City", 10 }
-            }; // store as JSON in Unity Version
+                gamePlayers[i] = new Player(i, UserInterface.GetUserNameInput(i+1), StartingCoords[i]);
             
-            return victoryPoints[entityName];
+            }
+
+            for (int i = 0; i < MAXbot; i++)
+            {
+                gamePlayers[i + MAXplayer] = new AI(i + MAXplayer, "AI" + (i+1), StartingCoords[i + MAXplayer]);
+            }
+
+
 
         }
 
@@ -55,14 +75,13 @@ namespace NEAGame
 
         public static Dictionary<int, int> GetCostOfUpgrade(string entityName)
         {
-            //        public static readonly string[] resources = { "Wood", "Brick", "Wheat", "Sheep", "Ore" };
 
             Dictionary<string, Dictionary<int, int>> purchaseCost = new Dictionary<string, Dictionary<int, int>>()
             {
-                {"Road", new Dictionary<int, int>()     { { 0, 1 }, { 1, 1 }, { 2, 0 }, { 3, 1 }, { 4, 0 } } },
-                {"Wall", new Dictionary<int, int>()     { { 0, 0 }, { 1, 5 }, { 2, 0 }, { 3, 0 }, { 4, 0 } } },
-                {"Village", new Dictionary<int, int>()  { { 0, 3 }, { 1, 1 }, { 2, 3 }, { 3, 3 }, { 4, 2 } } },
-                {"City", new Dictionary<int, int>()     { { 0, 1 }, { 1, 3 }, { 2, 1 }, { 3, 0 }, { 4, 4 } } }  
+                {"Road", new Dictionary<int, int>()     { { 1, 1 }, { 2, 1 }, { 3, 0 }, { 4, 1 }, { 5, 0 } } },
+                {"Wall", new Dictionary<int, int>()     { { 1, 0 }, { 2, 5 }, { 3, 0 }, { 4, 0 }, { 5, 0 } } },
+                {"Village", new Dictionary<int, int>()  { { 1, 3 }, { 2, 1 }, { 3, 3 }, { 4, 3 }, { 5, 2 } } },
+                {"City", new Dictionary<int, int>()     { { 1, 1 }, { 2, 3 }, { 3, 1 }, { 4, 0 }, { 5, 4 } } }  
             };
             // store as JSON in Unity Version
            
@@ -70,30 +89,13 @@ namespace NEAGame
 
         }
 
-        public TravelersOfCatan(int MAXplayer)
-        {
-
-            UserInterface = new TerminalUI();
-
-            MAXplayer = 2;
-            this.MAXplayer = MAXplayer;
-            victoryPoints = new int[MAXplayer];
-            gamePlayers = new Player[MAXplayer];
-            gamePlayers[0] = new Player(0, UserInterface.GetUserNameInput(1), StartingCoords[0]);
-            gamePlayers[1] = new AI(1, "AI", StartingCoords[1]);
-
-            //foreach (int i in Enumerable.Range(0, MAXplayer))
-            //{
-            //    gamePlayers[i] = new Player(i, UserInterface.GetUserNameInput(i+1), StartingCoords[i]);
-            //
-            //}
-
-        }
-
 
         public void startGame()
         {
 
+
+
+            DisplayPlayers();
             bool gameOngoing = true;
 
             //TravelersOfCatan.UserInterface.CreatePopup("Loarding Board...");
@@ -102,24 +104,25 @@ namespace NEAGame
 
             foreach (Player current in gamePlayers)
             {
-                // IMPORTANT: players start with resources and buildings
 
-                BuildingStatus capital = new BuildingStatus("City", current);
+                Building capital = new Building("City", current);
                 board.GetNodeAtPosition(current.position).status = capital;
                 current.addBuilding(board.GetNodeAtPosition(current.position));
 
-                foreach (int j in Enumerable.Range(0, 5))
+                // give every player their starting resources
+                for (int i = 1; i < Resource.resources.Length; i++)
                 {
-                    current.addResource(new Resource(j), 10);
+
+                    current.addResource(new Resource(i), StartingResourceCount);
                     if (current.playerName == "test")
                     {
-                        current.addResource(new Resource(j), 1000);
+                        current.addResource(new Resource(i), 1000);
                     }
                 }
 
             }
 
-            // TODO add highwayman
+            // TODO add highwayman 
 
             board.ShowBoard();
 
@@ -140,7 +143,6 @@ namespace NEAGame
                 if (p.getVictoryPoints() >= WinningVictoryPoints)
                 {
 
-
                     TravelersOfCatan.UserInterface.CreatePopup("Player " + p.playerName + " has won the game");
                     Console.ReadLine();
                     Environment.Exit(0);
@@ -149,21 +151,32 @@ namespace NEAGame
             }
         }
 
-        public void takeTurn()
+        public void takeTurn() // Terminal version specific
         {
 
-            currentPlayer.hasMoved = false;
+            currentPlayer.moves = 2; // initial moves per turn
+
             TravelersOfCatan.UserInterface.CreatePopup($"{currentPlayer.playerName}'s turn");
             while (true)
             {
 
 
-                TravelersOfCatan.UserInterface.CreatePopup("Enter Option:\n a) Show Current Position\n b) Move Player\n c) Show Victory Points\n d) Check Inventory\n e) Show Costs\n f) Make Purchase\n g) Show Board\n h) Show Board Connections\n i) Enter Trading\n j) End Turn");
+                TravelersOfCatan.UserInterface.CreatePopup(@"Enter Option:
+                    a) Show Current Position
+                    b) Move Player
+                    c) Show Victory Points
+                    d) Check Inventory
+                    e) Show Costs
+                    f) Make Purchase
+                    g) Show Board
+                    h) Show Board Connections
+                    i) Enter Trading
+                    j) End Turn");
 
 
                 // add more options and make it easier to read
 
-                int response = UserInterface.GetUserLetterInput(10);
+                int response = UserInterface.GetUserLetterInput(10); // this will get rewritten in Unity version
 
                 switch (response) // TODO: remove switch case into seperate functions as Unity does not support switch case
                 {
@@ -172,7 +185,7 @@ namespace NEAGame
                         break;
 
                     case 2:
-                        if (currentPlayer.hasMoved)
+                        if (currentPlayer.moves == 0)
                         {
                             TravelersOfCatan.UserInterface.CreatePopup("You have already moved this turn");
                             break;
@@ -440,7 +453,7 @@ namespace NEAGame
             TravelersOfCatan.UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
-            board.GetNodeAtPosition(currentPlayer.position).status = new BuildingStatus("Village", currentPlayer);
+            board.GetNodeAtPosition(currentPlayer.position).status = new Building("Village", currentPlayer);
             currentPlayer.addBuilding(board.GetNodeAtPosition(currentPlayer.position));
 
             return true;
@@ -506,21 +519,186 @@ namespace NEAGame
             TravelersOfCatan.UserInterface.CreatePopup("Confirm this position?");
             if (!UserInterface.GetUserConfirm()) { return; }
             currentPlayer.position = viableLocations[index];
-            currentPlayer.hasMoved = true;
-            if (currentPlayer.playerName == "test") { currentPlayer.hasMoved = false; }
+            currentPlayer.moves -= 1;
+
+            if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
         }
             
+        public void DisplayPlayers()
+        {
+            foreach (Player p in gamePlayers)
+            {
+                TravelersOfCatan.UserInterface.CreatePopup(p.playerName);
+            }
+        }
+    }
+
+   
+
+    class Board // A graph of nodes
+    {
+
+        private HexagonUnit[] board = new HexagonUnit[19];
+        private Node[] nodes = new Node[54]; 
+        // array of nodes and hexagon centers in graph. Fixed length means no need to resize
+        public Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>(); 
+        // nested dictionary for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
+        // this acts as an adjacency matrix of the graph of nodes but omits all the null values
+
+        public Board()
+        {
+
+            int i = 0;
+            for (int x = -2; x < 3; x++)
+            {
+                for (int y = -2; y < 3; y++)
+                {
+                    for (int z = -2; z < 3; z++)
+                    {
+                        if (x + y + z == 0)
+                        {
+                            HexagonUnit unit = new HexagonUnit(Resource.GetRandom(), x, y, z);
+                            board[i] = unit;
+                            i++;
+                        }
+                    }
+                }
+            }
+
+            i = 0;
+            for (int x = -2; x < 4; x++)
+            {
+                for (int y = -2; y < 4; y++)
+                {
+                    for (int z = -2; z < 4; z++)
+                    {
+                        if ((x + y + z == 1) || (x + y + z == 2))
+                        {
+
+                            Node n = new Node(x, y, z);
+
+                            // register a list of all existing connections for the AI to use
+                            foreach (Connection con in n.RegisterConnections()) 
+                            {
+                                if (!connections.ContainsKey(con.start))
+                                {
+                                    connections.Add(con.start, new Dictionary<Vector3, Connection>());
+                                }
+                                connections[con.start].Add(con.end, con);
+                            }
+
+
+
+
+                            nodes[i] = n;
+                            i++;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        public HexagonUnit GetHexAtPosition(Vector3 pos)
+        {
+            foreach (HexagonUnit unit in board)
+            {
+                if (unit.position == pos)
+                {
+                    return unit;
+                }
+            }
+            return null;
+        }
+
+        public Node GetNodeAtPosition(Vector3 pos)
+        {
+            foreach (Node node in nodes)
+            {
+                if (node.position == pos)
+                {
+                    return node;
+                }
+            }
+            return null;
+        }
+
+        public void ShowBoard() 
+        {
+
+            TravelersOfCatan.UserInterface.CreatePopup("Hexes:");
+
+            foreach (HexagonUnit unit in board)
+            {
+                TravelersOfCatan.UserInterface.CreatePopup(unit.ToString());
+            }
+
+            TravelersOfCatan.UserInterface.CreatePopup("Nodes:");
+
+            foreach (Node u in nodes)
+            {
+                TravelersOfCatan.UserInterface.CreatePopup(u.ToString());
+            }
+        }
+
+        public void ShowBoardConnections()
+        {
+            foreach (var i in connections)
+            {
+                TravelersOfCatan.UserInterface.CreatePopup(i.Key.ToString());
+                foreach (var j in i.Value)
+                {
+                    TravelersOfCatan.UserInterface.CreatePopup("\t" + j.Value.ToString());
+                }
+            }
+        }
+            
+
+        public Connection GetConnection(Vector3 v1, Vector3 v2)
+        {
+            var x = connections[v1];
+            if (x == null)
+            {
+                return null;
+            }
+            else
+            {
+                if (x.ContainsKey(v2))
+                {
+                    return x[v2];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        public void SetConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
+        {
+            var x = connections[v1];
+            if (x == null)
+            {
+                return;
+            }
+            else
+            {
+                x[v2] = new Connection(v1, v2, 0, status, currentPlayer);
+            }
+        }
+
     }
 
     class Player
     {
         private int victoryPoints;
         private Dictionary<Resource, int> resources = new Dictionary<Resource, int>() {
-            { new Resource(0), 0 },
             { new Resource(1), 0 },
             { new Resource(2), 0 },
             { new Resource(3), 0 },
-            { new Resource(4), 0 }
+            { new Resource(4), 0 },
+            { new Resource(5), 0 }
         };
 
         /// <summary>
@@ -529,12 +707,12 @@ namespace NEAGame
         /// Unused for now however may be useful for future features
         /// </summary>
 
-        protected bool isAI = false;
         protected int playerNumber; // useful as a UID for the player allowing the same name in testing
         public string playerName;
 
-        public bool hasMoved = false;
+        public int moves;
         public Vector3 position;
+        protected bool isAI = false; // gets changed by child AI class
 
         public Player(int playerNumber, string playerName, Vector3 origin)
         {
@@ -544,7 +722,7 @@ namespace NEAGame
             position = origin;
         }
 
-        private void addVictoryPoints(int points)
+        private void addVictoryPoints(int points) // required for future features
         {
             victoryPoints += points;
         }
@@ -553,7 +731,7 @@ namespace NEAGame
         public void addBuilding(Node building)
         {
             buildings.Add(building);
-            addVictoryPoints(TravelersOfCatan.ConvertToVictoryPoints(building.status.GetStatus()));
+            addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
 
         }
 
@@ -565,7 +743,7 @@ namespace NEAGame
         public void addConnection(Connection connection)
         {
             connections.Add(connection);
-            addVictoryPoints(TravelersOfCatan.ConvertToVictoryPoints(connection.GetStatus()));
+            addVictoryPoints(TravelersOfCatan.victoryPointConvertor[connection.GetStatus()]);
         }
 
         public int getVictoryPoints()
@@ -573,9 +751,10 @@ namespace NEAGame
             return victoryPoints;
         }
 
-        public void addResource(Resource resource, int count = 1)
+        public void addResource(Resource resource, int amount = 1)
         {
-            resources[resource] += count;
+            Console.WriteLine(resource);
+            resources[resource] += amount;
         }
 
         public void removeResource(Resource resource, int amount = 1)
@@ -599,11 +778,26 @@ namespace NEAGame
     class Node
     {
         public Vector3 position;
-        public BuildingStatus status = new BuildingStatus();
+        public Building status = new Building();
+        public Dictionary<Vector3, Connection> connections = new Dictionary<Vector3, Connection>();
 
         public Node(int x, int y, int z)
         {
             position = new Vector3(x, y, z);
+
+            
+        }
+
+        public IEnumerable<Connection> RegisterConnections()
+        {
+            foreach (Vector3 v in GetHexNeighbours())
+            {
+                Connection con = new Connection(this.position, v);
+                if (con != null)
+                {
+                    yield return con;
+                }
+            }
         }
 
 
@@ -662,6 +856,70 @@ namespace NEAGame
 
 
     }
+    
+
+    class Connection
+    {
+        public static readonly string[] statuses = { "Empty", "Road", "Wall" };
+        public Vector3 start;
+        public Vector3 end;
+        private int i = 0;
+        private Player occupant;
+
+
+        public Connection(Vector3 Start, Vector3 End, int i = 0, string status = "", Player occupant = null)
+        {
+            this.i = i;
+            if (status != "")
+            {
+                this.i = Array.IndexOf(statuses, status);
+            }
+            this.occupant = occupant;
+            this.start = Start;
+            this.end = End;
+        }
+
+
+        public Player GetOccupant()
+        {
+            return occupant;
+        }
+        public string GetStatus()
+        {
+            return statuses[i];
+        }
+
+        public int GetWalkingCost(Player otherPlayer)
+        {
+            if (this.i == 0)
+            {
+                return 1;
+            }
+            if (otherPlayer == occupant)
+            {
+                if (this.i == 1)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+            else if (otherPlayer != occupant)
+            {
+                return int.MaxValue;
+            }
+            return int.MinValue; // should never happen
+        }
+
+
+        public override string ToString()
+        {
+            return $"{statuses[i]} Owned by {occupant}";
+        }
+
+    }
 
     class HexagonUnit
     {
@@ -681,132 +939,7 @@ namespace NEAGame
 
     }
 
-    class Board
-    {
-
-        private HexagonUnit[] board = new HexagonUnit[19];
-        private Node[] nodes = new Node[54];
-
-
-        // adjacenecy list for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
-        public Dictionary<string, Connection> connections = new Dictionary<string, Connection>();
-        // string key will be the return from the Connection.Hash() function
-
-        public Board()
-        {
-
-
-            int i = 0;
-            for (int x = -2; x < 3; x++)
-            {
-                for (int y = -2; y < 3; y++)
-                {
-                    for (int z = -2; z < 3; z++)
-                    {
-                        if (x + y + z == 0)
-                        {
-                            HexagonUnit unit = new HexagonUnit(new Resource(), x, y, z);
-                            board[i] = unit;
-                            i++;
-                        }
-                    }
-                }
-            }
-
-            i = 0;
-            for (int x = -2; x < 4; x++)
-            {
-                for (int y = -2; y < 4; y++)
-                {
-                    for (int z = -2; z < 4; z++)
-                    {
-                        if ((x + y + z == 1) || (x + y + z == 2))
-                        {
-                            Node n = new Node(x, y, z);
-                            nodes[i] = n;
-                            i++;
-                        }
-                    }
-                }
-            }
-        }
-
-        public HexagonUnit GetHexAtPosition(Vector3 pos)
-        {
-            foreach (HexagonUnit unit in board)
-            {
-                if (unit.position == pos)
-                {
-                    return unit;
-                }
-            }
-            return null;
-        }
-
-        public Node GetNodeAtPosition(Vector3 pos) 
-        {             
-            foreach (Node node in nodes)
-            {
-                if (node.position == pos)
-                {
-                    return node;
-                }
-            }
-            return null;
-        }
-
-        public void ShowBoard() // move function to class1.cs
-        {
-
-            Console .WriteLine("Hexes:");
-
-            foreach (HexagonUnit unit in board)
-            {
-                Console .WriteLine(unit);
-            }
-
-            Console .WriteLine("Nodes:");
-
-            foreach (Node u in nodes)
-            {
-                Console .WriteLine(u);
-            }
-        }
-
-        public void ShowBoardConnections()
-        {
-            foreach (KeyValuePair<string, Connection> entry in connections)
-            {
-                Console .WriteLine(entry.Key + ": " + entry.Value);
-            }
-        }
-
-
-        public Connection GetConnection(Vector3 v1, Vector3 v2)
-        {
-            string key = Connection.Hash(v1, v2);
-            if (connections.ContainsKey(key))
-            {
-                return connections[key];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-
-        public void SetConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
-        {
-            
-            string key = Connection.Hash(v1, v2);
-            connections.Add(key, new Connection(Connection.GetID(status), currentPlayer));
-
-        }
-
-    }
-
-    class BuildingStatus
+    class Building
     {
         public int i;
         private string[] statuses = { "Empty", "Village", "City", "Highway Man" };
@@ -814,22 +947,22 @@ namespace NEAGame
 
 
 
-        public BuildingStatus(string i = "Empty", Player o = null)
+        public Building(string i = "Empty", Player o = null)
         {
             this.i = Array.IndexOf(statuses, i);
             occupant = o;
-        
+
         }
 
         public void UpgradeVillage()
         {
             if (i == 1)
             {
-                i ++;
+                i++;
             }
             else
             {
-                TravelersOfCatan.UserInterface.CreatePopup("You can't upgrade a city");
+                TravelersOfCatan.UserInterface.CreatePopup(@"You can't upgrade a {this.ToString()}");
             }
         }
 
@@ -858,72 +991,16 @@ namespace NEAGame
 
     }
 
-    class Connection
-    {
-        public static readonly string[] statuses = { "Empty", "Road", "Wall" };
-        private int i = 0;
-        private Player occupant;
-
-
-        public static string Hash(Vector3 v1, Vector3 v2)
-        {
-            return $"{Math.Min(v1.X, v2.X)}{Math.Max(v1.X, v2.X)},{Math.Min(v1.Y, v2.Y)}{Math.Max(v1.Y, v2.Y)},{Math.Min(v1.Z, v2.Z)}{Math.Max(v1.Z, v2.Z)}";
-        }
-
-        public static int GetID(string status)
-        {
-            return Array.IndexOf(statuses, status);
-        }
-
-        public Connection(int i, Player occupant)
-        {
-            this.i = i;
-            this.occupant = occupant;
-        }
-
-        public Connection()
-        {
-
-        }
-
-        public Player GetOccupant()
-        {
-            return occupant;
-        }
-        public string GetStatus()
-        {
-            return statuses[i];
-        }
-
-
-        public override string ToString()
-        {
-            return $"{statuses[i]} Owned by {occupant}";
-        }
-
-    }
-
-
-
     class Resource
     {
-        public static readonly string[] resources = { "Wood", "Brick", "Wheat", "Sheep", "Ore" };
+        public static readonly string[] resources = { "Empty", "Wood", "Brick", "Wheat", "Sheep", "Ore" };
         private static readonly Random rng = new Random();
         private int i;
 
 
-        public Resource(int i)
+        public Resource(int i = 0)
         {
             this.i = i;
-        }
-        public Resource(string i)
-        {
-            this.i = Array.IndexOf(resources, i);
-        }
-
-        public Resource()
-        {
-            CreateRandomResource();
         }
 
         public override string ToString()
@@ -932,9 +1009,9 @@ namespace NEAGame
         }
 
 
-        public void CreateRandomResource() // turn this into a static generator
+        public void CreateRandomResource()
         {
-            i = rng.Next(0, resources.Length);
+            i = rng.Next(1, resources.Length);
         }
 
         public override bool Equals(System.Object otherItem)
@@ -951,6 +1028,13 @@ namespace NEAGame
 
         public override int GetHashCode()
         {
+            return i;
+        }
+        
+        public static Resource GetRandom()
+        {
+            Resource i = new Resource();
+            i.CreateRandomResource();
             return i;
         }
 

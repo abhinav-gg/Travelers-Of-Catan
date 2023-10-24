@@ -18,7 +18,7 @@ namespace App
             // change to accept player count
             Console.WriteLine("Welcome to Game! Key [ENTER] to begin...");
             Console.ReadLine();
-            TravelersOfCatan game = new TravelersOfCatan(2); // 2 player game
+            TravelersOfCatan game = new TravelersOfCatan(2, 2); // 2 player game
 
             game.startGame();
 
@@ -30,13 +30,40 @@ namespace App
     public interface UI
     {
 
-
-        int GetUserLetterInput(int options);
-        int GetUserChoice(Object[] options);
+        int GetUserLetterInput(int options); // work to decomition
+        int GetUserChoice(Object[] options); 
         string GetUserNameInput(int who);
         bool GetUserConfirm();
         void CreatePopup(string message);
 
+    }
+
+    public class UnityUIManager : UI
+    {
+        public int GetUserLetterInput(int options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetUserChoice(object[] options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetUserNameInput(int who)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserConfirm()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreatePopup(string message)
+        {
+            throw new NotImplementedException();
+        }
     }
         
 
@@ -52,7 +79,7 @@ namespace App
             string playerPos =  Console.ReadLine();
             if (playerPos == "-1")
             {
-                return new Vector3(-1000,0,0);
+                return new Vector3(-1000,0,0); // exit code
             }
             try
             {
