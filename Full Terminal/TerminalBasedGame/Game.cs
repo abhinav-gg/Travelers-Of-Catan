@@ -144,7 +144,6 @@ namespace NEAGame
                 {
 
                     TravelersOfCatan.UserInterface.CreatePopup("Player " + p.playerName + " has won the game");
-                    Console.ReadLine();
                     Environment.Exit(0);
                     return;
                 }
@@ -333,7 +332,7 @@ namespace NEAGame
             {
                 if (con.start.position != currentPlayer.position)
                 {
-                    Console.WriteLine("Something went wrong..."); // this should never happen
+                    TravelersOfCatan.UserInterface.("Something went wrong..."); // this should never happen
                 }
                 if (con.GetOccupant() != null)
                 {
@@ -389,7 +388,7 @@ namespace NEAGame
             {
                 if (con.start.position != currentPlayer.position)
                 {
-                    Console.WriteLine("Something went wrong..."); // this should never happen
+                    TravelersOfCatan.UserInterface.("Something went wrong..."); // this should never happen
                 }
                 if (con.GetOccupant() != null)
                 {
@@ -808,7 +807,6 @@ namespace NEAGame
             {
                 if (gameBoard.GetNode(v) != null)
                 {
-                    Console.WriteLine("Adding connection" + this + v);
                     connections.Add(v, new Connection(this, gameBoard.GetNode(v)));
                 }
             }
