@@ -10,23 +10,6 @@ using NEAGame;
 namespace App
 {
 
-    public class MainClass
-    {
-        public static void Main(string[] args)
-        {
-
-            // change to accept player count
-            Console.WriteLine("Welcome to Game! Key [ENTER] to begin...");
-            Console.ReadLine();
-            TravelersOfCatan game = new TravelersOfCatan(2, 2); // 2 player game
-
-            game.startGame();
-
-
-        }
-    }
-
-
     public interface UI
     {
 

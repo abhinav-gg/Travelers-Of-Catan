@@ -14,8 +14,8 @@ using System.Runtime.CompilerServices;
 // Path: Class1.cs
 namespace NEAGame
 {
-
-    class TravelersOfCatan
+    [System.Serializable]
+    public class TravelersOfCatan
     {
 
         public static UI UserInterface;
@@ -537,9 +537,9 @@ namespace NEAGame
         }
     }
 
-   
 
-    class Board // A graph of nodes
+    [System.Serializable]
+    public class Board // A graph of nodes
     {
 
         private HexagonUnit[] board = new HexagonUnit[19];
@@ -698,7 +698,7 @@ namespace NEAGame
 
     }
 
-    class Player
+    public class Player
     {
         private int victoryPoints;
         private Dictionary<Resource, int> resources = new Dictionary<Resource, int>() {
@@ -786,8 +786,8 @@ namespace NEAGame
 
     }
 
-
-    class Node
+    [System.Serializable]
+    public class Node
     {
         public Vector3 position;
         public Building status = new Building();
@@ -883,7 +883,7 @@ namespace NEAGame
     }
     
 
-    class Connection
+    public class Connection
     {
         public static readonly string[] statuses = { "Empty", "Road", "Wall" };
         public Node start;
@@ -1005,7 +1005,9 @@ namespace NEAGame
 
     }
 
-    class HexagonUnit
+
+    [System.Serializable]
+    public class HexagonUnit
     {
         public Vector3 position;
         public Resource resource;
@@ -1023,7 +1025,8 @@ namespace NEAGame
 
     }
 
-    class Building
+    [System.Serializable]
+    public class Building
     {
         public int i;
         private string[] statuses = { "Empty", "Village", "City", "Highway Man" };
@@ -1078,7 +1081,8 @@ namespace NEAGame
 
     }
 
-    class Resource
+    [System.Serializable]
+    public class Resource
     {
         public static readonly string[] resources = { "Empty", "Wood", "Brick", "Wheat", "Sheep", "Ore" };
         private static readonly Random rng = new Random();
