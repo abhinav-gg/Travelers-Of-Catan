@@ -18,42 +18,20 @@ namespace App
         string GetUserNameInput(int who);
         bool GetUserConfirm();
         void CreatePopup(string message);
+        void DisplayPlayers(Player[] players);
+        void UpdateBoard(Board board);
+        void UpdateBoardConnections(Board board);
+        void HandleWinner(Player winner);
 
     }
 
-    public class UnityUIManager : UI
-    {
-        public int GetUserLetterInput(int options)
-        {
-            throw new NotImplementedException();
-        }
 
-        public int GetUserChoice(object[] options)
-        {
-            throw new NotImplementedException();
-        }
 
-        public string GetUserNameInput(int who)
-        {
-            throw new NotImplementedException();
-        }
 
-        public bool GetUserConfirm()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CreatePopup(string message)
-        {
-            throw new NotImplementedException();
-        }
-    }
-        
-
-    public class TerminalUI : UI
+    public class TerminalUI //: UI
     {
 
-
+        /*
         public static Vector3 GetUserPositionInput()
         {
             string[] pos;
@@ -181,7 +159,7 @@ namespace App
             Console.WriteLine(message);
         }
 
+    */
     }
-
 }
 
