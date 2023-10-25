@@ -6,15 +6,19 @@ using NEAGame;
 
 public class NodeButton : MonoBehaviour
 {
-
+    public Vector3 NodePos;
     public Node node;
     public Button btn;
+    public RawImage img;
+    public Texture village;
+    public Texture city;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        img = GetComponent<RawImage>();
+        img.enabled = false;
     }
 
     // Update is called once per frame
@@ -46,10 +50,25 @@ public class NodeButton : MonoBehaviour
         return transform.position;
     }
 
-    public Vector3 GetNodePos()
+
+
+    public void SetVillage()
     {
-        System.Numerics.Vector3 n = node.position;
-        return new Vector3(n.X, n.Y, n.Z);
+
+        img.texture = village;
+        img.enabled = true;
+    }
+
+    public void UpgradeVillage()
+    {
+        if (img.texture == village)
+        {
+            img.texture = city;
+        }
+        else
+        {
+            Debug.LogError("this should not be allowed");
+        }
     }
 
 }

@@ -12,6 +12,9 @@ using System.Collections;
 namespace NEAGame
 {
     [System.Serializable]
+    /// <summary>
+    /// Class <c>NEAGame.TravelersOfCatan</c> that controls the game and all of its mechanics. This is the main class that should be called from the UI.
+    /// </summary>
     public class TravelersOfCatan
     {
 
@@ -180,12 +183,11 @@ namespace NEAGame
 
         }
 
-        public void makePurchase()
+        public void makePurchase(string structure)
         {
-            TravelersOfCatan.UserInterface.CreatePopup("What would you like to purchase?\n a) Road\n b) Wall\n c) Village\n d) City");
 
-            int purchase = UserInterface.GetUserLetterInput(4) - 1;
-            Dictionary<int, int> cost = GetCostOfUpgrade(GetPurchaseID(purchase));
+            
+            Dictionary<int, int> cost = GetCostOfUpgrade(structure);
             bool canAfford = true;
             foreach (var entry in cost)
             {
@@ -202,7 +204,7 @@ namespace NEAGame
 
             bool success = false;
 
-            switch (GetPurchaseID(purchase))
+            switch (structure)
             {
                 case "Road":
                     success = purchaseRoad();
@@ -225,7 +227,7 @@ namespace NEAGame
                 {
                     currentPlayer.removeResource(new Resource(entry.Key), entry.Value);
                 }
-                TravelersOfCatan.UserInterface.CreatePopup("Purchase Successful");
+                UserInterface.CreatePopup("Purchase Successful");
                 CheckWinner();
 
             }
@@ -265,9 +267,8 @@ namespace NEAGame
 
             if (viableLocations.Count > 1 && canconnect)
             {
-                TravelersOfCatan.UserInterface.CreatePopup("Where would you like this road to connect?");
-                int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
-                otherpos = viableLocations[index];
+                
+                otherpos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
                 
             }
             else if (viableLocations.Count == 1 && canconnect)
@@ -316,15 +317,13 @@ namespace NEAGame
 
             if (viableLocations.Count > 1)
             {
-                TravelersOfCatan.UserInterface.CreatePopup("Where would you like this wall to connect?");
-                int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
-                otherpos = viableLocations[index];
+
+                otherpos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
 
             }
             else if (viableLocations.Count == 1)
             {
                 otherpos = viableLocations[0];
-                TravelersOfCatan.UserInterface.CreatePopup($"You are purchasing a Wall at {otherpos}");
             }
             else
             {
@@ -429,16 +428,10 @@ namespace NEAGame
                 currentPlayer.position = currentPlayer.GetCapital().position;
                 return; // this should not happen unless you get boxed in by the clever opponent!
             }
+            Node otherpos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
 
-            TravelersOfCatan.UserInterface.CreatePopup("Where would you like to move?");
-            int index = UserInterface.GetUserChoice(Array.ConvertAll(viableLocations.ToArray(), x => (object)x)) - 1;
-
-
-
-
-            TravelersOfCatan.UserInterface.CreatePopup("Confirm this position?");
             if (!UserInterface.GetUserConfirm()) { return; }
-            currentPlayer.position = viableLocations[index].position;
+            currentPlayer.position = otherpos.position;
             currentPlayer.moves -= 1; // update to accounts for travelling costs
 
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
@@ -446,7 +439,9 @@ namespace NEAGame
             
     }
 
-
+    /// <summary>
+    /// Minor classes for the game that are not worth their own file and are all serializable
+    /// </summary>
 
   
 
@@ -532,6 +527,7 @@ namespace NEAGame
         private static readonly Random rng = new Random();
         private int i;
 
+        
 
         public Resource(int i = 0)
         {

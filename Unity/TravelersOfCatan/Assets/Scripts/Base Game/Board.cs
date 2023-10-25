@@ -117,21 +117,12 @@ namespace NEAGame
             return nodes.Values.ToArray();
         }
 
-        public void ShowBoard()
+        public IEnumerable<KeyValuePair<Vector3, Resource>> GetResourcesOnBoard()
         {
-
-            TravelersOfCatan.UserInterface.CreatePopup("Hexes:");
-
-            foreach (HexagonUnit unit in board)
+            foreach (HexagonUnit hex in board)
             {
-                TravelersOfCatan.UserInterface.CreatePopup(unit.ToString());
-            }
-
-            TravelersOfCatan.UserInterface.CreatePopup("Nodes:");
-
-            foreach (Node u in nodes.Values)
-            {
-                TravelersOfCatan.UserInterface.CreatePopup(u.ToString());
+                yield return new KeyValuePair<Vector3, Resource>(hex.position, hex.resource);
+                
             }
         }
 
