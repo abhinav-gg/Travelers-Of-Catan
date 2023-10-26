@@ -73,6 +73,11 @@ namespace NEAGame
             return victoryPoints;
         }
 
+        public int getNumber()
+        {
+            return playerNumber;
+        }
+
         public void addResource(Resource resource, int amount = 1)
         {
             resources[resource] += amount;

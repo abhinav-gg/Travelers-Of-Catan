@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using NEAGame;
 using System;
+using Unity.VisualScripting;
 
 [Serializable]
 public class GameUI : UnityUI
@@ -16,6 +17,7 @@ public class GameUI : UnityUI
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
+    public Tilemap tilemap;
 
     public GameObject[] hexes = new GameObject[19];
     public NodeButton[] nodes = new NodeButton[54];
@@ -38,31 +40,40 @@ public class GameUI : UnityUI
 
 
 
-    void UpdateBoard(Board board)
+    internal void UpdateBoard(Board board)
     {
+
         if (!hasInitializedBoard)
         {
+            int resourceID;
+            Vector3Int gridPos;
             hasInitializedBoard = true;
 
             foreach (KeyValuePair<System.Numerics.Vector3, Resource> entry in board.GetResourcesOnBoard()) 
             {
-                Debug.Log(entry);
-                // Resource.resources.IndexOf(entry.Value.ToString()); is the index of the resource in the list of resources
+                
+                resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources
+                gridPos = CubicToOddRow(entry.Key);
+                tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
+
+
             }
-
-
+            
+            
             foreach (Node n in board.GetAllNodes())
             {
                 //node.transform.position = //  this is a pronblem;
-                NodeButton nodeui = Instantiate(NodePrefab, UnityUI.ConvertVector(n.position), Quaternion.identity).GetComponent<NodeButton>();
+                NodeButton nodeui = Instantiate(NodePrefab, ConvertVector(n.position), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
                 nodeui.node = n;
-                nodeui.NodePos = UnityUI.ConvertVector(n.position);
+                nodeui.NodePos = ConvertVector(n.position);
+                nodeui.transform.position = GetNodeGlobalPos(n);
             }
         }
+        Debug.Break();
     }
 
 
-    public Vector3 GetNodeGlocalPos(Node node)
+    public Vector3 GetNodeGlobalPos(Node node)
     {
         Vector3 center;
         float totalX = 0f;
@@ -70,21 +81,42 @@ public class GameUI : UnityUI
         float Z = 0f;
         foreach (System.Numerics.Vector3 vec in node.GetHexNeighbours())
         {
-            center = HexLocalToGlobal(UnityUI.ConvertVector(vec));
+            center = HexLocalToGlobal(CubicToOddRow(vec));
             totalX += center.x;
             totalY += center.y;
             Z = center.z;
         }
-        float avgX = 3;
-        float avgY = 3;
+        float avgX = totalX / 3;
+        float avgY = totalY / 3;
         return new Vector3(avgX, avgY, Z);
     }
 
-    public Vector3 HexLocalToGlobal(Vector3 pos)
+    public Vector3 HexLocalToGlobal(Vector3 cellPos)
     {
-        Vector3Int cellPos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
-        return gridLayout.CellToWorld(cellPos);
+        Vector3Int Pos = new Vector3Int((int)cellPos.x, (int)cellPos.y, 0);
+        return gridLayout.CellToWorld(Pos);
     }
+
+
+
+    public System.Numerics.Vector3 ConvertVector(Vector3 vec)
+    {
+        return new System.Numerics.Vector3(vec.x, vec.y, vec.z);
+    }
+
+    public static Vector3 ConvertVector(System.Numerics.Vector3 vec)
+    {
+        return new Vector3(vec.X, vec.Y, vec.Z);
+    }
+
+
+    public static Vector3Int CubicToOddRow(System.Numerics.Vector3 vec)
+    {
+        int col = (int)(vec.Z + ((vec.X - ((int)vec.X & 1)) / 2));
+        int row = (int)vec.X;
+        return new Vector3Int(col, row, 0);
+    }
+
 
     internal Node GetUserNodeChoice(Node[] options)
     {

@@ -13,15 +13,18 @@ namespace NEAGame
 
     [System.Serializable]
     public class Connection
-    {
+    {   
+
+
+        // Merged with ConnectionStatus class
         public static readonly string[] statuses = { "Empty", "Road", "Wall" };
         public Node start;
         public Node end;
         private int i = 0;
-        private Player occupant;
+        private int occupant;
 
 
-        public Connection(Node Start, Node End, int i = 0, string status = "", Player occupant = null)
+        public Connection(Node Start, Node End, int i = 0, string status = "", int occupant = -1)
         {
             this.i = i;
             if (status != "")
@@ -82,14 +85,14 @@ namespace NEAGame
         }
 
 
-        public Player GetOccupant()
+        public int GetOccupant()
         {
             return occupant;
         }
 
         public void SetOccupant(Player p)
         {
-            occupant = p;
+            occupant = p.getNumber();
         }
 
         public string GetStatus()
@@ -108,7 +111,7 @@ namespace NEAGame
             {
                 return 1;
             }
-            if (otherPlayer == occupant)
+            if (otherPlayer.getNumber() == occupant)
             {
                 if (this.i == 1)
                 {
@@ -119,7 +122,7 @@ namespace NEAGame
                     return 2;
                 }
             }
-            else if (otherPlayer != occupant)
+            else if (otherPlayer.getNumber() != occupant)
             {
                 return int.MaxValue;
             }

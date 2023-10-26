@@ -18,7 +18,7 @@ public class NodeButton : MonoBehaviour
     void Start()
     {
         img = GetComponent<RawImage>();
-        img.enabled = false;
+        //img.enabled = false; for testing
     }
 
     // Update is called once per frame

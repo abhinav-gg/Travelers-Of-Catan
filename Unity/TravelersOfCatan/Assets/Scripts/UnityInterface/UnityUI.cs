@@ -19,10 +19,6 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
     [Header("Serialized Game View")] public TravelersOfCatan game;
 
 
-
-    
-
-
     // Start is called before the first frame update
     void Awake()
     {
@@ -52,21 +48,7 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
     /// </summary>
 
 
-    public System.Numerics.Vector3 ConvertVector(Vector3 vec)
-    {
-        return new System.Numerics.Vector3(vec.x, vec.y, vec.z);
-    }
 
-    public static Vector3 ConvertVector(System.Numerics.Vector3 vec)
-    {
-        return new Vector3(vec.X, vec.Y, vec.Z);
-    }
-
-
-    //public static Vector3 CubicToOddRow(System.Numerics.Vector3 vec)
-    //{
-    //    return new Vector3(,vec.X,0)
-    //}
 
     Node UI.GetUserNodeChoice(Node[] options)
     {
@@ -95,6 +77,7 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
 
     void UI.UpdateBoard(Board board)
     {
+        GameInterface.UpdateBoard(board);
         //throw new System.NotImplementedException();
     }
 
