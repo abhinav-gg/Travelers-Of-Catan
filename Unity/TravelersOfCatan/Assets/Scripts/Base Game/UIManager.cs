@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using NEAGame;
 
 
@@ -22,6 +17,8 @@ namespace App
         void UpdateBoard(Board board);
         void UpdateBoardConnections(Board board);
         void HandleWinner(Player winner);
+        void SaveGame();
+        void LoadGame(string Save);
 
     }
 
