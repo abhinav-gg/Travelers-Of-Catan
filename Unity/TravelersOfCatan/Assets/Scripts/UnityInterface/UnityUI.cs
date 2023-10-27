@@ -72,6 +72,7 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
 
     void UI.DisplayPlayers(Player[] players)
     {
+        GameInterface.DisplayPlayers(players);
         //throw new System.NotImplementedException();
     }
 

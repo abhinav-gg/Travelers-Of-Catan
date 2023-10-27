@@ -118,6 +118,18 @@ public class GameUI : UnityUI
     }
 
 
+    public NodeButton FindGameObjectAtNode(Vector3 pos)
+    {
+        foreach (NodeButton n in FindObjectsOfType<NodeButton>())
+        {
+            if (n.NodePos == pos)
+            {
+                return n;
+            }
+        }
+        return null;
+    }
+
     internal Node GetUserNodeChoice(Node[] options)
     {
 
@@ -127,4 +139,16 @@ public class GameUI : UnityUI
 
         throw new NotImplementedException();
     }
+
+    internal void DisplayPlayers(Player[] players)
+    {
+        foreach (Player player in players)
+        {
+            Debug.Log(player.playerName);
+
+        }
+    }
+
+
+
 }

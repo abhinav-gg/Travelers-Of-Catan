@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - NodeParent
+  - ConnectionParent
+  - PlayerParent
   layers:
   - Default
   - TransparentFX
