@@ -15,8 +15,13 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
     public static UnityUI Interface { get; private set; }
     public static GameUI GameInterface { get; private set; }
 
+    [Header("UI overlay prefabs")] 
+    public GameObject NameGetOverlay;
 
-    [Header("Serialized Game View")] public TravelersOfCatan game;
+
+
+    [Header("Serialized Game View")] 
+    public TravelersOfCatan game;
 
 
     // Start is called before the first frame update
@@ -26,12 +31,15 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
             Interface = this;
         
         DontDestroyOnLoad(this.gameObject);
+        game = new TravelersOfCatan(Interface);
     }
 
     void Start()
     {
         GameInterface = FindObjectOfType<GameUI>();
-        GameInterface.StartGame();
+        
+        Debug.Log("Game Created");
+        StartCoroutine(GetNewPlayer(2));
     }
 
     // Update is called once per frame
@@ -50,11 +58,11 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
         SceneManager.LoadScene("Menu");
     }
 
-
-
-    /// <summary>
-    /// Functions to convert between Unity and System.Numerics vectors
-    /// </summary>
+    void QuitButtonPressed()
+    {
+        // add confirm here
+        Application.Quit();
+    }
 
 
     void UI.BeginTurn()
@@ -62,15 +70,36 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
         GameInterface.BeginTurn();
     }
 
+    IEnumerator GetNewPlayer(int playersLeft)
+    {
+
+        if (playersLeft > 0)
+        {
+            Instantiate(Interface.NameGetOverlay);
+            
+            while (FindObjectOfType<PlayerNameInp>().FinalName == "")
+            {
+                yield return null;
+            }
+
+            string name = FindObjectOfType<PlayerNameInp>().FinalName;
+            game.AddPlayer(name);
+            Destroy(FindObjectOfType<PlayerNameInp>().gameObject);
+            playersLeft--;
+            yield return StartCoroutine(GetNewPlayer(playersLeft));
+        }
+        else
+        {
+            Debug.Log("starting");
+            game.startGame();
+
+        }
+    }
+
 
     Node UI.GetUserNodeChoice(Node[] options)
     {
         return GameInterface.GetUserNodeChoice(options);
-    }
-
-    string UI.GetUserNameInput(int who)
-    {
-        return "AAAA";
     }
 
     bool UI.GetUserConfirm()
@@ -83,7 +112,7 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
         Debug.Log(message);
     }
 
-    void UI.DisplayPlayers(Player[] players)
+    void UI.DisplayPlayers(List<Player> players)
     {
         GameInterface.DisplayPlayers(players);
         //throw new System.NotImplementedException();

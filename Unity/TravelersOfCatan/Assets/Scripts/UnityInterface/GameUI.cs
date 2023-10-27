@@ -12,6 +12,7 @@ using Unity.VisualScripting;
 public class GameUI : UnityUI
 {
 
+    [Obsolete("Unity does not allow for this")] [HideInInspector] internal new TravelersOfCatan game;
 
     public GameObject NodePrefab;
     public GameObject ConnectionPrefab;
@@ -29,14 +30,16 @@ public class GameUI : UnityUI
 
     GameUIAnimator anim;
 
-
-
-    // Start is called before the first frame update
-    internal void StartGame()
+    private void Awake()
     {
-        game = new TravelersOfCatan(Interface, 2, 2);
-        game.startGame();
+        NameGetOverlay = base.NameGetOverlay;
     }
+
+    private void Start()
+    {
+        anim = GetComponent<GameUIAnimator>();
+    }
+
 
     public void BeginTurn()
     {
@@ -51,7 +54,7 @@ public class GameUI : UnityUI
     public void OnPlayerMove()
     {
         //anim.MoveButtonPlay();
-        Interface.game.movePlayer();
+        //game.movePlayer();
     }
 
     public ConnectionButton FindConnectionGameObject(Vector3 v1, Vector3 v2)
@@ -74,10 +77,10 @@ public class GameUI : UnityUI
 
         if (!hasInitializedBoard)
         {
-            int resourceID;
-            Vector3Int gridPos;
             hasInitializedBoard = true;
 
+            int resourceID;
+            Vector3Int gridPos;
             foreach (KeyValuePair<System.Numerics.Vector3, Resource> entry in board.GetResourcesOnBoard()) 
             {
                 
@@ -121,6 +124,16 @@ public class GameUI : UnityUI
                 }  
             }
 
+            foreach (Player pl in Interface.game.gamePlayers)
+            {
+                Debug.Log(pl);
+                PlayerButton playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerButton>();
+                playUI.player = pl;
+                playUI.gameObject.name = pl.playerName;
+                playUI.transform.position = GetNodeGlobalPos(Interface.game.board.GetNode(pl.position));
+            
+            }
+
 
 
         }
@@ -141,11 +154,11 @@ public class GameUI : UnityUI
         float totalY = 0f;
         float Z = 0f;
 
-        foreach (var vec in game.board.GetNode(v1).GetHexNeighbours())
+        foreach (var vec in Interface.game.board.GetNode(v1).GetHexNeighbours())
         {
             starthexes.Add(vec);
         }
-        foreach (var vec in game.board.GetNode(v2).GetHexNeighbours())
+        foreach (var vec in Interface.game.board.GetNode(v2).GetHexNeighbours())
         {
             endhexes.Add(vec);
         }
@@ -231,7 +244,7 @@ public class GameUI : UnityUI
         throw new NotImplementedException();
     }
 
-    internal void DisplayPlayers(Player[] players)
+    internal void DisplayPlayers(List<Player> players)
     {
         //foreach (Player player in players)
         //{

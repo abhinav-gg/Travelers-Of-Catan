@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using App;
 using System.Collections;
+using System.Diagnostics;
 
 
 // Path: Class1.cs
@@ -39,34 +40,38 @@ namespace NEAGame
         private int turn = 0;
         private int MAXplayer = 0;
         private Player currentPlayer;
-        public int[] victoryPoints;
+        public List<int> victoryPoints = new List<int>();
+        public List<Player> gamePlayers = new List<Player>();
         public Board board;
-        public Player[] gamePlayers;
 
 
-        public TravelersOfCatan(UI ui, int MAXplayer, int MAXbot)
+        public TravelersOfCatan(UI ui)
         {
 
             UserInterface = ui;
 
-            this.MAXplayer = MAXplayer + MAXbot ;
-            victoryPoints = new int[MAXplayer + MAXbot];
-            gamePlayers = new Player[MAXplayer + MAXbot];
+        }
 
-            foreach (int i in Enumerable.Range(0, MAXplayer))
-            {
-                gamePlayers[i] = new Player(i + 1, UserInterface.GetUserNameInput(i+1), StartingCoords[i]);
-            
-            }
 
-            for (int i = 0; i < MAXbot; i++)
-            {
-                gamePlayers[i + MAXplayer] = new AI(i + 1 + MAXplayer, "AI" + (i+1), StartingCoords[i + MAXplayer]);
-            }
+        public void AddPlayer(string Name)
+        {
+            MAXplayer++;
+            victoryPoints.Add(0);
+            int i = gamePlayers.Count;
+            gamePlayers.Add(new Player(i + 1, Name, StartingCoords[i]));
+            UserInterface.CreatePopup(gamePlayers.Count.ToString());
+        }
 
+        public void AddAI()
+        {
+            MAXplayer++;
+            victoryPoints.Add(0);
+            int i = gamePlayers.Count;
+            gamePlayers.Add(new AI(i + 1 + MAXplayer, "AI" + (i + 1), StartingCoords[i + MAXplayer]));
 
 
         }
+
 
         public static string GetPurchaseID(int i)
         {
@@ -93,9 +98,8 @@ namespace NEAGame
         public void startGame()
         {
 
-            // ADD HIGHWAYMAN MECHANICS
+            UserInterface.CreatePopup(gamePlayers.Count.ToString());
 
-            UserInterface.DisplayPlayers(gamePlayers);
             bool gameOngoing = true;
 
             board = new Board();
@@ -120,6 +124,9 @@ namespace NEAGame
                 }
 
             }
+
+            UserInterface.CreatePopup(gamePlayers.Count.ToString());
+
             UserInterface.UpdateBoard(board);
             return;
 

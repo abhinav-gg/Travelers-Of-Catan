@@ -18,7 +18,8 @@ public class NodeButton : MonoBehaviour
     void Start()
     {
         img = GetComponent<RawImage>();
-        //img.enabled = false; for testing
+        img.enabled = false; //for testing
+        btn.transform.parent.gameObject.SetActive(false);
     }
 
     // Update is called once per frame

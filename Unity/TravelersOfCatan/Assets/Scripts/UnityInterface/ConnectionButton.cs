@@ -40,7 +40,6 @@ public class ConnectionButton : MonoBehaviour
             if (n1.y > n2.y)
             {
                 Road.transform.Rotate(0, 0, 180);
-                Wall.transform.Rotate(0, 0, 180);
                 ButtonObj.transform.Rotate(0, 0, 180);
             }
         }
@@ -50,13 +49,12 @@ public class ConnectionButton : MonoBehaviour
             float gradient = (n1.y-n2.y) / (n1.x-n2.x);
             if (gradient > 0)
             {
-                Wall.transform.Rotate(0, 0, -60);
                 ButtonObj.transform.Rotate(0, 0, -60);
                 Road.transform.Rotate(0, 0, -60);
             }
             else
             {
-                Wall.transform.Rotate(0, 0, 60);
+                Wall.GetComponent<SpriteRenderer>().flipX = true;
                 ButtonObj.transform.Rotate(0, 0, 60);
                 Road.transform.Rotate(0, 0, 60);
             }
