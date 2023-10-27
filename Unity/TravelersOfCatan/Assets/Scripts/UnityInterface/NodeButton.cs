@@ -15,11 +15,11 @@ public class NodeButton : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        img = GetComponent<RawImage>();
-        img.enabled = false; //for testing
-        btn.transform.parent.gameObject.SetActive(false);
+        img.enabled = false;
+        btn.onClick.AddListener(OnClick);
+        btn.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -31,33 +31,31 @@ public class NodeButton : MonoBehaviour
 
     public void EnableButton()
     {
+        btn.gameObject.SetActive(true);
+        btn.transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(btn.gameObject, new Vector3(1, 1, 1), 0.75f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.1f);
         btn.interactable = true;
     }
 
     public void DisableButton()
     {
         btn.interactable = false;
+        btn.gameObject.SetActive(false);
     }
 
 
 
     public void OnClick()
     {
-        Debug.Log("Clicked");
+        UnityUI.GameInterface.OnNodeClick(this);
     }
-
-    public Vector3 GetGlobalPos()
-    {
-        return transform.position;
-    }
-
 
 
     public void SetVillage()
     {
 
-        img.texture = village;
         img.enabled = true;
+        img.texture = village;
     }
 
     public void UpgradeVillage()

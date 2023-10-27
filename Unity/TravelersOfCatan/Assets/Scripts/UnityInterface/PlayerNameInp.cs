@@ -23,7 +23,10 @@ public class PlayerNameInp : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            button.onClick.Invoke();
+        }
     }
 
 

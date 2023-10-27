@@ -30,7 +30,7 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
         if (Interface == null)
             Interface = this;
         
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
         game = new TravelersOfCatan(Interface);
     }
 
@@ -38,7 +38,6 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
     {
         GameInterface = FindObjectOfType<GameUI>();
         
-        Debug.Log("Game Created");
         StartCoroutine(GetNewPlayer(2));
     }
 
@@ -90,16 +89,15 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
         }
         else
         {
-            Debug.Log("starting");
             game.startGame();
 
         }
     }
 
 
-    Node UI.GetUserNodeChoice(Node[] options)
+    void UI.GetUserNodeChoice(Node[] options)
     {
-        return GameInterface.GetUserNodeChoice(options);
+        GameInterface.GetUserNodeChoice(options);
     }
 
     bool UI.GetUserConfirm()
@@ -114,7 +112,6 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
 
     void UI.DisplayPlayers(List<Player> players)
     {
-        GameInterface.DisplayPlayers(players);
         //throw new System.NotImplementedException();
     }
 

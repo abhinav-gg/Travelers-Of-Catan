@@ -10,7 +10,7 @@ namespace App
     public interface UI
     {
 
-        Node GetUserNodeChoice(Node[] options);
+        void GetUserNodeChoice(Node[] options);
         bool GetUserConfirm();
         void CreatePopup(string message);
         void DisplayPlayers(List<Player> players);

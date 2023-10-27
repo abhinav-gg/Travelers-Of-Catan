@@ -130,21 +130,13 @@ namespace NEAGame
 
         public Connection GetConnection(Vector3 v1, Vector3 v2)
         {
-            var x = connections[v1];
-            if (x == null)
+            try
+            {
+                return connections[v1][v2];
+            }
+            catch (KeyNotFoundException)
             {
                 return null;
-            }
-            else
-            {
-                if (x.ContainsKey(v2))
-                {
-                    return x[v2];
-                }
-                else
-                {
-                    return null;
-                }
             }
         }
 

@@ -12,38 +12,59 @@ using Unity.VisualScripting;
 public class GameUI : UnityUI
 {
 
-    [Obsolete("Unity does not allow for this")] [HideInInspector] internal new TravelersOfCatan game;
+    //[Obsolete("Unity does not allow for this")] [HideInInspector] internal new TravelersOfCatan game;
 
     public GameObject NodePrefab;
     public GameObject ConnectionPrefab;
     public GameObject PlayerPrefab;
+    public GameObject PlayerUI;
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
     public Tilemap tilemap;
 
-    public GameObject[] hexes = new GameObject[19];
-    public NodeButton[] nodes = new NodeButton[54];
+    public List<NodeButton> nodes = new List<NodeButton>();
     public List<ConnectionButton> connections = new List<ConnectionButton>();
 
     bool hasInitializedBoard = false;
 
-    GameUIAnimator anim;
+    public float Timer = 0.0f;
+    public bool TimerActive = false;
 
-    private void Awake()
+    PlayerUIOverlay overlay;
+    GameUIAnimator anim;
+    NodeButton SelectedNode;
+
+    void Awake()
     {
-        NameGetOverlay = base.NameGetOverlay;
+
     }
 
-    private void Start()
+    void Start()
     {
         anim = GetComponent<GameUIAnimator>();
     }
 
+    void Update()
+    {
+        if (TimerActive)
+        {
+            overlay.TimerText.text = GetTime();
+            Timer -= Time.deltaTime;
+        }
+    }
 
     public void BeginTurn()
     {
+        overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
+        overlay.EndTurnInput.onClick.AddListener(EndTurn);
+        overlay.MoveInput.onClick.AddListener(OnPlayerMove);
+        overlay.PlayerName.text = Interface.game.GetCurrentPlayerName();
 
+
+        Timer = 300.0f; // ASSIGN TO CONSTANT
+        TimerActive = true;
+        StartCoroutine(WaitForTurnToEnd());
     }
 
     public void ConnectionButtonPressed()
@@ -51,10 +72,47 @@ public class GameUI : UnityUI
 
     }
 
+    IEnumerator WaitForTurnToEnd()
+    {
+        while (Timer > 0.0f)
+        {
+            yield return null;
+        }
+        EndTurn();
+    }
+
     public void OnPlayerMove()
     {
         //anim.MoveButtonPlay();
-        //game.movePlayer();
+        Interface.game.attemptPlayerMove();
+    }
+
+    public string GetTime()
+    {
+        // take float time of seconds and convert to string of minutes and seconds
+        int minutes = Mathf.FloorToInt(Timer / 60F);
+        int seconds = Mathf.FloorToInt(Timer - minutes * 60);
+        string niceTime = string.Format("{0:0}:{1:00}", minutes, seconds);
+        return niceTime;
+    }
+
+    public void EndTurn()
+    {
+
+        foreach (NodeButton n in nodes)
+        {
+            n.DisableButton();
+        }
+        // anim.EndTurnButtonPlay();
+        LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
+        LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => { 
+        
+            Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
+            Interface.game.EndTurn();
+        
+        
+        });
+
     }
 
     public ConnectionButton FindConnectionGameObject(Vector3 v1, Vector3 v2)
@@ -99,6 +157,12 @@ public class GameUI : UnityUI
                 nodeui.node = n;
                 nodeui.NodePos = ConvertVector(n.position);
                 nodeui.transform.position = GetNodeGlobalPos(n);
+                if (n.status.GetStatus() == "City")
+                {
+                    nodeui.SetVillage();
+                    nodeui.UpgradeVillage();
+                }
+                nodes.Add(nodeui);
             }
 
             Vector3 conPos;
@@ -126,7 +190,7 @@ public class GameUI : UnityUI
 
             foreach (Player pl in Interface.game.gamePlayers)
             {
-                Debug.Log(pl);
+
                 PlayerButton playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerButton>();
                 playUI.player = pl;
                 playUI.gameObject.name = pl.playerName;
@@ -134,9 +198,23 @@ public class GameUI : UnityUI
             
             }
 
-
-
         }
+
+
+
+    }
+
+
+    public PlayerButton GetPlayerGameObject(string PlayerName)
+    {
+        foreach (var a in FindObjectsOfType<PlayerButton>())
+        {
+            if (a.player.playerName == PlayerName)
+            {
+                return a;
+            }
+        }
+        return null;
     }
 
     public void UpdateConnection(Vector3 n1, Vector3 n2, Connection connection)
@@ -224,35 +302,50 @@ public class GameUI : UnityUI
 
     public NodeButton FindNodeGameObject(Vector3 pos)
     {
-        foreach (NodeButton n in FindObjectsOfType<NodeButton>())
+        foreach (NodeButton n in nodes)
         {
             if (n.NodePos == pos)
             {
                 return n;
             }
         }
+        Debug.LogError(pos);
         return null;
     }
 
-    internal Node GetUserNodeChoice(Node[] options)
+    internal void GetUserNodeChoice(Node[] options)
     {
 
         // Add LeanTween Animation to the selected nodes here!
 
-
-
-        throw new NotImplementedException();
+        SelectedNode = null;
+        foreach (Node choice in options)
+        {
+            NodeButton node = FindNodeGameObject(ConvertVector(choice.position));
+            node.EnableButton();
+        }
+        StartCoroutine(WaitForNodeChoice());
     }
 
-    internal void DisplayPlayers(List<Player> players)
+    IEnumerator WaitForNodeChoice()
     {
-        //foreach (Player player in players)
-        //{
-        //    Debug.Log(player.playerName);
-        //
-        //}
+
+        while (SelectedNode is null)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        Interface.game.MovePlayer(SelectedNode.node);
+        LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayerName()).gameObject, SelectedNode.transform.position, 0.5f).setEase(LeanTweenType.easeInOutElastic);
     }
 
+    public void OnNodeClick(NodeButton node)
+    {
+        SelectedNode = node;
+        foreach (NodeButton n in nodes)
+        {
+            n.DisableButton();
+        }
+    }
 
 
 }

@@ -211,6 +211,7 @@ MonoBehaviour:
   NodePrefab: {fileID: 955635130051763877, guid: b09d4fe1c57ec05408bc24dcd97fcc48, type: 3}
   ConnectionPrefab: {fileID: 582317903075557195, guid: 8f21b5cdb32863e4594fa0921e6ccb09, type: 3}
   PlayerPrefab: {fileID: 6867297139346083432, guid: 293c13eeed8e74d4c93395e6b0dd32da, type: 3}
+  PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
   resources:
   - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
   - {fileID: 11400000, guid: d9cdd21a55462d24cbed8f4e1d3c6624, type: 2}
@@ -220,82 +221,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2369ff1a4ad7eeb459ad10f202442628, type: 2}
   gridLayout: {fileID: 530605235}
   tilemap: {fileID: 1780909974}
-  hexes:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  nodes:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  nodes: []
   connections: []
+  Timer: 0
+  TimerActive: 0
 --- !u!114 &262256238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +326,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 329.46188
+  orthographic size: 147.53258
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -421,7 +350,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 62, y: -6, z: -10}
+  m_LocalPosition: {x: -324, y: 51, z: -10}
   m_LocalScale: {x: 2.4656491, y: 5.5477104, z: 2.4656491}
   m_ConstrainProportionsScale: 0
   m_Children: []

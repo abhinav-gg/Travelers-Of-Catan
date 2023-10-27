@@ -28,7 +28,7 @@ RectTransform:
   m_GameObject: {fileID: 955635129635278964}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.8043, y: 1.8043, z: 1.8043}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 955635130051763874}
@@ -149,7 +149,7 @@ RectTransform:
   m_GameObject: {fileID: 955635130051763877}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.26638, y: 0.26638, z: 0.26638}
+  m_LocalScale: {x: 0.4665113, y: 0.4665113, z: 0.4665113}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 955635129635278965}
@@ -213,6 +213,6 @@ MonoBehaviour:
     status:
       i: 0
   btn: {fileID: 955635129635278961}
-  img: {fileID: 0}
+  img: {fileID: 955635130051763875}
   village: {fileID: 2800000, guid: 3c9e442a301e8154f8daf7c8e897b762, type: 3}
   city: {fileID: 2800000, guid: b81440fb6c0f1b5419b4b0ca05c50bbb, type: 3}

@@ -59,7 +59,6 @@ namespace NEAGame
             victoryPoints.Add(0);
             int i = gamePlayers.Count;
             gamePlayers.Add(new Player(i + 1, Name, StartingCoords[i]));
-            UserInterface.CreatePopup(gamePlayers.Count.ToString());
         }
 
         public void AddAI()
@@ -98,10 +97,6 @@ namespace NEAGame
         public void startGame()
         {
 
-            UserInterface.CreatePopup(gamePlayers.Count.ToString());
-
-            bool gameOngoing = true;
-
             board = new Board();
 
             foreach (Player current in gamePlayers)
@@ -125,36 +120,16 @@ namespace NEAGame
 
             }
 
-            UserInterface.CreatePopup(gamePlayers.Count.ToString());
 
             UserInterface.UpdateBoard(board);
-            return;
 
+            StartTurn();
+            
+        }
 
-            while (gameOngoing)
-            {
-                currentPlayer = gamePlayers[turn];
-                currentPlayer.moves = 3; // Allow this to change as a gamemode
-                gatherResources();
-                if (UserInterface.GetType() == typeof(TerminalUI))
-                {
-                    //takeTurn(); // this must now be event based with a timer
-                }
-                else if (UserInterface.GetType() == typeof(UnityUI))
-                {
-
-                    UserInterface.CreatePopup("It is " + currentPlayer.playerName + "'s turn");
-
-
-                    turn++;
-                    if (turn >= MAXplayer)
-                    {
-                        turn = 0;
-                    }
-                    return;
-                }
-
-            }
+        public string GetCurrentPlayerName()
+        {
+            return currentPlayer.playerName;
         }
 
         public void StartTurn()
@@ -163,7 +138,16 @@ namespace NEAGame
             currentPlayer.moves = 3; // Allow this to change as a gamemode
             gatherResources();
 
-            UserInterface.BeginTurn();
+            if (currentPlayer.GetType() == typeof(Player))
+            {
+                UserInterface.BeginTurn();
+            }
+            else if (currentPlayer.GetType() == typeof(AI))
+            {
+                //UserInterface.;
+                //((AI)currentPlayer).TakeTurn();
+                // AI will take its turn here and the UI must be updated with their moves.
+            }
 
         }
         public void EndTurn()
@@ -173,7 +157,7 @@ namespace NEAGame
             {
                 turn = 0;
             }
-
+            StartTurn();
         }
 
         public void CheckWinner()
@@ -209,6 +193,7 @@ namespace NEAGame
             {
                 if (board.GetHexAtPosition(u) != null)
                 {
+                    if (board.GetHexAtPosition(u).resource.ToString() == "Empty") continue;
                     currentPlayer.addResource(board.GetHexAtPosition(u).resource);
                 }
             }
@@ -292,12 +277,12 @@ namespace NEAGame
                 }
 
             }
-
+            otherPos = null;
 
             if (viableLocations.Count > 1 && canconnect)
             {
                 
-                otherPos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
+                //otherPos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
                 
             }
             else if (viableLocations.Count == 1 && canconnect)
@@ -344,7 +329,7 @@ namespace NEAGame
             if (viableLocations.Count > 1)
             {
 
-                otherpos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
+                otherpos = null;//UserInterface.GetUserNodeChoice(viableLocations.ToArray());
 
             }
             else if (viableLocations.Count == 1)
@@ -427,26 +412,38 @@ namespace NEAGame
             return true;
         }
 
-        public void movePlayer()
+        public void attemptPlayerMove()
         {
             Connection con;
             Node target;
             List<Node> viableLocations = new List<Node>();
 
+            bool valid;
             foreach (Vector3 pos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
+                valid = true;
                 con = board.GetConnection(pos, currentPlayer.position);
+                if (con == null) continue;
                 target = board.GetNode(pos);
                 if ((con.GetOccupant() != currentPlayer.getNumber()) && (con.GetOccupant() > 0)) 
                 {
-                    continue; // the enemy controls this road or wall
+                    valid = false; // the enemy controls this road or wall
                 }
                 else if ((target.status.GetOccupant() != currentPlayer.getNumber()) && (target.status.GetOccupant() > 0))
                 {
-                    continue; // The enemy controls the settlement at the end of this road
+                    valid = false; // The enemy controls the settlement at the end of this road
+                }
+                // Check that none of the other plauers are at this location
+                foreach (Player p in gamePlayers)
+                {
+                    if (p.position == target.position)
+                    {
+                        valid = false ;
+                    }
                 }
 
-                viableLocations.Add(target);
+                if (valid)
+                    viableLocations.Add(target);
                     
             }
 
@@ -456,14 +453,24 @@ namespace NEAGame
                 currentPlayer.position = currentPlayer.GetCapital().position;
                 return; // this should not happen unless you get boxed in by the clever opponent!
             }
-            Node otherpos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
+            UserInterface.GetUserNodeChoice(viableLocations.ToArray());
 
+
+
+
+
+        }
+
+        public void MovePlayer(Node otherpos)
+        {
             if (!UserInterface.GetUserConfirm()) { return; }
             currentPlayer.position = otherpos.position;
             currentPlayer.moves -= 1; // update to accounts for travelling costs
 
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
         }
+
+
             
     }
 
