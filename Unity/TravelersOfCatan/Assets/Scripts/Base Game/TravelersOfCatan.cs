@@ -95,10 +95,8 @@ namespace NEAGame
 
             // ADD HIGHWAYMAN MECHANICS
 
-            TravelersOfCatan.UserInterface.DisplayPlayers(gamePlayers);
+            UserInterface.DisplayPlayers(gamePlayers);
             bool gameOngoing = true;
-
-            //TravelersOfCatan.UserInterface.CreatePopup("Loarding Board...");
 
             board = new Board();
 
@@ -123,7 +121,6 @@ namespace NEAGame
 
             }
             UserInterface.UpdateBoard(board);
-            UserInterface.CreatePopup("Hello World!");
             return;
 
 
@@ -153,6 +150,25 @@ namespace NEAGame
             }
         }
 
+        public void StartTurn()
+        {
+            currentPlayer = gamePlayers[turn];
+            currentPlayer.moves = 3; // Allow this to change as a gamemode
+            gatherResources();
+
+            UserInterface.BeginTurn();
+
+        }
+        public void EndTurn()
+        {
+            turn++;
+            if (turn >= MAXplayer)
+            {
+                turn = 0;
+            }
+
+        }
+
         public void CheckWinner()
         {
             foreach (Player p in gamePlayers)
@@ -168,7 +184,7 @@ namespace NEAGame
         }
 
         
-        public void printCostOfItem(string item)
+        /*public void printCostOfItem(string item)
         {
             Dictionary<int, int> cost = GetCostOfUpgrade(item);
             foreach (var entry in cost)
@@ -178,7 +194,7 @@ namespace NEAGame
                     UserInterface.CreatePopup($"You need {entry.Value} {Resource.resources[entry.Key]}");
                 }
             }
-        }
+        }*/
 
         public void gatherResources()
         {
@@ -250,40 +266,37 @@ namespace NEAGame
         public bool purchaseRoad()
         {
             List<Node> viableLocations = new List<Node>();
+            Node otherPos;
             bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.getNumber(); // player must be standing on their own settlement to build a road
-            foreach (Connection con in board.GetNode(currentPlayer.position).GetConnections())
+            foreach (var con in board.GetNode(currentPlayer.position).connections )
             {
-                if (con.start.position != currentPlayer.position)
-                {
-                    UserInterface.CreatePopup("Something went wrong..."); // this should never happen
-                }
-                if (con.GetOccupant() > 0)
+                otherPos = board.GetNode(con.Key);
+                if (con.Value.GetOccupant() > 0)
                 {
                     continue; // can not build a road on existing connections of any sort
                 }
-                else if ((con.end.status.GetOccupant() != currentPlayer.getNumber()) && (con.end.status.GetOccupant() > 0))
+                else if ((otherPos.status.GetOccupant() != currentPlayer.getNumber()) && (otherPos.status.GetOccupant() > 0))
                 {
                     continue; // The enemy controls the settlement at the end of this road
                 }
                 else
                 {
-                    viableLocations.Add(con.end);
+                    viableLocations.Add(otherPos);
                 }
 
             }
 
-            Node otherpos;
 
             if (viableLocations.Count > 1 && canconnect)
             {
                 
-                otherpos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
+                otherPos = UserInterface.GetUserNodeChoice(viableLocations.ToArray());
                 
             }
             else if (viableLocations.Count == 1 && canconnect)
             {
-                otherpos = viableLocations[0];
-                UserInterface.CreatePopup($"You are purchasing a Road at {otherpos}");
+                otherPos = viableLocations[0];
+                UserInterface.CreatePopup($"You are purchasing a Road at {otherPos}");
             }
             else
             {
@@ -292,12 +305,12 @@ namespace NEAGame
             }
 
             UserInterface.CreatePopup("You are purchasing a Road which costs the following:");
-            printCostOfItem("Road");
+            UserInterface.ShowCost("Road");
             UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
-            board.UpdateConnection(currentPlayer.position, otherpos.position, "Road", currentPlayer);
-            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos.position));
+            board.UpdateConnection(currentPlayer.position, otherPos.position, "Road", currentPlayer);
+            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherPos.position));
 
             return true;
 
@@ -306,19 +319,16 @@ namespace NEAGame
         public bool purchaseWall()
         {
             List<Node> viableLocations = new List<Node>();
-            foreach (Connection con in board.GetNode(currentPlayer.position).GetConnections())
+            foreach (var con in board.GetNode(currentPlayer.position).connections)
             {
-                if (con.start.position != currentPlayer.position)
-                {
-                    UserInterface.CreatePopup("Something went wrong..."); // this should never happen
-                }
-                if (con.GetOccupant() > 0)
+
+                if (con.Value.GetOccupant() > 0)
                 {
                     continue; // can not build a wall on existing connections of any sort
                 }
                 else // do not care who owns the settlement at the end of this wall
                 {
-                    viableLocations.Add(con.end);
+                    viableLocations.Add(board.GetNode(con.Key));
                 }
             }
 
@@ -340,8 +350,7 @@ namespace NEAGame
                 return false;
             }
 
-            UserInterface.CreatePopup("You are purchasing a permanent Wall which costs the following:");
-            printCostOfItem("Wall");
+            UserInterface.ShowCost("Wall");
             UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
@@ -378,7 +387,7 @@ namespace NEAGame
             }
 
             UserInterface.CreatePopup("You are purchasing a Village which costs the following:");
-            printCostOfItem("Village");
+            UserInterface.ShowCost("Village");
             UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
@@ -401,7 +410,7 @@ namespace NEAGame
             }
 
             UserInterface.CreatePopup("You are purchasing a City which costs the following:");
-            printCostOfItem("City");
+            UserInterface.ShowCost("City");
             UserInterface.CreatePopup("Are you sure you want to purchase this?");
             if (!UserInterface.GetUserConfirm()) { return false; }
 
@@ -413,21 +422,24 @@ namespace NEAGame
 
         public void movePlayer()
         {
-
+            Connection con;
+            Node target;
             List<Node> viableLocations = new List<Node>();
 
-            foreach (Connection con in board.GetNode(currentPlayer.position).GetConnections())
+            foreach (Vector3 pos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
+                con = board.GetConnection(pos, currentPlayer.position);
+                target = board.GetNode(pos);
                 if ((con.GetOccupant() != currentPlayer.getNumber()) && (con.GetOccupant() > 0)) 
                 {
                     continue; // the enemy controls this road or wall
                 }
-                else if ((con.end.status.GetOccupant() != currentPlayer.getNumber()) && (con.end.status.GetOccupant() > 0))
+                else if ((target.status.GetOccupant() != currentPlayer.getNumber()) && (target.status.GetOccupant() > 0))
                 {
                     continue; // The enemy controls the settlement at the end of this road
                 }
 
-                viableLocations.Add(con.end);
+                viableLocations.Add(target);
                     
             }
 

@@ -75,13 +75,13 @@ namespace NEAGame
             foreach (Node n in nodes.Values)
             {
                 n.RegisterConnections(this);
-                foreach (Connection con in n.GetConnections())
+                foreach (var con in n.connections)
                 {
-                    if (!connections.ContainsKey(con.start.position))
+                    if (!connections.ContainsKey(n.position))
                     {
-                        connections.Add(con.start.position, new Dictionary<Vector3, Connection>());
+                        connections.Add(n.position, new Dictionary<Vector3, Connection>());
                     }
-                    connections[con.start.position].Add(con.end.position, con);
+                    connections[n.position].Add(con.Key, con.Value);
                 }
 
             }
@@ -117,24 +117,13 @@ namespace NEAGame
             return nodes.Values.ToArray();
         }
 
+
         public IEnumerable<KeyValuePair<Vector3, Resource>> GetResourcesOnBoard()
         {
             foreach (HexagonUnit hex in board)
             {
                 yield return new KeyValuePair<Vector3, Resource>(hex.position, hex.resource);
                 
-            }
-        }
-
-        public void ShowBoardConnections()
-        {
-            foreach (var i in connections)
-            {
-                TravelersOfCatan.UserInterface.CreatePopup(i.Key.ToString());
-                foreach (var j in i.Value)
-                {
-                    TravelersOfCatan.UserInterface.CreatePopup("\t" + j.Value.ToString());
-                }
             }
         }
 
@@ -164,7 +153,10 @@ namespace NEAGame
         {
             Connection x = connections[v1][v2];
             x.SetOccupant(currentPlayer);
-            x.SetStatus(status);
+            x.SetStatus(status); 
+            Connection y = connections[v2][v1];
+            y.SetOccupant(currentPlayer);
+            y.SetStatus(status);
         }
 
     }

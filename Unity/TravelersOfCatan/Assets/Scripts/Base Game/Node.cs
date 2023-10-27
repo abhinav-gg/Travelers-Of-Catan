@@ -30,16 +30,10 @@ namespace NEAGame
             {
                 if (gameBoard.GetNode(v) != null)
                 {
-                    connections.Add(v, new Connection(this, gameBoard.GetNode(v)));
+                    connections.Add(v, new Connection());
                 }
             }
         }
-
-        public List<Connection> GetConnections()
-        {
-            return Enumerable.ToList<Connection>(connections.Values);
-        }
-
 
         public IEnumerable<Vector3> GetNodeNeighbours()
         {

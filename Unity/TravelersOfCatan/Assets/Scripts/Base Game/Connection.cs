@@ -18,13 +18,12 @@ namespace NEAGame
 
         // Merged with ConnectionStatus class
         public static readonly string[] statuses = { "Empty", "Road", "Wall" };
-        public Node start;
-        public Node end;
+        
         private int i = 0;
         private int occupant;
 
 
-        public Connection(Node Start, Node End, int i = 0, string status = "", int occupant = -1)
+        public Connection( int i = 0, string status = "", int occupant = -1)
         {
             this.i = i;
             if (status != "")
@@ -32,58 +31,7 @@ namespace NEAGame
                 this.i = Array.IndexOf(statuses, status);
             }
             this.occupant = occupant;
-            this.start = Start;
-            this.end = End;
         }
-
-        public static bool operator ==(Connection c1, Connection c2)
-        {
-            if (c1 is null)
-            {
-                if (c2 is null)
-                {
-                    return true;
-                }
-                return false;
-            }
-            return c1.Equals(c2);
-        }
-
-        public static bool operator !=(Connection c1, Connection c2)
-        {
-            if (c1 is null)
-            {
-                if (c2 is null)
-                {
-                    return false;
-                }
-                return true;
-            }
-            return c1.Equals(c2);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj.GetType() != typeof(Connection))
-            {
-                return false;
-            }
-            Connection otherConnection = obj as Connection;
-            if (otherConnection.start == start && otherConnection.end == end)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
 
         public int GetOccupant()
         {
@@ -132,7 +80,7 @@ namespace NEAGame
 
         public override string ToString()
         {
-            return $"{statuses[i]} Owned by {occupant} Which connects {start} to {end}";
+            return $"{statuses[i]} Owned by {occupant}";
         }
 
     }

@@ -69,21 +69,21 @@ namespace NEAGame
             while (!Enumerable.All(visited, x => x.Value==true))
             {
 
-                foreach (Connection con in current.GetConnections())
-                {
-                    if (visited[con.end])
-                    {
-                        continue;
-                    } else
-                    {
-                        int alt = distance[current] + con.GetWalkingCost(this);
-                        if (alt < distance[con.end])
-                        {
-                            distance[con.end] = alt;
-                            previous[current] = current;
-                        }
-                    }
-                }
+                //foreach (Connection con in current.GetConnections())
+                //{
+                //    if (visited[con.end])
+                //    {
+                //        continue;
+                //    } else
+                //    {
+                //        int alt = distance[current] + con.GetWalkingCost(this);
+                //        if (alt < distance[con.end])
+                //        {
+                //            distance[con.end] = alt;
+                //            previous[current] = current;
+                //        }
+                //    }
+                //}
                 min_d = int.MaxValue;
                 foreach (KeyValuePair<Node, int> node in distance)
                 {

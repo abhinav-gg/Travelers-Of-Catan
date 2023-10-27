@@ -19,7 +19,8 @@ namespace App
         void HandleWinner(Player winner);
         void SaveGame();
         void LoadGame(string Save);
-
+        void BeginTurn();
+        void ShowCost(string ID);
     }
 
     public class TerminalUI { }

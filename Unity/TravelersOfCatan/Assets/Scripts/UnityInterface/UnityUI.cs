@@ -43,11 +43,24 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
         }*/
     }
 
+
+    void MenuButtonPressed()
+    {
+        // add confirm here
+        SceneManager.LoadScene("Menu");
+    }
+
+
+
     /// <summary>
     /// Functions to convert between Unity and System.Numerics vectors
     /// </summary>
 
 
+    void UI.BeginTurn()
+    {
+        GameInterface.BeginTurn();
+    }
 
 
     Node UI.GetUserNodeChoice(Node[] options)
@@ -98,6 +111,11 @@ public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interfa
     }
 
     void UI.LoadGame(string Save)
+    {
+        //throw new System.NotImplementedException();
+    }
+
+    void UI.ShowCost(string ID)
     {
         //throw new System.NotImplementedException();
     }

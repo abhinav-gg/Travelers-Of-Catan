@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using NEAGame;
 using System;
+using System.Linq;
 using Unity.VisualScripting;
 
 [Serializable]
@@ -14,6 +15,7 @@ public class GameUI : UnityUI
 
     public GameObject NodePrefab;
     public GameObject ConnectionPrefab;
+    public GameObject PlayerPrefab;
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
@@ -21,23 +23,50 @@ public class GameUI : UnityUI
 
     public GameObject[] hexes = new GameObject[19];
     public NodeButton[] nodes = new NodeButton[54];
-    public ConnectionButton[] connections;
+    public List<ConnectionButton> connections = new List<ConnectionButton>();
 
     bool hasInitializedBoard = false;
+
+    GameUIAnimator anim;
+
+
 
     // Start is called before the first frame update
     internal void StartGame()
     {
-        game = new TravelersOfCatan(UnityUI.Interface, 2, 2);
+        game = new TravelersOfCatan(Interface, 2, 2);
         game.startGame();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void BeginTurn()
     {
-        
+
     }
 
+    public void ConnectionButtonPressed()
+    {
+
+    }
+
+    public void OnPlayerMove()
+    {
+        //anim.MoveButtonPlay();
+        Interface.game.movePlayer();
+    }
+
+    public ConnectionButton FindConnectionGameObject(Vector3 v1, Vector3 v2)
+    {
+        List<Vector3> list = new List<Vector3>();
+        foreach (var con in connections)
+        {
+            list = (from node in con.nodes select node.NodePos).ToList<Vector3>();
+            if (list.Contains(v1) && list.Contains(v2))
+            {
+                return con;
+            }
+        }
+        return null;
+    }
 
 
     internal void UpdateBoard(Board board)
@@ -63,15 +92,76 @@ public class GameUI : UnityUI
             foreach (Node n in board.GetAllNodes())
             {
                 //node.transform.position = //  this is a pronblem;
-                NodeButton nodeui = Instantiate(NodePrefab, ConvertVector(n.position), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
+                NodeButton nodeui = Instantiate(NodePrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
                 nodeui.node = n;
                 nodeui.NodePos = ConvertVector(n.position);
                 nodeui.transform.position = GetNodeGlobalPos(n);
             }
+
+            Vector3 conPos;
+            ConnectionButton GO;
+            foreach (var nodeCon in board.connections)
+            {
+                 foreach (var con in nodeCon.Value)
+                {
+                    GO = FindConnectionGameObject(ConvertVector(nodeCon.Key), ConvertVector(con.Key));
+                    conPos = GetConnectionGlobalPos(nodeCon.Key, con.Key);
+                    if (GO is null)
+                    {
+                        ConnectionButton conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionButton>();
+                        conui.connection = con.Value;
+                        conui.transform.position = conPos;
+                        conui.nodes = new NodeButton[2];
+                        conui.nodes[0] = FindNodeGameObject(ConvertVector(nodeCon.Key));
+                        conui.nodes[1] = FindNodeGameObject(ConvertVector(con.Key));
+                        connections.Add(conui);
+
+                    }
+
+                }  
+            }
+
+
+
         }
-        Debug.Break();
     }
 
+    public void UpdateConnection(Vector3 n1, Vector3 n2, Connection connection)
+    {
+        ConnectionButton conui = FindConnectionGameObject(n1, n2);
+        conui.connection = connection;
+        conui.UpdateConnection();
+    }
+
+    public Vector3 GetConnectionGlobalPos(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
+    {
+        HashSet < System.Numerics.Vector3 > starthexes = new HashSet<System.Numerics.Vector3>();
+        HashSet < System.Numerics.Vector3 > endhexes = new HashSet<System.Numerics.Vector3>();
+        float totalX = 0f;
+        float totalY = 0f;
+        float Z = 0f;
+
+        foreach (var vec in game.board.GetNode(v1).GetHexNeighbours())
+        {
+            starthexes.Add(vec);
+        }
+        foreach (var vec in game.board.GetNode(v2).GetHexNeighbours())
+        {
+            endhexes.Add(vec);
+        }
+        Vector3 center;
+        foreach (var HexPos in starthexes.Except(endhexes).Union(endhexes.Except(starthexes)))
+        {
+            center = GetHexGlobalPos(CubicToOddRow(HexPos));
+            totalX += center.x;
+            totalY += center.y;
+            Z = center.z;
+
+        }
+        
+        return new Vector3(totalX / 2, totalY / 2, Z);
+
+    }
 
     public Vector3 GetNodeGlobalPos(Node node)
     {
@@ -79,9 +169,10 @@ public class GameUI : UnityUI
         float totalX = 0f;
         float totalY = 0f;
         float Z = 0f;
-        foreach (System.Numerics.Vector3 vec in node.GetHexNeighbours())
+        foreach (var vec in node.GetHexNeighbours())
         {
-            center = HexLocalToGlobal(CubicToOddRow(vec));
+            center = GetHexGlobalPos(CubicToOddRow(vec));
+
             totalX += center.x;
             totalY += center.y;
             Z = center.z;
@@ -91,7 +182,7 @@ public class GameUI : UnityUI
         return new Vector3(avgX, avgY, Z);
     }
 
-    public Vector3 HexLocalToGlobal(Vector3 cellPos)
+    public Vector3 GetHexGlobalPos(Vector3 cellPos)
     {
         Vector3Int Pos = new Vector3Int((int)cellPos.x, (int)cellPos.y, 0);
         return gridLayout.CellToWorld(Pos);
@@ -118,7 +209,7 @@ public class GameUI : UnityUI
     }
 
 
-    public NodeButton FindGameObjectAtNode(Vector3 pos)
+    public NodeButton FindNodeGameObject(Vector3 pos)
     {
         foreach (NodeButton n in FindObjectsOfType<NodeButton>())
         {
@@ -142,11 +233,11 @@ public class GameUI : UnityUI
 
     internal void DisplayPlayers(Player[] players)
     {
-        foreach (Player player in players)
-        {
-            Debug.Log(player.playerName);
-
-        }
+        //foreach (Player player in players)
+        //{
+        //    Debug.Log(player.playerName);
+        //
+        //}
     }
 
 
