@@ -18,6 +18,7 @@ public class GameUI : UnityUI
     public GameObject ConnectionPrefab;
     public GameObject PlayerPrefab;
     public GameObject PlayerUI;
+    public GameObject inventoryPopup;
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
@@ -30,6 +31,8 @@ public class GameUI : UnityUI
 
     public float Timer = 0.0f;
     public bool TimerActive = false;
+
+
 
     PlayerUIOverlay overlay;
     GameUIAnimator anim;
@@ -49,6 +52,9 @@ public class GameUI : UnityUI
     {
         if (TimerActive)
         {
+            if (!LeanTween.isTweening(Camera.main.gameObject))
+                LeanTween.move(Camera.main.gameObject, GetCurrentPlayerPos() + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine);
+            
             overlay.TimerText.text = GetTime();
             Timer -= Time.deltaTime;
         }
@@ -59,12 +65,16 @@ public class GameUI : UnityUI
         overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
         overlay.EndTurnInput.onClick.AddListener(EndTurn);
         overlay.MoveInput.onClick.AddListener(OnPlayerMove);
+        overlay.InventoryInput.onClick.AddListener(OpenInventory);
         overlay.PlayerName.text = Interface.game.GetCurrentPlayerName();
 
 
         Timer = 300.0f; // ASSIGN TO CONSTANT
         TimerActive = true;
         StartCoroutine(WaitForTurnToEnd());
+
+        // set camera position to player position on baord!
+        Camera.main.transform.position = GetCurrentPlayerPos() + new Vector3(0, 0, -10);
     }
 
     public void ConnectionButtonPressed()
@@ -85,6 +95,11 @@ public class GameUI : UnityUI
     {
         //anim.MoveButtonPlay();
         Interface.game.attemptPlayerMove();
+    }
+
+    public Vector3 GetCurrentPlayerPos()
+    {
+        return FindPlayerGameObject(Interface.game.GetCurrentPlayerName()).transform.position;
     }
 
     public string GetTime()
@@ -124,6 +139,18 @@ public class GameUI : UnityUI
             if (list.Contains(v1) && list.Contains(v2))
             {
                 return con;
+            }
+        }
+        return null;
+    }
+
+    public PlayerButton FindPlayerGameObject(string PlayerName)
+    {
+        foreach (var a in FindObjectsOfType<PlayerButton>())
+        {
+            if (a.player.playerName == PlayerName)
+            {
+                return a;
             }
         }
         return null;
@@ -327,12 +354,12 @@ public class GameUI : UnityUI
         StartCoroutine(WaitForNodeChoice());
     }
 
-    IEnumerator WaitForNodeChoice()
+    IEnumerator WaitForNodeChoice() // pass in function for moving vs buying
     {
 
         while (SelectedNode is null)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
         Interface.game.MovePlayer(SelectedNode.node);
         LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayerName()).gameObject, SelectedNode.transform.position, 0.5f).setEase(LeanTweenType.easeInOutElastic);
@@ -347,5 +374,22 @@ public class GameUI : UnityUI
         }
     }
 
+
+    public void OpenInventory()
+    {
+        StartCoroutine(DisplayInventory());
+    }
+
+
+    IEnumerator DisplayInventory()
+    {
+        InventoryPopup inv = Instantiate(inventoryPopup).GetComponent<InventoryPopup>();
+        foreach (KeyValuePair<Resource, int> entry in Interface.game.GetCurrentPlayerInventory())
+        {
+            inv.Display(entry.Key.ToString(), entry.Value);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+    }
 
 }

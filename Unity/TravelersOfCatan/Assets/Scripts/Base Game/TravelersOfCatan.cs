@@ -132,6 +132,11 @@ namespace NEAGame
             return currentPlayer.playerName;
         }
 
+        public Dictionary<Resource, int> GetCurrentPlayerInventory()
+        {
+            return currentPlayer.getResources();
+        }
+
         public void StartTurn()
         {
             currentPlayer = gamePlayers[turn];
@@ -197,6 +202,8 @@ namespace NEAGame
                     currentPlayer.addResource(board.GetHexAtPosition(u).resource);
                 }
             }
+
+            // call animation in UI to show the player what they have gained
 
         }
 

@@ -10,6 +10,7 @@ public class PlayerUIOverlay : MonoBehaviour
 
     public Button MoveInput;
     public Button ShopInput;
+    public Button InventoryInput;
     public Button TradeInput;
     public Button EndTurnInput;
     public TextMeshProUGUI TimerText;
