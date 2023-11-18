@@ -6,14 +6,13 @@ using UnityEngine.SceneManagement;
 using NEAGame;
 using App;
 
-public class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
+public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
 
 
 
 
     public static UnityUI Interface { get; private set; }
-    public static GameUI GameInterface { get; private set; }
 
     [Header("UI overlay prefabs")] 
     public GameObject NameGetOverlay;

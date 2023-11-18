@@ -9,7 +9,7 @@ using System.Linq;
 using Unity.VisualScripting;
 
 [Serializable]
-public class GameUI : UnityUI
+public partial class UnityUI
 {
 
     //[Obsolete("Unity does not allow for this")] [HideInInspector] internal new TravelersOfCatan game;
