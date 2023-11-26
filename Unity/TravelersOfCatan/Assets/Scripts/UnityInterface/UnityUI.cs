@@ -34,9 +34,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     }
 
     void Start()
-    {
-        GameInterface = FindObjectOfType<GameUI>();
-        
+    {        
         StartCoroutine(GetNewPlayer(2));
     }
 
@@ -47,6 +45,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         {
             game.ShowBoard();
         }*/
+        Update2();
     }
 
 
@@ -65,7 +64,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     void UI.BeginTurn()
     {
-        GameInterface.BeginTurn();
+        BeginTurn();
     }
 
     IEnumerator GetNewPlayer(int playersLeft)
@@ -96,7 +95,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     void UI.GetUserNodeChoice(Node[] options)
     {
-        GameInterface.GetUserNodeChoice(options);
+        GetUserNodeChoice(options);
     }
 
     bool UI.GetUserConfirm()
@@ -109,14 +108,14 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         Debug.Log(message);
     }
 
-    void UI.DisplayPlayers(List<Player> players)
-    {
-        //throw new System.NotImplementedException();
-    }
+    //void UI.DisplayPlayers(List<Player> players)
+    //{
+    //    //throw new System.NotImplementedException();
+    //}
 
     void UI.UpdateBoard(Board board)
     {
-        GameInterface.UpdateBoard(board);
+        UpdateBoard(board);
         //throw new System.NotImplementedException();
     }
 

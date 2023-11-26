@@ -12,8 +12,6 @@ using Unity.VisualScripting;
 public partial class UnityUI
 {
 
-    //[Obsolete("Unity does not allow for this")] [HideInInspector] internal new TravelersOfCatan game;
-
     public GameObject NodePrefab;
     public GameObject ConnectionPrefab;
     public GameObject PlayerPrefab;
@@ -38,17 +36,8 @@ public partial class UnityUI
     GameUIAnimator anim;
     NodeButton SelectedNode;
 
-    void Awake()
-    {
 
-    }
-
-    void Start()
-    {
-        anim = GetComponent<GameUIAnimator>();
-    }
-
-    void Update()
+    void Update2()
     {
         if (TimerActive)
         {

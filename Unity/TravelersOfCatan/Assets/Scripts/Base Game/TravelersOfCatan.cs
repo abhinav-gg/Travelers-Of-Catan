@@ -137,7 +137,7 @@ namespace NEAGame
             return currentPlayer.getResources();
         }
 
-        public void StartTurn()
+        private void StartTurn()
         {
             currentPlayer = gamePlayers[turn];
             currentPlayer.moves = 3; // Allow this to change as a gamemode
@@ -202,8 +202,6 @@ namespace NEAGame
                     currentPlayer.addResource(board.GetHexAtPosition(u).resource);
                 }
             }
-
-            // call animation in UI to show the player what they have gained
 
         }
 

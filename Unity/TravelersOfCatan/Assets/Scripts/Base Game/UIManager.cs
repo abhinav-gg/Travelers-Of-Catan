@@ -13,7 +13,7 @@ namespace App
         void GetUserNodeChoice(Node[] options);
         bool GetUserConfirm();
         void CreatePopup(string message);
-        void DisplayPlayers(List<Player> players);
+        //void DisplayPlayers(List<Player> players);
         void UpdateBoard(Board board);
         void UpdateBoardConnections(Board board);
         void HandleWinner(Player winner);

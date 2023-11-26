@@ -47,7 +47,7 @@ public class NodeButton : MonoBehaviour
 
     public void OnClick()
     {
-        UnityUI.GameInterface.OnNodeClick(this);
+        UnityUI.Interface.OnNodeClick(this);
     }
 
 

@@ -18,7 +18,7 @@ public class ConnectionButton : MonoBehaviour
     void Start()
     {
         UpdateConnection();
-        btn.onClick.AddListener(UnityUI.GameInterface.ConnectionButtonPressed);
+        btn.onClick.AddListener(UnityUI.Interface.ConnectionButtonPressed);
     }
 
     // Update is called once per frame

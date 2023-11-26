@@ -28,7 +28,7 @@ public class PlayerUIOverlay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        TimerText.text = UnityUI.GameInterface.GetTime();
+        TimerText.text = UnityUI.Interface.GetTime();
     }
 
 
