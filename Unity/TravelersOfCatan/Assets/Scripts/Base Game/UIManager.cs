@@ -1,16 +1,16 @@
 ﻿
+using System;
 using System.Collections.Generic;
-using NEAGame;
 
 
-namespace App
+namespace NEAGame
 {
 
 
     public interface UI
     {
 
-        void GetUserNodeChoice(Node[] options);
+        void GetUserNodeChoice(Node[] options, Action<Node> method);
         bool GetUserConfirm();
         void CreatePopup(string message);
         //void DisplayPlayers(List<Player> players);

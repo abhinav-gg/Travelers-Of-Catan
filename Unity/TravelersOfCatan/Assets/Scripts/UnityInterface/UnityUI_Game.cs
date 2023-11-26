@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using NEAGame;
 using System;
 using System.Linq;
-using Unity.VisualScripting;
+
 
 [Serializable]
 public partial class UnityUI
@@ -33,18 +33,16 @@ public partial class UnityUI
 
 
     PlayerUIOverlay overlay;
-    GameUIAnimator anim;
     NodeButton SelectedNode;
 
 
-    void Update2()
+    void FixedUpdate()
     {
         if (TimerActive)
         {
             if (!LeanTween.isTweening(Camera.main.gameObject))
-                LeanTween.move(Camera.main.gameObject, GetCurrentPlayerPos() + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine);
+                LeanTween.move(Camera.main.gameObject, GetCurrentPlayerGlobalPos() + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine);
             
-            overlay.TimerText.text = GetTime();
             Timer -= Time.deltaTime;
         }
     }
@@ -63,7 +61,7 @@ public partial class UnityUI
         StartCoroutine(WaitForTurnToEnd());
 
         // set camera position to player position on baord!
-        Camera.main.transform.position = GetCurrentPlayerPos() + new Vector3(0, 0, -10);
+        Camera.main.transform.position = GetCurrentPlayerGlobalPos() + new Vector3(0, 0, -10);
     }
 
     public void ConnectionButtonPressed()
@@ -86,7 +84,7 @@ public partial class UnityUI
         Interface.game.attemptPlayerMove();
     }
 
-    public Vector3 GetCurrentPlayerPos()
+    public Vector3 GetCurrentPlayerGlobalPos()
     {
         return FindPlayerGameObject(Interface.game.GetCurrentPlayerName()).transform.position;
     }
@@ -216,8 +214,6 @@ public partial class UnityUI
 
         }
 
-
-
     }
 
 
@@ -329,7 +325,7 @@ public partial class UnityUI
         return null;
     }
 
-    internal void GetUserNodeChoice(Node[] options)
+    void UI.GetUserNodeChoice(Node[] options, Action<Node> method)
     {
 
         // Add LeanTween Animation to the selected nodes here!
@@ -340,17 +336,17 @@ public partial class UnityUI
             NodeButton node = FindNodeGameObject(ConvertVector(choice.position));
             node.EnableButton();
         }
-        StartCoroutine(WaitForNodeChoice());
+        StartCoroutine(WaitForNodeChoice(method));
     }
 
-    IEnumerator WaitForNodeChoice() // pass in function for moving vs buying
+    IEnumerator WaitForNodeChoice(Action<Node> method) // pass in function for moving vs buying
     {
 
         while (SelectedNode is null)
         {
             yield return new WaitForSeconds(0.01f);
         }
-        Interface.game.MovePlayer(SelectedNode.node);
+        method(SelectedNode.node);
         LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayerName()).gameObject, SelectedNode.transform.position, 0.5f).setEase(LeanTweenType.easeInOutElastic);
     }
 

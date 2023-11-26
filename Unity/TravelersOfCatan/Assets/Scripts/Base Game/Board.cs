@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using App;
 using System.Collections;
 
 namespace NEAGame
@@ -13,7 +12,7 @@ namespace NEAGame
     public class Board // A graph of nodes
     {
 
-        private HexagonUnit[] board = new HexagonUnit[19];
+        public HexagonUnit[] board = new HexagonUnit[19];
         Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
         // array of nodes and hexagon centers in graph. Fixed length means no need to resize
         public Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();

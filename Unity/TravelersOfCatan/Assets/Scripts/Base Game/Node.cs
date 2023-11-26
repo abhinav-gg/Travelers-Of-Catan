@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using App;
 using System.Collections;
 
 namespace NEAGame

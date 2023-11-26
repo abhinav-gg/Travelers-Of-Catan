@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using NEAGame;
-using App;
 
 public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
@@ -31,21 +30,26 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         
         DontDestroyOnLoad(gameObject);
         game = new TravelersOfCatan(Interface);
+        Debug.Log(JsonUtility.ToJson(game.board));
     }
 
     void Start()
-    {        
-        StartCoroutine(GetNewPlayer(2));
+    {
+        //StartCoroutine(GetNewPlayer(2));
+        game.AddPlayer(name);
+        game.startGame();
     }
 
     // Update is called once per frame
     void Update()
     {
+
         /*if (Input.GetKeyDown(KeyCode.Return))
         {
             game.ShowBoard();
         }*/
-        Update2();
+        Debug.Log(JsonUtility.ToJson(game));
+
     }
 
 
@@ -92,11 +96,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         }
     }
 
-
-    void UI.GetUserNodeChoice(Node[] options)
-    {
-        GetUserNodeChoice(options);
-    }
 
     bool UI.GetUserConfirm()
     {

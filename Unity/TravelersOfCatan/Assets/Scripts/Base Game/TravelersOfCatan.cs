@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using App;
 using System.Collections;
 using System.Diagnostics;
 
@@ -69,12 +68,6 @@ namespace NEAGame
             gamePlayers.Add(new AI(i + 1 + MAXplayer, "AI" + (i + 1), StartingCoords[i + MAXplayer]));
 
 
-        }
-
-
-        public static string GetPurchaseID(int i)
-        {
-            return new string[] { "Road", "Wall", "Village", "City" }[i];
         }
 
         public static Dictionary<int, int> GetCostOfUpgrade(string entityName)
@@ -242,6 +235,10 @@ namespace NEAGame
                     break;
 
             }
+
+            // chyange to use action delegates
+
+
             if (success)
             {
 
@@ -458,11 +455,7 @@ namespace NEAGame
                 currentPlayer.position = currentPlayer.GetCapital().position;
                 return; // this should not happen unless you get boxed in by the clever opponent!
             }
-            UserInterface.GetUserNodeChoice(viableLocations.ToArray());
-
-
-
-
+            UserInterface.GetUserNodeChoice(viableLocations.ToArray(), MovePlayer);
 
         }
 
@@ -475,9 +468,8 @@ namespace NEAGame
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
         }
 
-
-            
     }
+
 
     /// <summary>
     /// Minor classes for the game that are not worth their own file and are all serializable
@@ -565,24 +557,24 @@ namespace NEAGame
     {
         public static readonly string[] resources = { "Empty", "Wood", "Brick", "Wheat", "Sheep", "Ore" };
         private static readonly Random rng = new Random();
-        private int i;
+        private int id;
 
         
 
         public Resource(int i = 0)
         {
-            this.i = i;
+            id = i;
         }
 
         public override string ToString()
         {
-            return resources[i];
+            return resources[id];
         }
 
 
         public void CreateRandomResource()
         {
-            i = rng.Next(1, resources.Length);
+            id = rng.Next(1, resources.Length);
         }
 
         public override bool Equals(System.Object otherItem)
@@ -594,19 +586,19 @@ namespace NEAGame
 
             Resource otherResource = otherItem as Resource;
 
-            return (i == otherResource.i);
+            return (id == otherResource.id);
         }
 
         public override int GetHashCode()
         {
-            return i;
+            return id;
         }
         
         public static Resource GetRandom()
         {
-            Resource i = new Resource();
-            i.CreateRandomResource();
-            return i;
+            Resource temp = new Resource();
+            temp.CreateRandomResource();
+            return temp;
         }
 
 

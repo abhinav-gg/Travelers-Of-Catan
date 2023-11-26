@@ -10,7 +10,9 @@ public class NodeButton : MonoBehaviour
     public Node node;
     public Button btn;
     public RawImage img;
+    [InspectorName("Village")]
     public Texture village;
+    [InspectorName("City")]
     public Texture city;
 
 

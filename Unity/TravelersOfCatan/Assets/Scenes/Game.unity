@@ -159,85 +159,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &262256235
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 262256236}
-  - component: {fileID: 262256237}
-  - component: {fileID: 262256238}
-  m_Layer: 0
-  m_Name: Game
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &262256236
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262256235}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -26.390604, y: 49.26778, z: -2.084966}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &262256237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262256235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fa5da795fcc97b47873ed6b0412b70f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NameGetOverlay: {fileID: 0}
-  game:
-    victoryPoints: 
-    gamePlayers: []
-  NodePrefab: {fileID: 955635130051763877, guid: b09d4fe1c57ec05408bc24dcd97fcc48, type: 3}
-  ConnectionPrefab: {fileID: 582317903075557195, guid: 8f21b5cdb32863e4594fa0921e6ccb09, type: 3}
-  PlayerPrefab: {fileID: 6867297139346083432, guid: 293c13eeed8e74d4c93395e6b0dd32da, type: 3}
-  PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
-  inventoryPopup: {fileID: 2111445291719360313, guid: 643f130cbe33cff49bdab615e3348778, type: 3}
-  resources:
-  - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
-  - {fileID: 11400000, guid: d9cdd21a55462d24cbed8f4e1d3c6624, type: 2}
-  - {fileID: 11400000, guid: 95f2ad4aff2d2f040bb4877644c3d001, type: 2}
-  - {fileID: 11400000, guid: 1ddbf1124b0b7ec44a6bea28343bf847, type: 2}
-  - {fileID: 11400000, guid: 8d3fb1b1f7e333e44b1d122388d17a28, type: 2}
-  - {fileID: 11400000, guid: 2369ff1a4ad7eeb459ad10f202442628, type: 2}
-  gridLayout: {fileID: 530605235}
-  tilemap: {fileID: 1780909974}
-  nodes: []
-  connections: []
-  Timer: 0
-  TimerActive: 0
---- !u!114 &262256238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262256235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22a13990dc633d3468d871bbc6e8e6ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &354520028
 GameObject:
   m_ObjectHideFlags: 0
@@ -570,6 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -655,6 +577,45 @@ MonoBehaviour:
   game:
     victoryPoints: 
     gamePlayers: []
+    board:
+      board:
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+      - {}
+  NodePrefab: {fileID: 955635130051763877, guid: b09d4fe1c57ec05408bc24dcd97fcc48, type: 3}
+  ConnectionPrefab: {fileID: 582317903075557195, guid: 8f21b5cdb32863e4594fa0921e6ccb09, type: 3}
+  PlayerPrefab: {fileID: 6867297139346083432, guid: 293c13eeed8e74d4c93395e6b0dd32da, type: 3}
+  PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
+  inventoryPopup: {fileID: 2111445291719360313, guid: 643f130cbe33cff49bdab615e3348778, type: 3}
+  resources:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  gridLayout: {fileID: 530605235}
+  tilemap: {fileID: 1780909974}
+  nodes: []
+  connections: []
+  Timer: 0
+  TimerActive: 0
 --- !u!1 &1680080577
 GameObject:
   m_ObjectHideFlags: 0
