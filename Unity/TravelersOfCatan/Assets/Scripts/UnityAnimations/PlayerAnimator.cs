@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using NEAGame;
+using UnityEngine;
 
-public class PlayerButton : MonoBehaviour
+public class PlayerAnimator : MonoBehaviour
 {
-    // Start is called before the first frame update
+
     public Player player;
+    // Start is called before the first frame update
     void Start()
     {
         

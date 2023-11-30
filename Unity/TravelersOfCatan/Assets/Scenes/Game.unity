@@ -604,12 +604,12 @@ MonoBehaviour:
   PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
   inventoryPopup: {fileID: 2111445291719360313, guid: 643f130cbe33cff49bdab615e3348778, type: 3}
   resources:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
+  - {fileID: 11400000, guid: d9cdd21a55462d24cbed8f4e1d3c6624, type: 2}
+  - {fileID: 11400000, guid: 95f2ad4aff2d2f040bb4877644c3d001, type: 2}
+  - {fileID: 11400000, guid: 1ddbf1124b0b7ec44a6bea28343bf847, type: 2}
+  - {fileID: 11400000, guid: 8d3fb1b1f7e333e44b1d122388d17a28, type: 2}
+  - {fileID: 11400000, guid: 2369ff1a4ad7eeb459ad10f202442628, type: 2}
   gridLayout: {fileID: 530605235}
   tilemap: {fileID: 1780909974}
   nodes: []

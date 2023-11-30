@@ -11,56 +11,49 @@ namespace NEAGame
 {
 
     [System.Serializable]
-    public class Connection
+    public class Connection : Settlement
     {   
-
-
-        // Merged with ConnectionStatus class
-        public static readonly string[] statuses = { "Empty", "Road", "Wall" };
-        
-        private int i = 0;
-        private int occupant;
-
 
         public Connection( int i = 0, string status = "", int occupant = -1)
         {
-            this.i = i;
+            statuses = new string[] { "Empty", "Road", "Wall" };
+            id = i;
             if (status != "")
             {
-                this.i = Array.IndexOf(statuses, status);
+                id = Array.IndexOf(statuses, status);
             }
-            this.occupant = occupant;
+            occupantID = occupant;
         }
 
         public int GetOccupant()
         {
-            return occupant;
+            return occupantID;
         }
 
         public void SetOccupant(Player p)
         {
-            occupant = p.getNumber();
+            occupantID = p.getNumber();
         }
 
         public string GetStatus()
         {
-            return statuses[i];
+            return statuses[id];
         }
 
         public void SetStatus(string status)
         {
-            i = Array.IndexOf(statuses, status);
+            id = Array.IndexOf(statuses, status);
         }
 
         public int GetWalkingCost(Player otherPlayer)
         {
-            if (this.i == 0)
+            if (id == 0)
             {
                 return 1;
             }
-            if (otherPlayer.getNumber() == occupant)
+            if (otherPlayer.getNumber() == occupantID)
             {
-                if (this.i == 1)
+                if (id == 1)
                 {
                     return 0;
                 }
@@ -69,7 +62,7 @@ namespace NEAGame
                     return 2;
                 }
             }
-            else if (otherPlayer.getNumber() != occupant)
+            else if (otherPlayer.getNumber() != occupantID)
             {
                 return int.MaxValue;
             }
@@ -79,7 +72,7 @@ namespace NEAGame
 
         public override string ToString()
         {
-            return $"{statuses[i]} Owned by {occupant}";
+            return $"{statuses[id]} Owned by {occupantID}";
         }
 
     }

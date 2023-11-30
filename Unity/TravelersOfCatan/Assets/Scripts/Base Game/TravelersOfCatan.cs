@@ -8,7 +8,7 @@ using System.Collections;
 using System.Diagnostics;
 
 
-// Path: Class1.cs
+
 namespace NEAGame
 {
     [System.Serializable]
@@ -70,15 +70,15 @@ namespace NEAGame
 
         }
 
-        public static Dictionary<int, int> GetCostOfUpgrade(string entityName)
+        public static Dictionary<Resource, int> GetCostOfUpgrade(string entityName)
         {
 
-            Dictionary<string, Dictionary<int, int>> purchaseCost = new Dictionary<string, Dictionary<int, int>>()
+            Dictionary<string, Dictionary<Resource, int>> purchaseCost = new Dictionary<string, Dictionary<Resource, int>>()
             {
-                {"Road", new Dictionary<int, int>()     { { 1, 1 }, { 2, 1 }, { 3, 0 }, { 4, 1 }, { 5, 0 } } },
-                {"Wall", new Dictionary<int, int>()     { { 1, 0 }, { 2, 5 }, { 3, 0 }, { 4, 0 }, { 5, 0 } } },
-                {"Village", new Dictionary<int, int>()  { { 1, 3 }, { 2, 1 }, { 3, 3 }, { 4, 3 }, { 5, 2 } } },
-                {"City", new Dictionary<int, int>()     { { 1, 1 }, { 2, 3 }, { 3, 1 }, { 4, 0 }, { 5, 4 } } }  
+                {"Road", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 1 }, { new Resource(3), 0 }, { new Resource(4), 1 }, { new Resource(5), 0 } } },
+                {"Wall", new Dictionary<Resource, int>()     { { new Resource(1), 0 }, { new Resource(2), 5 }, { new Resource(3), 0 }, { new Resource(4), 0 }, { new Resource(5), 0 } } },
+                {"Village", new Dictionary<Resource, int>()  { { new Resource(1), 3 }, { new Resource(2), 1 }, { new Resource(3), 3 }, { new Resource(4), 3 }, { new Resource(5), 2 } } },
+                {"City", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 3 }, { new Resource(3), 1 }, { new Resource(4), 0 }, { new Resource(5), 4 } } }  
             };
             // store as JSON in Unity Version
            
@@ -207,7 +207,7 @@ namespace NEAGame
         {
 
             List<string> options = new List<string>();
-            if (tryPurchaseRoad())
+            if (canPurchaseRoad())
             {
                 options.Add("Wall");
             }
@@ -238,10 +238,10 @@ namespace NEAGame
         public void ChargePlayer(string structure)
         {
 
-            Dictionary<int, int> cost = GetCostOfUpgrade(structure);
+            Dictionary<Resource, int> cost = GetCostOfUpgrade(structure);
             foreach (var entry in cost)
             {
-                currentPlayer.removeResource(new Resource(entry.Key), entry.Value);
+                currentPlayer.removeResource(entry.Key, entry.Value);
             }
             UserInterface.CreatePopup("Purchase Successful");
             CheckWinner();
@@ -250,11 +250,11 @@ namespace NEAGame
 
         public bool CheckCosts(string structure)
         {
-            Dictionary<int, int> cost = GetCostOfUpgrade(structure);
+            Dictionary<Resource, int> cost = GetCostOfUpgrade(structure);
             bool canAfford = true;
             foreach (var entry in cost)
             {
-                if (currentPlayer.getResources()[new Resource(entry.Key)] < entry.Value)
+                if (currentPlayer.getResources()[entry.Key] < entry.Value)
                 {
                     canAfford = false;
                 }
@@ -266,7 +266,7 @@ namespace NEAGame
             return canAfford;
         }
 
-        public bool tryPurchaseRoad()
+        public bool canPurchaseRoad()
         {
 
             if (!CheckCosts("Road")) return false;
@@ -283,8 +283,8 @@ namespace NEAGame
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours() )
             {
                 Connection con = board.GetConnection(currentPlayer.position, vOther);
-                otherPos = board.GetNode(con.Key);
-                if (con.Value.GetOccupant() > 0)
+                otherPos = board.GetNode(vOther);
+                if (con.GetOccupant() > 0)
                 {
                     continue; // can not build a road on existing connections of any sort
                 }
@@ -304,18 +304,20 @@ namespace NEAGame
             {
                 otherPos = viableLocations[0];
                 UserInterface.CreatePopup($"You are purchasing a Road at {otherPos}");
+                return true;
             }
             else if (viableLocations.Count > 1)
             {
                 UserInterface.CreatePopup("You must select a location to build a road");
-                otherPos = UserInterface.GetUserNodeChoice(viableLocations, purchaseRoad);
+                return true;
+                //UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseRoad);
             }
             else
             {
                 return false;
             }
 
-            return true;
+            
 
         }
 
@@ -323,51 +325,6 @@ namespace NEAGame
         {
             board.UpdateConnection(currentPlayer.position, other.position, "Road", currentPlayer);
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
-
-        }
-
-        public bool purchaseWall()
-        {
-            List<Node> viableLocations = new List<Node>();
-            foreach (var con in board.GetNode(currentPlayer.position).connections)
-            {
-
-                if (con.Value.GetOccupant() > 0)
-                {
-                    continue; // can not build a wall on existing connections of any sort
-                }
-                else // do not care who owns the settlement at the end of this wall
-                {
-                    viableLocations.Add(board.GetNode(con.Key));
-                }
-            }
-
-            Node otherpos;
-
-            if (viableLocations.Count > 1)
-            {
-
-                otherpos = null;//UserInterface.GetUserNodeChoice(viableLocations.ToArray());
-
-            }
-            else if (viableLocations.Count == 1)
-            {
-                otherpos = viableLocations[0];
-            }
-            else
-            {
-                UserInterface.CreatePopup("You cannot purchase a wall here");
-                return false;
-            }
-
-            UserInterface.ShowCost("Wall");
-            UserInterface.CreatePopup("Are you sure you want to purchase this?");
-            if (!UserInterface.GetUserConfirm()) { return false; }
-
-            board.UpdateConnection(currentPlayer.position, otherpos.position, "Wall", currentPlayer);
-            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, otherpos.position));
-
-            return true;
 
         }
 
@@ -405,29 +362,6 @@ namespace NEAGame
             board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.getNumber());
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
         }
-
-        public bool purchaseCity()
-        {
-
-            if (!(board.GetNode(currentPlayer.position).status.ToString() == "Village"))
-            { 
-
-                UserInterface.CreatePopup("You cannot place a city here as you do not own a village on this Node");
-                return false;
-                
-            }
-
-            UserInterface.CreatePopup("You are purchasing a City which costs the following:");
-            UserInterface.ShowCost("City");
-            UserInterface.CreatePopup("Are you sure you want to purchase this?");
-            if (!UserInterface.GetUserConfirm()) { return false; }
-
-            board.GetNode(currentPlayer.position).status.UpgradeVillage();
-            currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
-
-            return true;
-        }
-
 
         /// <summary>
         /// Player Movement
@@ -514,18 +448,22 @@ namespace NEAGame
 
     }
 
-    [System.Serializable]
-    public class Building
+    public abstract class Settlement
     {
-        private int id;
-        private string[] statuses = { "Empty", "Village", "City", "Highway Man" };
-        private int occupantID;
+        protected int id { get; set; }
+        protected string[] statuses { get; set; }
+        protected int occupantID { get; set; }
+        public static int convertToVictoryPoints(string status) { return 0;  }
+    }
 
-
+    [System.Serializable]
+    public class Building : Settlement
+    { 
 
         public Building(string i = "Empty", int o = -1)
         {
-            this.id = Array.IndexOf(statuses, i);
+            statuses = new string[] { "Empty", "Village", "City" };
+            id = Array.IndexOf(statuses, i);
             occupantID = o;
 
         }
@@ -550,7 +488,7 @@ namespace NEAGame
         {
             if (occupantID != -1)
             {
-                return $"{statuses[id]} owned by Player {occupant}";
+                return $"{statuses[id]} owned by Player {occupantID}";
             }
             else
             {

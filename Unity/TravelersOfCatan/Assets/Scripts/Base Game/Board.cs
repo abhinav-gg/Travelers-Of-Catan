@@ -14,7 +14,7 @@ namespace NEAGame
 
         public HexagonUnit[] board = new HexagonUnit[19];
         Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
-        // array of nodes and hexagon centers in graph. Fixed length means no need to resize
+
         private Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
         // nested dictionary for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
         // this acts as an adjacency matrix of the graph of nodes but omits all the null values
@@ -71,16 +71,15 @@ namespace NEAGame
                 }
             }
 
-            foreach (Node n in nodes.Values)
+            foreach (Node n1 in nodes.Values)
             {
-                n.RegisterConnections(this);
-                foreach (var con in n.connections)
+                foreach (Node n2 in nodes.Values)
                 {
-                    if (!connections.ContainsKey(n.position))
+                    if (!connections.ContainsKey(n1.position))
                     {
-                        connections.Add(n.position, new Dictionary<Vector3, Connection>());
+                        connections.Add(n1.position, new Dictionary<Vector3, Connection>());
                     }
-                    connections[n.position].Add(con.Key, con.Value);
+                    connections[n1.position].Add(n2.position, new Connection());
                 }
 
             }
@@ -139,6 +138,10 @@ namespace NEAGame
             }
         }
 
+        public Dictionary<Vector3, Dictionary<Vector3, Connection>> GetConnections()
+        {
+            return connections;
+        }
 
         public void UpdateConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
         {

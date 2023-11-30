@@ -131,9 +131,9 @@ public partial class UnityUI
         return null;
     }
 
-    public PlayerButton FindPlayerGameObject(string PlayerName)
+    public PlayerAnimator FindPlayerGameObject(string PlayerName)
     {
-        foreach (var a in FindObjectsOfType<PlayerButton>())
+        foreach (var a in FindObjectsOfType<PlayerAnimator>())
         {
             if (a.player.playerName == PlayerName)
             {
@@ -181,7 +181,7 @@ public partial class UnityUI
 
             Vector3 conPos;
             ConnectionButton GO;
-            foreach (var nodeCon in board.connections)
+            foreach (var nodeCon in board.GetConnections())
             {
                  foreach (var con in nodeCon.Value)
                 {
@@ -205,7 +205,7 @@ public partial class UnityUI
             foreach (Player pl in Interface.game.gamePlayers)
             {
 
-                PlayerButton playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerButton>();
+                PlayerAnimator playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerAnimator>();
                 playUI.player = pl;
                 playUI.gameObject.name = pl.playerName;
                 playUI.transform.position = GetNodeGlobalPos(Interface.game.board.GetNode(pl.position));
@@ -217,9 +217,9 @@ public partial class UnityUI
     }
 
 
-    public PlayerButton GetPlayerGameObject(string PlayerName)
+    public PlayerAnimator GetPlayerGameObject(string PlayerName)
     {
-        foreach (var a in FindObjectsOfType<PlayerButton>())
+        foreach (var a in FindObjectsOfType<PlayerAnimator>())
         {
             if (a.player.playerName == PlayerName)
             {

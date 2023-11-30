@@ -35,9 +35,12 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     void Start()
     {
-        //StartCoroutine(GetNewPlayer(2));
+        game.AddPlayer("TravelersOf");
         game.AddPlayer(name);
-        game.startGame();
+
+        StartCoroutine(GetNewPlayer(1));
+
+        //game.startGame();
     }
 
     // Update is called once per frame
@@ -48,7 +51,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         {
             game.ShowBoard();
         }*/
-        Debug.Log(JsonUtility.ToJson(game));
+        //Debug.Log(JsonUtility.ToJson(game));
 
     }
 
