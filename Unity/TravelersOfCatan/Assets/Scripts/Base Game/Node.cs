@@ -13,7 +13,7 @@ namespace NEAGame
     {
         public Vector3 position;
         public Building status = new Building();
-        public Dictionary<Vector3, Connection> connections = new Dictionary<Vector3, Connection>();
+        //public Dictionary<Vector3, Connection> connections = new Dictionary<Vector3, Connection>();
 
         public Node(int x, int y, int z)
         {
@@ -22,8 +22,7 @@ namespace NEAGame
 
         }
 
-
-        public void RegisterConnections(Board gameBoard)
+        /*public void RegisterConnections(Board gameBoard)
         {
             foreach (Vector3 v in GetNodeNeighbours())
             {
@@ -32,7 +31,7 @@ namespace NEAGame
                     connections.Add(v, new Connection());
                 }
             }
-        }
+        }*/
 
         public IEnumerable<Vector3> GetNodeNeighbours()
         {

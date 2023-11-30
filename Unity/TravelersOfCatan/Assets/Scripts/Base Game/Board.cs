@@ -15,7 +15,7 @@ namespace NEAGame
         public HexagonUnit[] board = new HexagonUnit[19];
         Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
         // array of nodes and hexagon centers in graph. Fixed length means no need to resize
-        public Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
+        private Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
         // nested dictionary for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
         // this acts as an adjacency matrix of the graph of nodes but omits all the null values
 
