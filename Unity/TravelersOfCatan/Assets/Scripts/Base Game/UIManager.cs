@@ -1,7 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
-
+﻿using System;
+using System.Numerics;
 
 namespace NEAGame
 {
@@ -21,6 +19,7 @@ namespace NEAGame
         void LoadGame(string Save);
         void BeginTurn();
         void ShowCost(string ID);
+        void UpdatePlayer(Node otherNode);
     }
 
     public class TerminalUI { }

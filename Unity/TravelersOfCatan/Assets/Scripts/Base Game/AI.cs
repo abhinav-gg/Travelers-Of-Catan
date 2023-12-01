@@ -19,11 +19,11 @@ namespace NEAGame
 
 
 
-        public Vector4 Eval(TravelersOfCatan game)
+        public static int Eval(TravelersOfCatan game)
         {
 
 
-            return new Vector4(0, 0, 0, 0);
+            return 0;
         }
 
         public void Minimax()

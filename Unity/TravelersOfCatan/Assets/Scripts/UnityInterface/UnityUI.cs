@@ -68,12 +68,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         Application.Quit();
     }
 
-
-    void UI.BeginTurn()
-    {
-        BeginTurn();
-    }
-
     IEnumerator GetNewPlayer(int playersLeft)
     {
 
@@ -115,11 +109,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     //    //throw new System.NotImplementedException();
     //}
 
-    void UI.UpdateBoard(Board board)
-    {
-        UpdateBoard(board);
-        //throw new System.NotImplementedException();
-    }
 
     void UI.UpdateBoardConnections(Board board)
     {

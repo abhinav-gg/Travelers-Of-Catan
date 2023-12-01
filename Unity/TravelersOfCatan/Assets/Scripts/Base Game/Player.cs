@@ -48,6 +48,10 @@ namespace NEAGame
             victoryPoints += points;
         }
 
+        public int GetID()
+        {
+            return playerNumber;
+        }
 
         public void addBuilding(Node building)
         {
@@ -102,6 +106,53 @@ namespace NEAGame
 
         }
 
+        /// <summary>
+        /// Used to calculate the wealth of a player for the AI static state evaluation function
+        /// </summary>
+        public float GetWealth()
+        {
+            float wealth = 0;
+            foreach (KeyValuePair<Resource, int> resource in resources)
+            {
+                wealth += resource.Value * 0.5f;
+            }
+            foreach (Node n in buildings)
+            {
+                if (n.status.GetStatus() == "City")
+                {
+                    wealth += 10;
+                }
+                else
+                {
+                    wealth += 5.5f;
+                }
+            }
+            foreach (Connection c in connections)
+            {
+                if (c.GetStatus() == "Road")
+                {
+                    wealth += 2;
+                }
+                else
+                {
+                    wealth += 1.5f;
+                }
+            }
+
+            return wealth;
+        }
+
+        public void upgradeCillage(Node node)
+        {
+            foreach (Node n in buildings)
+            {
+                if (n == node)
+                {
+                    n.status.UpgradeVillage();
+                    addVictoryPoints(TravelersOfCatan.victoryPointConvertor["City"]);
+                }
+            }
+        }
     }
 
 

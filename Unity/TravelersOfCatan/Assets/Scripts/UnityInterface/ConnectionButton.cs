@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using NEAGame;
+using System;
 
 public class ConnectionButton : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class ConnectionButton : MonoBehaviour
     void Start()
     {
         UpdateConnection();
-        btn.onClick.AddListener(UnityUI.Interface.ConnectionButtonPressed);
+        btn.onClick.AddListener(UnityUI.Interface.OnConnectionClick);
     }
 
     // Update is called once per frame
@@ -62,4 +63,18 @@ public class ConnectionButton : MonoBehaviour
 
 
     }
+    public void EnableButton()
+    {
+        btn.gameObject.SetActive(true);
+        btn.transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(btn.gameObject, new Vector3(1, 1, 1), 0.75f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.1f);
+        btn.interactable = true;
+    }
+
+    public void DisableButton()
+    {
+        btn.interactable = false;
+        btn.gameObject.SetActive(false);
+    }
+
 }

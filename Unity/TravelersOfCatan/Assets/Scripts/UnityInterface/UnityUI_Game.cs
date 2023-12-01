@@ -17,6 +17,7 @@ public partial class UnityUI
     public GameObject PlayerPrefab;
     public GameObject PlayerUI;
     public GameObject inventoryPopup;
+    public GameObject shoppingPopup;
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
@@ -40,20 +41,19 @@ public partial class UnityUI
     {
         if (TimerActive)
         {
-            if (!LeanTween.isTweening(Camera.main.gameObject))
-                LeanTween.move(Camera.main.gameObject, GetCurrentPlayerGlobalPos() + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine);
-            
+         
             Timer -= Time.deltaTime;
         }
     }
 
-    public void BeginTurn()
+    void UI.BeginTurn()
     {
         overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
         overlay.EndTurnInput.onClick.AddListener(EndTurn);
         overlay.MoveInput.onClick.AddListener(OnPlayerMove);
         overlay.InventoryInput.onClick.AddListener(OpenInventory);
-        overlay.PlayerName.text = Interface.game.GetCurrentPlayerName();
+        overlay.ShopInput.onClick.AddListener(OpenShop);
+        overlay.PlayerName.text = Interface.game.GetCurrentPlayer().playerName;
 
 
         Timer = 300.0f; // ASSIGN TO CONSTANT
@@ -61,13 +61,11 @@ public partial class UnityUI
         StartCoroutine(WaitForTurnToEnd());
 
         // set camera position to player position on baord!
-        Camera.main.transform.position = GetCurrentPlayerGlobalPos() + new Vector3(0, 0, -10);
-    }
-
-    public void ConnectionButtonPressed()
-    {
+        LeanTween.move(Camera.main.gameObject, GetCurrentPlayerGlobalPos() + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine);
 
     }
+
+
 
     IEnumerator WaitForTurnToEnd()
     {
@@ -80,13 +78,14 @@ public partial class UnityUI
 
     public void OnPlayerMove()
     {
+        StopAllPlayerCoroutines();
         //anim.MoveButtonPlay();
-        Interface.game.attemptPlayerMove();
+        game.attemptPlayerMove();
     }
 
     public Vector3 GetCurrentPlayerGlobalPos()
     {
-        return FindPlayerGameObject(Interface.game.GetCurrentPlayerName()).transform.position;
+        return FindPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).transform.position;
     }
 
     public string GetTime()
@@ -131,11 +130,11 @@ public partial class UnityUI
         return null;
     }
 
-    public PlayerAnimator FindPlayerGameObject(string PlayerName)
+    public PlayerAnimator FindPlayerGameObject(int PlayerID)
     {
         foreach (var a in FindObjectsOfType<PlayerAnimator>())
         {
-            if (a.player.playerName == PlayerName)
+            if (a.player.GetID() == PlayerID)
             {
                 return a;
             }
@@ -144,7 +143,7 @@ public partial class UnityUI
     }
 
 
-    internal void UpdateBoard(Board board)
+    void UI.UpdateBoard(Board board)
     {
 
         if (!hasInitializedBoard)
@@ -217,11 +216,11 @@ public partial class UnityUI
     }
 
 
-    public PlayerAnimator GetPlayerGameObject(string PlayerName)
+    public PlayerAnimator GetPlayerGameObject(int playerID)
     {
         foreach (var a in FindObjectsOfType<PlayerAnimator>())
         {
-            if (a.player.playerName == PlayerName)
+            if (a.player.GetID() == playerID)
             {
                 return a;
             }
@@ -229,7 +228,7 @@ public partial class UnityUI
         return null;
     }
 
-    public void UpdateConnection(Vector3 n1, Vector3 n2, Connection connection)
+    public void UpdateConnection(Vector3 n1, Vector3 n2, Connection connection) // set UI.
     {
         ConnectionButton conui = FindConnectionGameObject(n1, n2);
         conui.connection = connection;
@@ -325,7 +324,16 @@ public partial class UnityUI
         return null;
     }
 
-    void UI.GetUserNodeChoice(Node[] options, Action<Node> method)
+
+    public void OpenShop()
+    {
+        StopAllPlayerCoroutines();
+        Debug.Log(game.canPurchaseRoad());
+        game.tryPurchaseRoad();
+    }
+
+
+    void UI.GetUserNodeChoice(Node[] options, Action<Node> callback)
     {
 
         // Add LeanTween Animation to the selected nodes here!
@@ -336,18 +344,18 @@ public partial class UnityUI
             NodeButton node = FindNodeGameObject(ConvertVector(choice.position));
             node.EnableButton();
         }
-        StartCoroutine(WaitForNodeChoice(method));
+        StartCoroutine(WaitForNodeChoice(callback));
     }
 
-    IEnumerator WaitForNodeChoice(Action<Node> method) // pass in function for moving vs buying
+    IEnumerator WaitForNodeChoice(Action<Node> callback) // pass in function for moving vs buying
     {
 
         while (SelectedNode is null)
         {
             yield return new WaitForSeconds(0.01f);
         }
-        method(SelectedNode.node);
-        LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayerName()).gameObject, SelectedNode.transform.position, 0.5f).setEase(LeanTweenType.easeInOutElastic);
+        callback(SelectedNode.node);
+        SelectedNode = null;
     }
 
     public void OnNodeClick(NodeButton node)
@@ -359,9 +367,42 @@ public partial class UnityUI
         }
     }
 
+    public void OnConnectionClick()
+    {
+
+    }
+
+
+    void UI.UpdatePlayer(Node otherNode)
+    {
+        Vector3 pos = GetNodeGlobalPos(otherNode);
+        LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
+        LeanTween.move(Camera.main.gameObject, pos + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
+
+    }
+
+    public void StopAllPlayerCoroutines()
+    {
+        foreach (NodeButton n in nodes)
+        {
+            n.DisableButton();
+        }
+        foreach (ConnectionButton n in connections)
+        {
+            n.DisableButton();
+        }
+        StopCoroutine(WaitForNodeChoice(null));
+        //StopCoroutine();
+    }
+
+    /// <summary>
+    /// Inventory handler
+    /// </summary>
+
 
     public void OpenInventory()
     {
+        StopAllPlayerCoroutines();
         StartCoroutine(DisplayInventory());
     }
 
@@ -369,7 +410,7 @@ public partial class UnityUI
     IEnumerator DisplayInventory()
     {
         InventoryPopup inv = Instantiate(inventoryPopup).GetComponent<InventoryPopup>();
-        foreach (KeyValuePair<Resource, int> entry in Interface.game.GetCurrentPlayerInventory())
+        foreach (KeyValuePair<Resource, int> entry in Interface.game.GetCurrentPlayer().getResources())
         {
             inv.Display(entry.Key.ToString(), entry.Value);
             yield return new WaitForSeconds(0.1f);
