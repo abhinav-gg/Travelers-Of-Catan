@@ -15,6 +15,8 @@ public class PlayerUIOverlay : MonoBehaviour
     public Button EndTurnInput;
     public TextMeshProUGUI TimerText;
     public TextMeshProUGUI PlayerName;
+    public TextMeshProUGUI PlayerScore;
+    public TextMeshProUGUI PlayerMoves;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +30,12 @@ public class PlayerUIOverlay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        // Moves these to main GUi class
+
         TimerText.text = UnityUI.Interface.GetTime();
+        PlayerMoves.text = UnityUI.Interface.game.GetCurrentPlayer().getMovesLeft().ToString();
+        PlayerScore.text = UnityUI.Interface.game.GetCurrentPlayer().getVictoryPoints().ToString();
     }
 
 

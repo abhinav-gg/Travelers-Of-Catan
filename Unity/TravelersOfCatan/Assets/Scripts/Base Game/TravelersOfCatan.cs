@@ -47,7 +47,7 @@ namespace NEAGame
 
 
 
-        private int WinningVictoryPoints = 30; // allow this to be passed into the constructor
+        private int WinningVictoryPoints = 1; // allow this to be passed into the constructor
         private int StartingResourceCount = 10;
 
         private int turn = 0;
@@ -56,6 +56,8 @@ namespace NEAGame
         public List<int> victoryPoints = new List<int>();
         public List<Player> gamePlayers = new List<Player>();
         public Board board;
+
+        private bool WinnerFound = false;
 
 
         public TravelersOfCatan(UI ui)
@@ -119,7 +121,7 @@ namespace NEAGame
             }
 
 
-            UserInterface.UpdateBoard(board);
+            UserInterface.DisplayBoard(board);
 
             StartTurn();
             
@@ -150,6 +152,8 @@ namespace NEAGame
         }
         public void EndTurn()
         {
+            if (WinnerFound) return;
+
             turn++;
             if (turn >= MAXplayer)
             {
@@ -167,6 +171,7 @@ namespace NEAGame
 
                     UserInterface.CreatePopup("Player " + p.playerName + " has won the game");
                     UserInterface.HandleWinner(p);
+                    WinnerFound = true;
                     return;
                 }
             }
@@ -318,6 +323,7 @@ namespace NEAGame
             board.UpdateConnection(currentPlayer.position, other.position, "Road", currentPlayer);
             ChargePlayer("Road");
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
+            UserInterface.UpdateConnection(other);
         }
 
         public void purchaseWall(Node other)
@@ -345,6 +351,11 @@ namespace NEAGame
 
         public void attemptPlayerMove()
         {
+            if (currentPlayer.moves <= 0)
+            {
+                UserInterface.CreatePopup("You have no moves left");
+                return;
+            }
             Connection con;
             Node target;
             List<Node> viableLocations = new List<Node>();

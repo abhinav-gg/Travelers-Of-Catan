@@ -10,7 +10,7 @@ using System.Collections;
 namespace NEAGame
 {
 
-    [System.Serializable]
+    [Serializable]
     public class Connection : Settlement
     {   
 

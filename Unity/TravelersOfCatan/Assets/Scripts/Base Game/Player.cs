@@ -56,7 +56,7 @@ namespace NEAGame
         public void addBuilding(Node building)
         {
             buildings.Add(building);
-            //addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
+            addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
 
         }
 
@@ -68,7 +68,7 @@ namespace NEAGame
         public void addConnection(Connection connection)
         {
             connections.Add(connection);
-            //addVictoryPoints(TravelersOfCatan.victoryPointConvertor[connection.GetStatus()]);
+            addVictoryPoints(TravelersOfCatan.victoryPointConvertor[connection.GetStatus()]);
         }
 
         public int getVictoryPoints()
@@ -81,6 +81,10 @@ namespace NEAGame
             return playerNumber;
         }
 
+        public int getMovesLeft()
+        {
+            return moves;
+        }
         public void addResource(Resource resource, int amount = 1)
         {
             resources[resource] += amount;

@@ -30,7 +30,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         
         DontDestroyOnLoad(gameObject);
         game = new TravelersOfCatan(Interface);
-        Debug.Log(JsonUtility.ToJson(game.board));
+
     }
 
     void Start()
@@ -110,15 +110,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     //}
 
 
-    void UI.UpdateBoardConnections(Board board)
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    void UI.HandleWinner(Player winner)
-    {
-        //throw new System.NotImplementedException();
-    }
+    
 
     void UI.SaveGame()
     {
@@ -130,8 +122,5 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         //throw new System.NotImplementedException();
     }
 
-    void UI.ShowCost(string ID)
-    {
-        //throw new System.NotImplementedException();
-    }
+
 }

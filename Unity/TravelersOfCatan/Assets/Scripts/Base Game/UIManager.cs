@@ -11,15 +11,15 @@ namespace NEAGame
         void GetUserNodeChoice(Node[] options, Action<Node> method);
         bool GetUserConfirm();
         void CreatePopup(string message);
-        //void DisplayPlayers(List<Player> players);
-        void UpdateBoard(Board board);
-        void UpdateBoardConnections(Board board);
+        void DisplayBoard(Board board);
         void HandleWinner(Player winner);
         void SaveGame();
         void LoadGame(string Save);
         void BeginTurn();
-        void ShowCost(string ID);
         void UpdatePlayer(Node otherNode);
+        void UpdateConnection(Node otherNode);
+        void UpdateSettlement(Node otherNode);
+
     }
 
     public class TerminalUI { }

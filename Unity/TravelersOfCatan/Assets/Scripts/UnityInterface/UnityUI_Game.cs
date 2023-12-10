@@ -24,14 +24,15 @@ public partial class UnityUI
     public Tilemap tilemap;
 
     public List<NodeButton> nodes = new List<NodeButton>();
-    public List<ConnectionButton> connections = new List<ConnectionButton>();
+    public List<ConnectionAnimator> connections = new List<ConnectionAnimator>();
 
     bool hasInitializedBoard = false;
 
+    public const float MAX_TIME = 90f;
     public float Timer = 0.0f;
     public bool TimerActive = false;
 
-
+    private IEnumerator coroutine;
 
     PlayerUIOverlay overlay;
     NodeButton SelectedNode;
@@ -56,7 +57,8 @@ public partial class UnityUI
         overlay.PlayerName.text = Interface.game.GetCurrentPlayer().playerName;
 
 
-        Timer = 300.0f; // ASSIGN TO CONSTANT
+
+        Timer = MAX_TIME; // ASSIGN TO CONSTANT
         TimerActive = true;
         StartCoroutine(WaitForTurnToEnd());
 
@@ -85,7 +87,7 @@ public partial class UnityUI
 
     public Vector3 GetCurrentPlayerGlobalPos()
     {
-        return FindPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).transform.position;
+        return GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).transform.position;
     }
 
     public string GetTime()
@@ -100,10 +102,13 @@ public partial class UnityUI
     public void EndTurn()
     {
 
-        foreach (NodeButton n in nodes)
-        {
-            n.DisableButton();
-        }
+        StopAllPlayerCoroutines();
+
+        // Close all GUIS
+        FindAnyObjectByType<InventoryPopup>()?.CloseGUI();
+        // FindAnyObjectByType<ShoppingPopup>()?.CloseGUI();
+
+
         // anim.EndTurnButtonPlay();
         LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
         LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => { 
@@ -116,13 +121,12 @@ public partial class UnityUI
 
     }
 
-    public ConnectionButton FindConnectionGameObject(Vector3 v1, Vector3 v2)
+    public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
     {
-        List<Vector3> list = new List<Vector3>();
-        foreach (var con in connections)
+        
+        foreach (ConnectionAnimator con in connections)
         {
-            list = (from node in con.nodes select node.NodePos).ToList<Vector3>();
-            if (list.Contains(v1) && list.Contains(v2))
+            if (con.connection == game.board.GetConnection(v1, v2))
             {
                 return con;
             }
@@ -130,20 +134,7 @@ public partial class UnityUI
         return null;
     }
 
-    public PlayerAnimator FindPlayerGameObject(int PlayerID)
-    {
-        foreach (var a in FindObjectsOfType<PlayerAnimator>())
-        {
-            if (a.player.GetID() == PlayerID)
-            {
-                return a;
-            }
-        }
-        return null;
-    }
-
-
-    void UI.UpdateBoard(Board board)
+    void UI.DisplayBoard(Board board)
     {
 
         if (!hasInitializedBoard)
@@ -159,9 +150,7 @@ public partial class UnityUI
                 gridPos = CubicToOddRow(entry.Key);
                 tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
 
-
             }
-            
             
             foreach (Node n in board.GetAllNodes())
             {
@@ -178,29 +167,6 @@ public partial class UnityUI
                 nodes.Add(nodeui);
             }
 
-            Vector3 conPos;
-            ConnectionButton GO;
-            foreach (var nodeCon in board.GetConnections())
-            {
-                 foreach (var con in nodeCon.Value)
-                {
-                    GO = FindConnectionGameObject(ConvertVector(nodeCon.Key), ConvertVector(con.Key));
-                    conPos = GetConnectionGlobalPos(nodeCon.Key, con.Key);
-                    if (GO is null)
-                    {
-                        ConnectionButton conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionButton>();
-                        conui.connection = con.Value;
-                        conui.transform.position = conPos;
-                        conui.nodes = new NodeButton[2];
-                        conui.nodes[0] = FindNodeGameObject(ConvertVector(nodeCon.Key));
-                        conui.nodes[1] = FindNodeGameObject(ConvertVector(con.Key));
-                        connections.Add(conui);
-
-                    }
-
-                }  
-            }
-
             foreach (Player pl in Interface.game.gamePlayers)
             {
 
@@ -215,9 +181,12 @@ public partial class UnityUI
 
     }
 
-
-    public PlayerAnimator GetPlayerGameObject(int playerID)
+    public PlayerAnimator GetPlayerGameObject(int playerID=-1)
     {
+        if (playerID == -1)
+        {
+            playerID = game.GetCurrentPlayer().GetID();
+        }
         foreach (var a in FindObjectsOfType<PlayerAnimator>())
         {
             if (a.player.GetID() == playerID)
@@ -226,13 +195,6 @@ public partial class UnityUI
             }
         }
         return null;
-    }
-
-    public void UpdateConnection(Vector3 n1, Vector3 n2, Connection connection) // set UI.
-    {
-        ConnectionButton conui = FindConnectionGameObject(n1, n2);
-        conui.connection = connection;
-        conui.UpdateConnection();
     }
 
     public Vector3 GetConnectionGlobalPos(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
@@ -290,8 +252,6 @@ public partial class UnityUI
         return gridLayout.CellToWorld(Pos);
     }
 
-
-
     public System.Numerics.Vector3 ConvertVector(Vector3 vec)
     {
         return new System.Numerics.Vector3(vec.x, vec.y, vec.z);
@@ -325,14 +285,6 @@ public partial class UnityUI
     }
 
 
-    public void OpenShop()
-    {
-        StopAllPlayerCoroutines();
-        Debug.Log(game.canPurchaseRoad());
-        game.tryPurchaseRoad();
-    }
-
-
     void UI.GetUserNodeChoice(Node[] options, Action<Node> callback)
     {
 
@@ -344,7 +296,8 @@ public partial class UnityUI
             NodeButton node = FindNodeGameObject(ConvertVector(choice.position));
             node.EnableButton();
         }
-        StartCoroutine(WaitForNodeChoice(callback));
+        coroutine = WaitForNodeChoice(callback);
+        StartCoroutine(coroutine);
     }
 
     IEnumerator WaitForNodeChoice(Action<Node> callback) // pass in function for moving vs buying
@@ -381,18 +334,41 @@ public partial class UnityUI
 
     }
 
+
+    void UI.UpdateConnection(Node otherNode)
+    {
+        var x = game.GetCurrentPlayer().position;
+        var y = otherNode.position;
+        ConnectionAnimator conui = FindConnectionGameObject(x, y);
+        if (conui is null)
+        {
+            conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
+            conui.connection = game.board.GetConnection(x, y);
+            conui.transform.position = GetConnectionGlobalPos(x, y);
+            conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
+        }
+        conui.UpdateDisplay();
+        //conui.UpdateConnection();
+    }
+
+
+    void UI.UpdateSettlement(Node otherNode)
+    {
+        
+    }
+
     public void StopAllPlayerCoroutines()
     {
         foreach (NodeButton n in nodes)
         {
             n.DisableButton();
         }
-        foreach (ConnectionButton n in connections)
+
+        if (coroutine != null)
         {
-            n.DisableButton();
+            StopCoroutine(coroutine);
         }
-        StopCoroutine(WaitForNodeChoice(null));
-        //StopCoroutine();
+        
     }
 
     /// <summary>
@@ -415,6 +391,28 @@ public partial class UnityUI
             inv.Display(entry.Key.ToString(), entry.Value);
             yield return new WaitForSeconds(0.1f);
         }
+
+    }
+
+
+    /// <summary>
+    /// Shopping handler
+    /// </summary
+
+    public void OpenShop()
+    {
+        StopAllPlayerCoroutines();
+        game.tryPurchaseRoad();
+    }
+
+
+    void UI.HandleWinner(Player winner)
+    {
+        EndTurn();
+
+        // Show winner screen
+
+        
 
     }
 
