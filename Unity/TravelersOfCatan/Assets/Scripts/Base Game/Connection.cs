@@ -66,7 +66,7 @@ namespace NEAGame
             {
                 return int.MaxValue;
             }
-            return int.MinValue; // should never happen
+            return -1; // should never happen
         }
 
 

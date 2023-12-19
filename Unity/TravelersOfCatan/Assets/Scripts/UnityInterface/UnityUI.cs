@@ -29,18 +29,36 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
             Interface = this;
         
         DontDestroyOnLoad(gameObject);
-        game = new TravelersOfCatan(Interface);
 
     }
 
     void Start()
     {
-        game.AddPlayer("TravelersOf");
-        game.AddPlayer(name);
+        SceneManager.sceneLoaded += NewScene;
+    }   
 
-        StartCoroutine(GetNewPlayer(1));
+    void NewScene(Scene scene, LoadSceneMode mode)
+    {
+        
+        if (scene.name == "Game")
+        {
+            game = new TravelersOfCatan(Interface, 130, 40);
+            game.AddPlayer("TravelersOf");
+            game.AddPlayer(name);
 
-        //game.startGame();
+            
+            SetupGameScene();
+
+            game.startGame();
+            
+        }
+    }
+
+
+    void OnDisable()
+    {
+        Debug.Log("OnDisable");
+        SceneManager.sceneLoaded -= NewScene;
     }
 
     // Update is called once per frame
@@ -53,6 +71,11 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         }*/
         //Debug.Log(JsonUtility.ToJson(game));
 
+    }
+
+    public void StartGameButton()
+    {
+        SceneManager.LoadScene("Game");
     }
 
 

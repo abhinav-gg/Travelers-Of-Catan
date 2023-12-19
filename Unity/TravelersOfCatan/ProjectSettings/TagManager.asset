@@ -7,6 +7,7 @@ TagManager:
   - NodeParent
   - ConnectionParent
   - PlayerParent
+  - Board
   layers:
   - Default
   - TransparentFX

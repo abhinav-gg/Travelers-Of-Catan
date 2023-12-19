@@ -67,7 +67,12 @@ public partial class UnityUI
 
     }
 
-
+    void SetupGameScene()
+    {
+        gridLayout = FindObjectOfType<GridLayout>();
+        tilemap = FindObjectOfType<Tilemap>();
+            
+    }
 
     IEnumerator WaitForTurnToEnd()
     {
@@ -159,11 +164,8 @@ public partial class UnityUI
                 nodeui.node = n;
                 nodeui.NodePos = ConvertVector(n.position);
                 nodeui.transform.position = GetNodeGlobalPos(n);
-                if (n.status.GetStatus() == "City")
-                {
-                    nodeui.SetVillage();
-                    nodeui.UpgradeVillage();
-                }
+                nodeui.UpdateSettlement();
+                
                 nodes.Add(nodeui);
             }
 
@@ -354,7 +356,9 @@ public partial class UnityUI
 
     void UI.UpdateSettlement(Node otherNode)
     {
-        
+        var x = otherNode.position;
+        NodeButton nodeui = FindNodeGameObject(ConvertVector(x)); // no need to instantiate as the nodes were made on startup
+        nodeui.UpdateSettlement();
     }
 
     public void StopAllPlayerCoroutines()
@@ -402,7 +406,41 @@ public partial class UnityUI
     public void OpenShop()
     {
         StopAllPlayerCoroutines();
-        game.tryPurchaseRoad();
+
+        StartCoroutine(DisplayShop());
+
+
+
+    }
+
+
+    public void AttemptPurchase(string name)
+    {
+        switch(name)
+        {
+            case "Road":
+                game.tryPurchaseRoad();
+                break;
+            case "Wall":
+                game.tryPurchaseWall();
+                break;
+            case "Village":
+                game.tryPurchaseVillage();
+                break;
+            case "City":
+                game.tryPurchaseCity();
+                break;
+            default:
+                Debug.LogError("Invalid purchase name");
+                break;
+        }
+    }
+
+    IEnumerator DisplayShop()
+    {
+        ShopOverlay sv = Instantiate(shoppingPopup).GetComponent<ShopOverlay>();
+        yield return new WaitForSeconds(0.1f);
+
     }
 
 

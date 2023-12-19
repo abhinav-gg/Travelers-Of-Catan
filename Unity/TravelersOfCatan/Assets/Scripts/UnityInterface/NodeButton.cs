@@ -53,23 +53,27 @@ public class NodeButton : MonoBehaviour
     }
 
 
-    public void SetVillage()
+    public void UpdateSettlement()
     {
 
         img.enabled = true;
-        img.texture = village;
-    }
-
-    public void UpgradeVillage()
-    {
-        if (img.texture == village)
+        
+        if (node.status.GetStatus() == "Village")
+        {
+            img.texture = village;
+        }
+        else if (node.status.GetStatus() == "City")
         {
             img.texture = city;
         }
         else
         {
-            Debug.LogError("this should not be allowed");
+            img.enabled = false;
         }
+        var sc = img.transform.localScale;
+        img.transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(img.gameObject, sc, 0.75f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.5f);
     }
+
 
 }

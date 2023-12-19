@@ -20,7 +20,6 @@ public class ConnectionAnimator : MonoBehaviour
     {
 
         // Animate images based on the direction of this connection so that they are always facing the right way
-        Debug.Log(n1); Debug.Log(n2);
 
         if (n1.y == n2.y && n1.z == n2.z)
         {

@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 530605235}
   m_Layer: 0
   m_Name: Board
-  m_TagString: Untagged
+  m_TagString: Board
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -529,93 +529,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1496674234
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1496674235}
-  - component: {fileID: 1496674236}
-  m_Layer: 0
-  m_Name: Catan
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1496674235
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1496674234}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.0323803, y: 3.8996065, z: -0.031763427}
-  m_LocalScale: {x: 14.037714, y: 14.037714, z: 14.037714}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1496674236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1496674234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7293d32f28ae81a45bd90fce006e61e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NameGetOverlay: {fileID: 7016893585919283161, guid: b251f8400da97ab4fb56cb1b80be244e, type: 3}
-  game:
-    victoryPoints: 
-    gamePlayers: []
-    board:
-      board:
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-  NodePrefab: {fileID: 955635130051763877, guid: b09d4fe1c57ec05408bc24dcd97fcc48, type: 3}
-  ConnectionPrefab: {fileID: 582317903075557195, guid: 8f21b5cdb32863e4594fa0921e6ccb09, type: 3}
-  PlayerPrefab: {fileID: 6867297139346083432, guid: 293c13eeed8e74d4c93395e6b0dd32da, type: 3}
-  PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
-  inventoryPopup: {fileID: 2111445291719360313, guid: 643f130cbe33cff49bdab615e3348778, type: 3}
-  resources:
-  - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
-  - {fileID: 11400000, guid: d9cdd21a55462d24cbed8f4e1d3c6624, type: 2}
-  - {fileID: 11400000, guid: 95f2ad4aff2d2f040bb4877644c3d001, type: 2}
-  - {fileID: 11400000, guid: 1ddbf1124b0b7ec44a6bea28343bf847, type: 2}
-  - {fileID: 11400000, guid: 8d3fb1b1f7e333e44b1d122388d17a28, type: 2}
-  - {fileID: 11400000, guid: 2369ff1a4ad7eeb459ad10f202442628, type: 2}
-  gridLayout: {fileID: 530605235}
-  tilemap: {fileID: 1780909974}
-  nodes: []
-  connections: []
-  Timer: 0
-  TimerActive: 0
 --- !u!1 &1680080577
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,7 +665,7 @@ GameObject:
   - component: {fileID: 1780909973}
   m_Layer: 0
   m_Name: Tilemap
-  m_TagString: Untagged
+  m_TagString: Board
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

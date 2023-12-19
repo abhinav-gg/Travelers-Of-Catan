@@ -29,10 +29,10 @@ namespace NEAGame
 
         private static readonly Dictionary<string, Dictionary<Resource, int>> purchaseCost = new Dictionary<string, Dictionary<Resource, int>>()
             {
-                {"Road", new Dictionary<Resource, int>()     { { new Resource("Wood"), 1 }, { new Resource(2), 1 }, { new Resource(3), 0 }, { new Resource(4), 1 }, { new Resource(5), 0 } } },
-                {"Wall", new Dictionary<Resource, int>()     { { new Resource("Wood"), 0 }, { new Resource(2), 5 }, { new Resource(3), 0 }, { new Resource(4), 0 }, { new Resource(5), 0 } } },
-                {"Village", new Dictionary<Resource, int>()  { { new Resource("Wood"), 3 }, { new Resource(2), 1 }, { new Resource(3), 3 }, { new Resource(4), 3 }, { new Resource(5), 2 } } },
-                {"City", new Dictionary<Resource, int>()     { { new Resource("Wood"), 1 }, { new Resource(2), 3 }, { new Resource(3), 1 }, { new Resource(4), 0 }, { new Resource(5), 4 } } }
+                {"Road", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 1 }, { new Resource(3), 0 }, { new Resource(4), 1 }, { new Resource(5), 0 } } },
+                {"Wall", new Dictionary<Resource, int>()     { { new Resource(1), 0 }, { new Resource(2), 5 }, { new Resource(3), 0 }, { new Resource(4), 0 }, { new Resource(5), 0 } } },
+                {"Village", new Dictionary<Resource, int>()  { { new Resource(1), 3 }, { new Resource(2), 1 }, { new Resource(3), 3 }, { new Resource(4), 3 }, { new Resource(5), 2 } } },
+                {"City", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 3 }, { new Resource(3), 1 }, { new Resource(4), 0 }, { new Resource(5), 4 } } }
             };
 
         private static readonly Vector3[] StartingCoords = new Vector3[] {
@@ -47,8 +47,8 @@ namespace NEAGame
 
 
 
-        private int WinningVictoryPoints = 1; // allow this to be passed into the constructor
-        private int StartingResourceCount = 10;
+        private readonly int WinningVictoryPoints; // allow this to be passed into the constructor
+        private readonly int StartingResourceCount;
 
         private int turn = 0;
         private int MAXplayer = 0;
@@ -60,10 +60,12 @@ namespace NEAGame
         private bool WinnerFound = false;
 
 
-        public TravelersOfCatan(UI ui)
+        public TravelersOfCatan(UI ui, int win, int start)
         {
 
             UserInterface = ui;
+            WinningVictoryPoints = win;
+            StartingResourceCount = start;
 
         }
 
@@ -201,6 +203,22 @@ namespace NEAGame
                 }
             }
 
+            foreach (Node n in currentPlayer.GetBuildings())
+            {
+                if (n.status.GetStatus() == "City")
+                {
+                    foreach (Vector3 u in n.GetHexNeighbours())
+                    {
+                        if (board.GetHexAtPosition(u) != null)
+                        {
+                            if (board.GetHexAtPosition(u).resource.ToString() == "Empty") continue;
+                            currentPlayer.addResource(board.GetHexAtPosition(u).resource);
+                        }
+                    }
+                }
+            }   
+
+
         }
 
 
@@ -221,6 +239,18 @@ namespace NEAGame
             CheckWinner();
 
         }
+        
+        public Dictionary<Resource, int> GetDifference(string structure) // can be used in the UI to show the player what they need to buy
+        {
+            Dictionary<Resource, int> res = new Dictionary<Resource, int>();
+            Dictionary<Resource, int> diff = GetCostOfUpgrade(structure);
+            foreach (var entry in diff)
+            {
+                res.Add(entry.Key, Math.Min(entry.Value, currentPlayer.getResources()[entry.Key] - entry.Value));
+            }
+
+            return res;
+        }
 
         public bool CheckCosts(string structure)
         {
@@ -233,40 +263,40 @@ namespace NEAGame
                     canAfford = false;
                 }
             }
-            if (!canAfford)
-            {
-                UserInterface.CreatePopup("You cannot afford this purchase");
-            }
             return canAfford;
         }
 
-        public Node[] canPurchaseRoad()
+        public void tryPurchaseRoad()
         {
 
-            if (!CheckCosts("Road")) return new Node[0];
+            if (!CheckCosts("Road"))
+            {
+                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
+                return;
+            }
 
 
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
             bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.getNumber(); // player must be standing on their own settlement to build a road
-            if (!canconnect)
-            {
-                UserInterface.CreatePopup("You must be standing on your own settlement to build a road");
-                return new Node[0];
-            }
+            
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours() )
             {
                 if (board.GetNode(vOther) == null) continue; // this is a null node (out of bounds
                 
                 Connection con = board.GetConnection(currentPlayer.position, vOther);
                 otherPos = board.GetNode(vOther);
-                if (con.GetOccupant() > 0)
+                if (con.GetStatus() != "Empty")
                 {
                     continue; // can not build a road on existing connections of any sort
                 }
-                else if ((otherPos.status.GetOccupant() != currentPlayer.getNumber()) && (otherPos.status.GetOccupant() > 0))
+                else if ((otherPos.status.GetOccupant() != currentPlayer.getNumber()) && (otherPos.status.GetStatus() != "Empty"))
                 {
                     continue; // The enemy controls the settlement at the end of this road
+                }
+                else if (!canconnect && (otherPos.status.GetOccupant() != currentPlayer.getNumber()))
+                {
+                    continue; // player must be connecting to their own settlement
                 }
                 else
                 {
@@ -275,45 +305,125 @@ namespace NEAGame
 
             }
 
-            return viableLocations.ToArray();           
-
+            UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseRoad);
+        
+        
         }
-
-        public void tryPurchaseRoad()
-        {
-            UserInterface.GetUserNodeChoice(canPurchaseRoad(), purchaseRoad);
-        } // these functions will be needed as a canPurchase func is mandatory for the UI
-
-        public bool canPurchaseVillage()
+        public void tryPurchaseWall()
         {
 
-            if (!CheckCosts("Village")) return false;
-
-
-            if (!board.GetNode(currentPlayer.position).isEmpty())
+            if (!CheckCosts("Wall"))
             {
-                UserInterface.CreatePopup("You cannot place a village here as there is already an establishment on this Node");
-                return false;
+                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
+                return;
             }
 
-            bool isConnected = false;
-            foreach (Vector3 nPos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
+
+            List<Node> viableLocations = new List<Node>();
+            Node otherPos;
+            bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.getNumber(); // player must be standing on their own settlement to build a road
+
+            foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
-                Connection con = board.GetConnection(currentPlayer.position, nPos);
-                if (con.GetOccupant() == currentPlayer.getNumber() && con.GetStatus() == "Road")
+                if (board.GetNode(vOther) == null) continue; // this is a null node (out of bounds
+
+                Connection con = board.GetConnection(currentPlayer.position, vOther);
+                otherPos = board.GetNode(vOther);
+                if (con.GetStatus() != "Empty")
                 {
-                    isConnected = true;
+                    continue; // can not build a road on existing connections of any sort
+                }
+                else
+                {
+                    viableLocations.Add(otherPos);
                 }
 
             }
-            if (!isConnected)
-            {
 
-                UserInterface.CreatePopup("You cannot place a village here as there is no road connecting to this Node");
-                return false;
+            UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseWall);
+
+
+        }
+
+        public void tryPurchaseVillage()
+        {
+
+            if (!CheckCosts("Village"))
+            {
+                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
+                return;
             }
 
-            return true;
+
+            Node otherPos;
+            Node current = board.GetNode(currentPlayer.position);
+            if (current.status.GetStatus() != "Empty")
+            {
+                UserInterface.CreatePopup("You can not build a settlement on an existing settlement");
+                return;
+            }
+
+
+            bool DistanceRule = true;
+            bool isConnecting = false;
+            
+            foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours())
+            {
+                if (board.GetNode(vOther) == null) continue; // this is a null node (out of bounds
+
+                Connection con = board.GetConnection(currentPlayer.position, vOther);
+                otherPos = board.GetNode(vOther);
+
+                if (con.GetOccupant() != currentPlayer.GetID() && con.GetStatus() == "Road")
+                {
+                    // can not build a settlement if an enemy road connects to this node
+                    isConnecting = false;
+                    break;
+                }
+                else if (con.GetOccupant() == currentPlayer.GetID() && con.GetStatus() == "Road") 
+                {
+                    // node is connected to a road owned by the player
+                    isConnecting = true;
+                }
+
+                if (otherPos.status.GetStatus() != "Empty")
+                {
+                    // breaches distance rule but may still be valid
+                    DistanceRule = false;
+                }
+
+
+            }
+            UserInterface.CreatePopup(DistanceRule.ToString());
+            UserInterface.CreatePopup(isConnecting.ToString());
+
+            if (isConnecting || DistanceRule)
+            {
+                purchaseVillage(current);
+            }
+            
+
+        }
+
+        public void tryPurchaseCity()
+        {
+
+            if (!CheckCosts("City"))
+            {
+                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
+                return;
+            }
+
+
+            Node current = board.GetNode(currentPlayer.position);
+            if (current.status.GetStatus() == "Village" && current.status.GetOccupant() == currentPlayer.GetID())
+            {
+                purchaseCity(current);
+            }
+            else 
+            { 
+                UserInterface.CreatePopup("Player must be on their village to upgrade");
+            }
 
         }
 
@@ -329,20 +439,27 @@ namespace NEAGame
         public void purchaseWall(Node other)
         {
             board.UpdateConnection(currentPlayer.position, other.position, "Wall", currentPlayer);
+            ChargePlayer("Wall");
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
+            UserInterface.UpdateConnection(other);
 
         }
 
         public void purchaseVillage(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.getNumber());
+            ChargePlayer("Village");
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
+            UserInterface.UpdateSettlement(otherPos);
         }
 
         public void purchaseCity(Node otherPos)
         {
-            board.GetNode(currentPlayer.position).status = new Building("City", currentPlayer.getNumber());
+            board.GetNode(currentPlayer.position).status.UpgradeVillage();
+            ChargePlayer("City");
             currentPlayer.upgradeCillage(board.GetNode(currentPlayer.position));
+            UserInterface.UpdateSettlement(otherPos);
+
         }
 
         /// <summary>
@@ -383,6 +500,11 @@ namespace NEAGame
                         valid = false ;
                     }
                 }
+                // Check that the player has enough movement points to move to this location
+                if (currentPlayer.moves < con.GetWalkingCost(currentPlayer))
+                {
+                    valid = false;
+                }
 
                 if (valid)
                     viableLocations.Add(target);
@@ -401,8 +523,8 @@ namespace NEAGame
 
         private void MovePlayer(Node otherpos)
         {
+            currentPlayer.moves -= board.GetConnection(currentPlayer.position, otherpos.position).GetWalkingCost(currentPlayer); 
             currentPlayer.position = otherpos.position;
-            currentPlayer.moves -= 1; // update to accounts for travelling costs
 
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
 
@@ -502,7 +624,7 @@ namespace NEAGame
     [System.Serializable]
     public class Resource
     {
-        public static readonly string[] resources = { "Empty", "Wood", "Brick", "Wheat", "Sheep", "Ore" };
+        public static readonly string[] resources = { "Empty", "Brick", "Sheep", "Ore", "Wood", "Wheat" };
         private int id;
         private static readonly Random rng = new Random();
 

@@ -29,7 +29,7 @@ namespace NEAGame
         /// </summary>
 
         protected int playerNumber; // useful as a UID for the player allowing the same name in testing
-        public string playerName;
+        public readonly string playerName;
 
         public int moves;
         public Vector3 position;
@@ -58,6 +58,10 @@ namespace NEAGame
             buildings.Add(building);
             addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
 
+        }
+        public List<Node> GetBuildings()
+        {
+            return buildings;
         }
 
         public Node GetCapital()
