@@ -42,23 +42,16 @@ namespace NEAGame
             new Vector3(-2,  2,  2) 
         };
 
-        public static UI UserInterface;
+        public UI UserInterface;
 
-
-
-
-        private readonly int WinningVictoryPoints; // allow this to be passed into the constructor
-        private readonly int StartingResourceCount;
+        public readonly int WinningVictoryPoints; // allow this to be passed into the constructor
+        public readonly int StartingResourceCount;
 
         private int turn = 0;
-        private int MAXplayer = 0;
+        //private int MAXplayer = 0;
         private Player currentPlayer;
-        public List<int> victoryPoints = new List<int>();
         public List<Player> gamePlayers = new List<Player>();
         public Board board;
-
-        private bool WinnerFound = false;
-
 
         public TravelersOfCatan(UI ui, int win, int start)
         {
@@ -72,18 +65,14 @@ namespace NEAGame
 
         public void AddPlayer(string Name)
         {
-            MAXplayer++;
-            victoryPoints.Add(0);
             int i = gamePlayers.Count;
             gamePlayers.Add(new Player(i + 1, Name, StartingCoords[i]));
         }
 
         public void AddAI()
         {
-            MAXplayer++;
-            victoryPoints.Add(0);
             int i = gamePlayers.Count;
-            gamePlayers.Add(new AI(i + 1 + MAXplayer, "AI" + (i + 1), StartingCoords[i + MAXplayer]));
+            gamePlayers.Add(new AI(i + 1, "AI" + (i + 1), StartingCoords[i]));
 
 
         }
@@ -98,7 +87,7 @@ namespace NEAGame
 
         public void startGame()
         {
-
+            UserInterface.CreatePopup(gamePlayers.Count.ToString() + " players have joined the game");
             board = new Board();
 
             foreach (Player current in gamePlayers)
@@ -154,10 +143,10 @@ namespace NEAGame
         }
         public void EndTurn()
         {
-            if (WinnerFound) return;
+            if (HasWinner()) return;
 
             turn++;
-            if (turn >= MAXplayer)
+            if (turn >= gamePlayers.Count)
             {
                 turn = 0;
             }
@@ -173,12 +162,15 @@ namespace NEAGame
 
                     UserInterface.CreatePopup("Player " + p.playerName + " has won the game");
                     UserInterface.HandleWinner(p);
-                    WinnerFound = true;
                     return;
                 }
             }
         }
 
+        public bool HasWinner()
+        {
+            return gamePlayers.Any(p => p.getVictoryPoints() >= WinningVictoryPoints);
+        }
         
         /*public void printCostOfItem(string item)
         {
@@ -239,7 +231,6 @@ namespace NEAGame
             CheckWinner();
 
         }
-        
         public Dictionary<Resource, int> GetDifference(string structure) // can be used in the UI to show the player what they need to buy
         {
             Dictionary<Resource, int> res = new Dictionary<Resource, int>();
@@ -251,7 +242,6 @@ namespace NEAGame
 
             return res;
         }
-
         public bool CheckCosts(string structure)
         {
             Dictionary<Resource, int> cost = GetCostOfUpgrade(structure);
@@ -265,16 +255,8 @@ namespace NEAGame
             }
             return canAfford;
         }
-
         public void tryPurchaseRoad()
         {
-
-            if (!CheckCosts("Road"))
-            {
-                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
-                return;
-            }
-
 
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
@@ -312,12 +294,6 @@ namespace NEAGame
         public void tryPurchaseWall()
         {
 
-            if (!CheckCosts("Wall"))
-            {
-                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
-                return;
-            }
-
 
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
@@ -344,16 +320,8 @@ namespace NEAGame
 
 
         }
-
         public void tryPurchaseVillage()
         {
-
-            if (!CheckCosts("Village"))
-            {
-                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
-                return;
-            }
-
 
             Node otherPos;
             Node current = board.GetNode(currentPlayer.position);
@@ -377,7 +345,9 @@ namespace NEAGame
                 if (con.GetOccupant() != currentPlayer.GetID() && con.GetStatus() == "Road")
                 {
                     // can not build a settlement if an enemy road connects to this node
+                    
                     isConnecting = false;
+                    DistanceRule = false;
                     break;
                 }
                 else if (con.GetOccupant() == currentPlayer.GetID() && con.GetStatus() == "Road") 
@@ -400,25 +370,20 @@ namespace NEAGame
             if (isConnecting || DistanceRule)
             {
                 purchaseVillage(current);
+
             }
-            
+
 
         }
-
         public void tryPurchaseCity()
         {
-
-            if (!CheckCosts("City"))
-            {
-                UserInterface.CreatePopup("CRITICLEST OF ERRORS");
-                return;
-            }
-
 
             Node current = board.GetNode(currentPlayer.position);
             if (current.status.GetStatus() == "Village" && current.status.GetOccupant() == currentPlayer.GetID())
             {
-                purchaseCity(current);
+                //purchaseCity(current);
+                UserInterface.GetUserNodeChoice(new Node[] { current }, purchaseCity);
+
             }
             else 
             { 
@@ -426,8 +391,6 @@ namespace NEAGame
             }
 
         }
-
-
         public void purchaseRoad(Node other)
         {
             board.UpdateConnection(currentPlayer.position, other.position, "Road", currentPlayer);
@@ -435,7 +398,6 @@ namespace NEAGame
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
             UserInterface.UpdateConnection(other);
         }
-
         public void purchaseWall(Node other)
         {
             board.UpdateConnection(currentPlayer.position, other.position, "Wall", currentPlayer);
@@ -444,7 +406,6 @@ namespace NEAGame
             UserInterface.UpdateConnection(other);
 
         }
-
         public void purchaseVillage(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.getNumber());
@@ -452,7 +413,6 @@ namespace NEAGame
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
             UserInterface.UpdateSettlement(otherPos);
         }
-
         public void purchaseCity(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status.UpgradeVillage();
@@ -468,15 +428,11 @@ namespace NEAGame
 
         public void attemptPlayerMove()
         {
-            if (currentPlayer.moves <= 0)
-            {
-                UserInterface.CreatePopup("You have no moves left");
-                return;
-            }
+            
             Connection con;
             Node target;
             List<Node> viableLocations = new List<Node>();
-
+            bool possible = false;
             bool valid;
             foreach (Vector3 pos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
@@ -500,6 +456,7 @@ namespace NEAGame
                         valid = false ;
                     }
                 }
+                possible = possible || valid;
                 // Check that the player has enough movement points to move to this location
                 if (currentPlayer.moves < con.GetWalkingCost(currentPlayer))
                 {
@@ -511,10 +468,10 @@ namespace NEAGame
                     
             }
 
-            if (viableLocations.Count == 0)
+            if (viableLocations.Count == 0 && !possible)
             {
                 UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
-                currentPlayer.position = currentPlayer.GetCapital().position;
+                currentPlayer.position = currentPlayer.GetCapital();
                 return;
             }
             UserInterface.GetUserNodeChoice(viableLocations.ToArray(), MovePlayer);
@@ -542,7 +499,6 @@ namespace NEAGame
 
   
 
-    [System.Serializable]
     public class HexagonUnit
     {
         public Vector3 position;
@@ -566,10 +522,8 @@ namespace NEAGame
         protected int id { get; set; }
         protected string[] statuses { get; set; }
         protected int occupantID { get; set; }
-        public static int convertToVictoryPoints(string status) { return 0;  }
     }
 
-    [System.Serializable]
     public class Building : Settlement
     { 
 
@@ -586,10 +540,6 @@ namespace NEAGame
             if (id == 1)
             {
                 id++;
-            }
-            else
-            {
-                TravelersOfCatan.UserInterface.CreatePopup(@"You can't upgrade a {this.ToString()}");
             }
         }
 
@@ -619,9 +569,9 @@ namespace NEAGame
             return occupantID;
         }
 
+
     }
 
-    [System.Serializable]
     public class Resource
     {
         public static readonly string[] resources = { "Empty", "Brick", "Sheep", "Ore", "Wood", "Wheat" };

@@ -12,10 +12,10 @@ namespace NEAGame
     public class Board // A graph of nodes
     {
 
-        public HexagonUnit[] board = new HexagonUnit[19];
+        HexagonUnit[] board = new HexagonUnit[19];
         Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
+        Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
 
-        private Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
         // nested dictionary for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
         // this acts as an adjacency matrix of the graph of nodes but omits all the null values
 
@@ -138,11 +138,6 @@ namespace NEAGame
             }
         }
 
-        public Dictionary<Vector3, Dictionary<Vector3, Connection>> GetConnections()
-        {
-            return connections;
-        }
-
         public void UpdateConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
         {
             Connection x = connections[v1][v2];
@@ -152,6 +147,23 @@ namespace NEAGame
             y.SetOccupant(currentPlayer);
             y.SetStatus(status);
         }
+
+
+        public BoardWrapper SoftSerialize()
+        {
+            BoardWrapper b = new BoardWrapper();
+            foreach (HexagonUnit u in board)
+            {
+                b.board.Add(new HexagonUnitWrapper(u));
+            }
+            b.connections = new AdjMatrixWrapper(connections);
+            b.nodes = new AllNodesWrapper(nodes);
+
+
+            return b;
+        }
+
+
 
     }
 }

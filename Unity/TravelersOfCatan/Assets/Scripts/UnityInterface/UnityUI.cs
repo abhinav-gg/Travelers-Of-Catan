@@ -43,13 +43,10 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         if (scene.name == "Game")
         {
             game = new TravelersOfCatan(Interface, 130, 40);
-            game.AddPlayer("TravelersOf");
-            game.AddPlayer(name);
+            StartCoroutine(GetNewPlayer(2));
 
-            
             SetupGameScene();
 
-            game.startGame();
             
         }
     }

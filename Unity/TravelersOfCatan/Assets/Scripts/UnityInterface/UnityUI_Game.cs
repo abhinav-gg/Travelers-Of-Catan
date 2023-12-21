@@ -18,6 +18,7 @@ public partial class UnityUI
     public GameObject PlayerUI;
     public GameObject inventoryPopup;
     public GameObject shoppingPopup;
+    public GameObject pausePopup;
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
@@ -38,11 +39,13 @@ public partial class UnityUI
     NodeButton SelectedNode;
 
 
+
+
     void FixedUpdate()
     {
         if (TimerActive)
         {
-         
+
             Timer -= Time.deltaTime;
         }
     }
@@ -56,7 +59,7 @@ public partial class UnityUI
         overlay.ShopInput.onClick.AddListener(OpenShop);
         overlay.PlayerName.text = Interface.game.GetCurrentPlayer().playerName;
 
-
+        GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
         Timer = MAX_TIME; // ASSIGN TO CONSTANT
         TimerActive = true;
@@ -71,7 +74,7 @@ public partial class UnityUI
     {
         gridLayout = FindObjectOfType<GridLayout>();
         tilemap = FindObjectOfType<Tilemap>();
-            
+
     }
 
     IEnumerator WaitForTurnToEnd()
@@ -104,31 +107,37 @@ public partial class UnityUI
         return niceTime;
     }
 
+    float UI.GetTimer()
+    {
+        return Timer;
+    }
+
     public void EndTurn()
     {
+        GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).isCurrentPlayer = false;
 
         StopAllPlayerCoroutines();
 
         // Close all GUIS
         FindAnyObjectByType<InventoryPopup>()?.CloseGUI();
-        // FindAnyObjectByType<ShoppingPopup>()?.CloseGUI();
+        FindAnyObjectByType<ShopOverlay>()?.CloseGUI();
 
 
         // anim.EndTurnButtonPlay();
         LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
-        LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => { 
-        
+        LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
+
             Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
             Interface.game.EndTurn();
-        
-        
+
+
         });
 
     }
 
     public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
     {
-        
+
         foreach (ConnectionAnimator con in connections)
         {
             if (con.connection == game.board.GetConnection(v1, v2))
@@ -148,15 +157,15 @@ public partial class UnityUI
 
             int resourceID;
             Vector3Int gridPos;
-            foreach (KeyValuePair<System.Numerics.Vector3, Resource> entry in board.GetResourcesOnBoard()) 
+            foreach (KeyValuePair<System.Numerics.Vector3, Resource> entry in board.GetResourcesOnBoard())
             {
-                
+
                 resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources
                 gridPos = CubicToOddRow(entry.Key);
                 tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
 
             }
-            
+
             foreach (Node n in board.GetAllNodes())
             {
                 //node.transform.position = //  this is a pronblem;
@@ -165,7 +174,7 @@ public partial class UnityUI
                 nodeui.NodePos = ConvertVector(n.position);
                 nodeui.transform.position = GetNodeGlobalPos(n);
                 nodeui.UpdateSettlement();
-                
+
                 nodes.Add(nodeui);
             }
 
@@ -176,14 +185,14 @@ public partial class UnityUI
                 playUI.player = pl;
                 playUI.gameObject.name = pl.playerName;
                 playUI.transform.position = GetNodeGlobalPos(Interface.game.board.GetNode(pl.position));
-            
+
             }
 
         }
 
     }
 
-    public PlayerAnimator GetPlayerGameObject(int playerID=-1)
+    public PlayerAnimator GetPlayerGameObject(int playerID = -1)
     {
         if (playerID == -1)
         {
@@ -201,8 +210,8 @@ public partial class UnityUI
 
     public Vector3 GetConnectionGlobalPos(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
     {
-        HashSet < System.Numerics.Vector3 > starthexes = new HashSet<System.Numerics.Vector3>();
-        HashSet < System.Numerics.Vector3 > endhexes = new HashSet<System.Numerics.Vector3>();
+        HashSet<System.Numerics.Vector3> starthexes = new HashSet<System.Numerics.Vector3>();
+        HashSet<System.Numerics.Vector3> endhexes = new HashSet<System.Numerics.Vector3>();
         float totalX = 0f;
         float totalY = 0f;
         float Z = 0f;
@@ -224,7 +233,7 @@ public partial class UnityUI
             Z = center.z;
 
         }
-        
+
         return new Vector3(totalX / 2, totalY / 2, Z);
 
     }
@@ -322,11 +331,6 @@ public partial class UnityUI
         }
     }
 
-    public void OnConnectionClick()
-    {
-
-    }
-
 
     void UI.UpdatePlayer(Node otherNode)
     {
@@ -372,7 +376,7 @@ public partial class UnityUI
         {
             StopCoroutine(coroutine);
         }
-        
+
     }
 
     /// <summary>
@@ -382,6 +386,7 @@ public partial class UnityUI
 
     public void OpenInventory()
     {
+        Debug.Log(GameWrapper.Dump(new GameWrapper(game)));
         StopAllPlayerCoroutines();
         StartCoroutine(DisplayInventory());
     }
@@ -409,14 +414,12 @@ public partial class UnityUI
 
         StartCoroutine(DisplayShop());
 
-
-
     }
 
 
     public void AttemptPurchase(string name)
     {
-        switch(name)
+        switch (name)
         {
             case "Road":
                 game.tryPurchaseRoad();
@@ -450,7 +453,7 @@ public partial class UnityUI
 
         // Show winner screen
 
-        
+
 
     }
 

@@ -7,7 +7,7 @@ namespace NEAGame
 
     public interface UI
     {
-
+        float GetTimer();
         void GetUserNodeChoice(Node[] options, Action<Node> method);
         bool GetUserConfirm();
         void CreatePopup(string message);

@@ -51,7 +51,10 @@ public class ShopOverlay : MonoBehaviour
 
     public void CloseGUI()
     {
-        gameObject.SetActive(false);
+
+        LeanTween.scale(purchase.gameObject, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeOutCirc)
+            .setOnComplete(() => Destroy(gameObject));
+        
     }
 
 

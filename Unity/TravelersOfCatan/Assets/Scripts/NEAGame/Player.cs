@@ -30,7 +30,7 @@ namespace NEAGame
 
         protected int playerNumber; // useful as a UID for the player allowing the same name in testing
         public readonly string playerName;
-
+        public readonly Vector3 origin;
         public int moves;
         public Vector3 position;
         protected bool isAI = false; // gets changed by child AI class
@@ -39,6 +39,7 @@ namespace NEAGame
         {
             this.playerNumber = playerNumber;
             this.playerName = playerName;
+            this.origin = origin;
             victoryPoints = 0;
             position = origin;
         }
@@ -64,9 +65,9 @@ namespace NEAGame
             return buildings;
         }
 
-        public Node GetCapital()
+        public Vector3 GetCapital()
         {
-            return buildings[0];
+            return origin;
         }
 
         public void addConnection(Connection connection)
@@ -117,37 +118,17 @@ namespace NEAGame
         /// <summary>
         /// Used to calculate the wealth of a player for the AI static state evaluation function
         /// </summary>
-        public float GetWealth()
+        public int GetWealth()
         {
             float wealth = 0;
             foreach (KeyValuePair<Resource, int> resource in resources)
             {
-                wealth += resource.Value * 0.5f;
+                wealth += resource.Value / 5;
             }
-            foreach (Node n in buildings)
-            {
-                if (n.status.GetStatus() == "City")
-                {
-                    wealth += 10;
-                }
-                else
-                {
-                    wealth += 5.5f;
-                }
-            }
-            foreach (Connection c in connections)
-            {
-                if (c.GetStatus() == "Road")
-                {
-                    wealth += 2;
-                }
-                else
-                {
-                    wealth += 1.5f;
-                }
-            }
-
-            return wealth;
+            wealth += victoryPoints * 2;
+            
+            // int cast wealth 
+            return (int)wealth;
         }
 
         public void upgradeCillage(Node node)

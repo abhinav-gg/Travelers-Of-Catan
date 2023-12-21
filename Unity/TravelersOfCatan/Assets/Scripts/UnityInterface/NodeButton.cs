@@ -9,11 +9,11 @@ public class NodeButton : MonoBehaviour
     public Vector3 NodePos;
     public Node node;
     public Button btn;
-    public RawImage img;
+    public SpriteRenderer img;
     [InspectorName("Village")]
-    public Texture village;
+    public Sprite village;
     [InspectorName("City")]
-    public Texture city;
+    public Sprite city;
 
 
     // Start is called before the first frame update
@@ -60,11 +60,11 @@ public class NodeButton : MonoBehaviour
         
         if (node.status.GetStatus() == "Village")
         {
-            img.texture = village;
+            img.sprite = village;
         }
         else if (node.status.GetStatus() == "City")
         {
-            img.texture = city;
+            img.sprite = city;
         }
         else
         {
