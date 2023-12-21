@@ -44,6 +44,8 @@ public class ConnectionAnimator : MonoBehaviour
 
     public void UpdateDisplay()
     {
+        Debug.Log("Updating Connection Display");
+        Debug.Log(connection.GetStatus());
         switch (connection.GetStatus())
         {
             case "Road":

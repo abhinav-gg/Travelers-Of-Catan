@@ -178,10 +178,10 @@ public partial class UnityUI
 
                 foreach (Node n2 in board.GetAllNodes())
                 {
-                    if (board.GetConnection(n.position, n2.position) != null)
-                    {
+                    if (n == n2) continue;
+                    if (board.GetConnection(n.position, n2.position).GetStatus() != "Empty")
                         UpdateConnection(n, n2);
-                    }
+                    
                 }
             }
 
@@ -351,25 +351,25 @@ public partial class UnityUI
     }
 
 
-    public void UpdateConnection(Node otherNode, Node current)
+    public void UpdateConnection(Node otherNode, Node current, Connection con)
     {
         var x = current.position;
         var y = otherNode.position;
         ConnectionAnimator conui = FindConnectionGameObject(x, y);
         if (conui == null)
         {
+            Debug.Log("Creating new connection" + x.ToString() + y.ToString());
             conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
             conui.connection = game.board.GetConnection(x, y);
-            Debug.Log(game.board.GetConnection(x, y).ToString());
             conui.transform.position = GetConnectionGlobalPos(x, y);
             conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
         }
         conui.UpdateDisplay();
-        //conui.UpdateConnection();
     }
 
     void UI.UpdateConnection(Node otherNode, Node current)
     {
+        Debug.Log("FROM UI");
         UpdateConnection(otherNode, current);
     }
 

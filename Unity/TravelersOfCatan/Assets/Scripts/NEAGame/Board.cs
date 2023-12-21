@@ -188,6 +188,7 @@ namespace NEAGame
                 {
                     Vector3 pos1 = new Vector3(v1.x, v1.y, v1.z);
                     Vector3 pos2 = new Vector3(v2.x, v2.y, v2.z);
+
                     b.UpdateConnection(pos1, pos2, board.connections._Values[i]._Values[j]);
                     j++;
                 }
