@@ -44,6 +44,28 @@ namespace NEAGame
             position = origin;
         }
 
+
+        public Player(PlayerWrapper player)
+        {
+            this.playerNumber = player.playerNumber;
+            this.playerName = player.playerName;
+            this.origin = new Vector3(player.origin.x, player.origin.y, player.origin.z);
+            this.victoryPoints = player.victoryPoints;
+            this.moves = player.moves;
+            this.position = new Vector3(player.position.x, player.position.y, player.position.z);
+            this.resources = new Dictionary<Resource, int>();
+            foreach (var entry in player.resources._Keys.Zip(player.resources._Values, (k, v) => new { k, v }))
+            {
+                this.resources.Add(new Resource(entry.k), entry.v);
+            }
+        }
+
+
+        public bool isPlayerAI()
+        {
+            return isAI;
+        }
+
         private void addVictoryPoints(int points) // required for future features
         {
             victoryPoints += points;

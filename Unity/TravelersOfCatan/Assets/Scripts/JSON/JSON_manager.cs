@@ -30,7 +30,29 @@ namespace NEAGame
     class JSON_manager
     {
 
+        public static void SAVEGAME(TravelersOfCatan game, string SAVE)
+        {
+            GameWrapper gameWrapper = new GameWrapper(game);
+            // save the game to a file in unity persistent data path with the name SAVE
+            string json = JSONWrapper<GameWrapper>.Dump(gameWrapper);
+            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
 
+            FileHandler fileHandler = new FileHandler(fullpath, false);
+            fileHandler.Save(json);
+
+        }
+
+        public static GameWrapper LOADGAME(string SAVE)
+        {
+            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
+            FileHandler fileHandler = new FileHandler(fullpath, false);
+            string json = fileHandler.Load();
+            GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);
+            Debug.Log(json);
+           
+            return gameWrapper;
+        
+        }
 
 
     }
@@ -74,21 +96,18 @@ namespace NEAGame
 
         public string status;
         public int occupantID;
-        public string Type;
 
         public SettlementWrapper() { }
         public SettlementWrapper(Connection connection)
         {
             status = connection.GetStatus();
             occupantID = connection.GetOccupant();
-            Type = "Connection";
         }
 
         public SettlementWrapper(Building node)
         {
             status = node.GetStatus();
             occupantID = node.GetOccupant();
-            Type = "Building";
         }
 
     }
@@ -144,6 +163,7 @@ namespace NEAGame
         public string playerName;
         public int victoryPoints;
         public int moves;
+        public bool isAI;
         public Vector3 origin;
         public InventoryWrapper resources;
 
@@ -157,6 +177,7 @@ namespace NEAGame
             playerName = player.playerName;
             victoryPoints = player.getVictoryPoints();
             moves = player.moves;
+            isAI = player.isPlayerAI();
             origin = UnityUI.ConvertVector(player.origin);
             resources = new InventoryWrapper(player.getResources());
         }
@@ -182,6 +203,7 @@ namespace NEAGame
 
     }
 
+    [Serializable]
     public class AllNodesWrapper : JSONWrapper<AllNodesWrapper>
     {
         public List<Vector3> _Keys = new List<Vector3>();
@@ -192,28 +214,29 @@ namespace NEAGame
         {
             foreach (var entry in nodes)
             {
+                if (entry.Value.status.GetStatus() == "Empty") continue;
                 _Keys.Add(UnityUI.ConvertVector(entry.Key));
                 _Values.Add(new NodeWrapper(entry.Value));
             }
         }
     }
 
-
+    [Serializable]
     public class NodeWrapper : JSONWrapper<NodeWrapper>
     {
         public Vector3 position;
-        public SettlementWrapper building;
+        public SettlementWrapper status;
 
         public NodeWrapper() { }
         public NodeWrapper(Node node)
         {
             position = UnityUI.ConvertVector(node.position);
-            building = new SettlementWrapper(node.status);
+            status = new SettlementWrapper(node.status);
         }
     }
 
 
-
+    [Serializable]
     public class BoardWrapper : JSONWrapper<BoardWrapper>
     {
 
@@ -225,10 +248,12 @@ namespace NEAGame
     
     }
 
+    [Serializable]
     public class GameWrapper : JSONWrapper<GameWrapper> 
     {
         
         public int winVictoryPoints;
+        public float timePerMove;
         public float timer; // controlled by UI
         public int turn;
         public List<PlayerWrapper> allPlayers = new List<PlayerWrapper>();
@@ -240,7 +265,15 @@ namespace NEAGame
         public GameWrapper(TravelersOfCatan game)
         {
             winVictoryPoints = game.WinningVictoryPoints;
+            timePerMove = game.TimePerMove;
             timer = game.UserInterface.GetTimer();
+            // get index of current player in game.gamePlayers
+            turn = game.gamePlayers.IndexOf(game.GetCurrentPlayer());
+            foreach (Player player in game.gamePlayers)
+            {
+                allPlayers.Add(new PlayerWrapper(player));
+            }
+            board = game.board.SoftSerialize();
 
         }
 

@@ -46,6 +46,7 @@ namespace NEAGame
 
         public readonly int WinningVictoryPoints; // allow this to be passed into the constructor
         public readonly int StartingResourceCount;
+        public readonly float TimePerMove;
 
         private int turn = 0;
         //private int MAXplayer = 0;
@@ -53,12 +54,35 @@ namespace NEAGame
         public List<Player> gamePlayers = new List<Player>();
         public Board board;
 
-        public TravelersOfCatan(UI ui, int win, int start)
+        public TravelersOfCatan(UI ui, int win, int start, float maxtime)
         {
 
             UserInterface = ui;
             WinningVictoryPoints = win;
             StartingResourceCount = start;
+            TimePerMove = maxtime;
+
+        }
+
+
+        public TravelersOfCatan(UI ui, GameWrapper game)
+        {
+            UserInterface = ui;
+            WinningVictoryPoints = game.winVictoryPoints;
+            TimePerMove = game.timePerMove;
+            foreach (PlayerWrapper pl in game.allPlayers)
+            {
+                if (pl.isAI)
+                    gamePlayers.Add(new AI(pl));
+                else
+                    gamePlayers.Add(new Player(pl));
+            }
+
+            board = Board.SoftDeSerialize(game.board);
+            turn = game.turn;
+            UserInterface.DisplayBoard(board);
+            UserInterface.DisplayPlayers(gamePlayers);
+
 
         }
 
@@ -87,6 +111,8 @@ namespace NEAGame
 
         public void startGame()
         {
+            
+
             UserInterface.CreatePopup(gamePlayers.Count.ToString() + " players have joined the game");
             board = new Board();
 
@@ -113,7 +139,7 @@ namespace NEAGame
 
 
             UserInterface.DisplayBoard(board);
-
+            UserInterface.DisplayPlayers(gamePlayers);
             StartTurn();
             
         }
@@ -123,15 +149,19 @@ namespace NEAGame
             return currentPlayer;
         }
 
-        private void StartTurn()
+        public void StartTurn(float timeleft=-1f)
         {
+            if (timeleft == -1f)
+            {
+                timeleft = TimePerMove;
+            }
             currentPlayer = gamePlayers[turn];
             currentPlayer.moves = 3; // Allow this to change as a gamemode
             gatherResources();
 
             if (currentPlayer.GetType() == typeof(Player))
             {
-                UserInterface.BeginTurn();
+                UserInterface.BeginTurn(timeleft);
             }
             else if (currentPlayer.GetType() == typeof(AI))
             {
@@ -396,14 +426,14 @@ namespace NEAGame
             board.UpdateConnection(currentPlayer.position, other.position, "Road", currentPlayer);
             ChargePlayer("Road");
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
-            UserInterface.UpdateConnection(other);
+            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position));
         }
         public void purchaseWall(Node other)
         {
             board.UpdateConnection(currentPlayer.position, other.position, "Wall", currentPlayer);
             ChargePlayer("Wall");
             currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
-            UserInterface.UpdateConnection(other);
+            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position));
 
         }
         public void purchaseVillage(Node otherPos)
@@ -510,6 +540,12 @@ namespace NEAGame
             position = new Vector3(x, y, z);
         }
 
+        public HexagonUnit(HexagonUnitWrapper hex)
+        {
+            resource = new Resource(hex.resource);
+            position = new Vector3(hex.position.x, hex.position.y, hex.position.z);
+        }
+
         public override string ToString()
         {
             return $"{resource} at {position}";
@@ -534,6 +570,14 @@ namespace NEAGame
             occupantID = o;
 
         }
+
+        public Building(SettlementWrapper sw)
+        {
+            statuses = new string[] { "Empty", "Village", "City" };
+            occupantID = sw.occupantID;
+            id = Array.IndexOf(statuses, sw.status);
+        }
+
 
         public void UpgradeVillage()
         {
@@ -589,6 +633,12 @@ namespace NEAGame
         {
             id = Array.IndexOf(resources, name);
         }
+
+        public Resource(ResourceWrapper res)
+        {
+            this.id = res.id;
+        }
+
 
         public override string ToString()
         {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Diagnostics;
 
 namespace NEAGame
 {
@@ -148,6 +149,12 @@ namespace NEAGame
             y.SetStatus(status);
         }
 
+        public void UpdateConnection(Vector3 v1, Vector3 v2, SettlementWrapper con)
+        {
+            connections[v1][v2] = new Connection(con);
+            connections[v2][v1] = new Connection(con);
+        }
+
 
         public BoardWrapper SoftSerialize()
         {
@@ -163,6 +170,39 @@ namespace NEAGame
             return b;
         }
 
+        public static Board SoftDeSerialize(BoardWrapper board)
+        {
+            Board b = new Board();
+            int i = 0;
+            int j = 0;
+            foreach (HexagonUnitWrapper hex in board.board)
+            {
+                b.board[i] = new HexagonUnit(hex);
+                i++;
+            }
+            i = 0;
+            foreach (var v1 in board.connections._Keys)
+            {
+                j = 0;
+                foreach (var v2 in board.connections._Values[i]._Keys)
+                {
+                    Vector3 pos1 = new Vector3(v1.x, v1.y, v1.z);
+                    Vector3 pos2 = new Vector3(v2.x, v2.y, v2.z);
+                    b.UpdateConnection(pos1, pos2, board.connections._Values[i]._Values[j]);
+                    j++;
+                }
+
+                i++;
+            }
+
+            foreach (var v in board.nodes._Keys.Zip(board.nodes._Values, (k, v) => new { k, v }))
+            {
+                b.nodes[new Vector3(v.k.x, v.k.y, v.k.z)] = new Node(v.v);
+            }
+
+
+            return b;
+        }
 
 
     }

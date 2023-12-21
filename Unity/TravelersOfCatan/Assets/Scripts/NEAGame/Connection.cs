@@ -25,6 +25,14 @@ namespace NEAGame
             occupantID = occupant;
         }
 
+        public Connection(SettlementWrapper settlementWrapper)
+        {
+            statuses = new string[] { "Empty", "Road", "Wall" };
+            
+            occupantID = settlementWrapper.occupantID;
+            SetStatus(settlementWrapper.status);
+        }
+
         public int GetOccupant()
         {
             return occupantID;

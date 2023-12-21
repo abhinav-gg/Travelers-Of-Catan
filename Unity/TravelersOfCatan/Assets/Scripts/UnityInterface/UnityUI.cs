@@ -21,7 +21,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     [Header("Serialized Game View")] 
     public TravelersOfCatan game;
 
-
+    private string LoadFile = "";
     // Start is called before the first frame update
     void Awake()
     {
@@ -42,10 +42,24 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         
         if (scene.name == "Game")
         {
-            game = new TravelersOfCatan(Interface, 130, 40);
-            StartCoroutine(GetNewPlayer(2));
-
             SetupGameScene();
+            if (LoadFile == "")
+            {
+                this.game = new TravelersOfCatan(Interface, 130, 40, 90f);
+                //StartCoroutine(GetNewPlayer(2));
+                game.AddPlayer("bob");
+                game.AddPlayer("joe");
+                game.startGame();
+
+            }
+            else
+            {
+                GameWrapper gw = JSON_manager.LOADGAME(LoadFile);
+                this.game = new TravelersOfCatan(Interface, gw);
+                
+                game.StartTurn(gw.timer);
+            }
+
 
             
         }
@@ -75,6 +89,12 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         SceneManager.LoadScene("Game");
     }
 
+    public void LoadGameButton()
+    {
+        LoadFile = "TESTFINDME";
+        SceneManager.LoadScene("Game");
+
+    }
 
     void MenuButtonPressed()
     {

@@ -17,6 +17,11 @@ namespace NEAGame
             isAI = true;
         }
 
+        public AI(PlayerWrapper player) : base(player)
+        {
+            isAI = true;
+        }
+
 
 
         public int StaticEval(TravelersOfCatan game)

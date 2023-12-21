@@ -22,6 +22,12 @@ namespace NEAGame
 
         }
 
+        public Node(NodeWrapper node) 
+        {
+            position = new Vector3(node.position.x, node.position.y, node.position.z);
+            status = new Building(node.status);
+        }
+
         /*public void RegisterConnections(Board gameBoard)
         {
             foreach (Vector3 v in GetNodeNeighbours())

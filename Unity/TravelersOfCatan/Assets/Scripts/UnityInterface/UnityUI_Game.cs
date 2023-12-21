@@ -29,7 +29,6 @@ public partial class UnityUI
 
     bool hasInitializedBoard = false;
 
-    public const float MAX_TIME = 90f;
     public float Timer = 0.0f;
     public bool TimerActive = false;
 
@@ -50,18 +49,18 @@ public partial class UnityUI
         }
     }
 
-    void UI.BeginTurn()
+    void UI.BeginTurn(float time)
     {
         overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
         overlay.EndTurnInput.onClick.AddListener(EndTurn);
         overlay.MoveInput.onClick.AddListener(OnPlayerMove);
         overlay.InventoryInput.onClick.AddListener(OpenInventory);
         overlay.ShopInput.onClick.AddListener(OpenShop);
-        overlay.PlayerName.text = Interface.game.GetCurrentPlayer().playerName;
+        overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
 
-        GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
+        GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
-        Timer = MAX_TIME; // ASSIGN TO CONSTANT
+        Timer = time; // ASSIGN TO CONSTANT
         TimerActive = true;
         StartCoroutine(WaitForTurnToEnd());
 
@@ -137,10 +136,10 @@ public partial class UnityUI
 
     public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
     {
-
+        Connection searching = game.board.GetConnection(v1, v2);
         foreach (ConnectionAnimator con in connections)
         {
-            if (con.connection == game.board.GetConnection(v1, v2))
+            if (con.connection == searching)
             {
                 return con;
             }
@@ -176,20 +175,31 @@ public partial class UnityUI
                 nodeui.UpdateSettlement();
 
                 nodes.Add(nodeui);
-            }
 
-            foreach (Player pl in Interface.game.gamePlayers)
-            {
-
-                PlayerAnimator playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerAnimator>();
-                playUI.player = pl;
-                playUI.gameObject.name = pl.playerName;
-                playUI.transform.position = GetNodeGlobalPos(Interface.game.board.GetNode(pl.position));
-
+                foreach (Node n2 in board.GetAllNodes())
+                {
+                    if (board.GetConnection(n.position, n2.position) != null)
+                    {
+                        UpdateConnection(n, n2);
+                    }
+                }
             }
 
         }
 
+    }
+
+    void UI.DisplayPlayers(List<Player> gamePlayers)
+    {
+        foreach (Player pl in gamePlayers)
+        {
+
+            PlayerAnimator playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerAnimator>();
+            playUI.player = pl;
+            playUI.gameObject.name = pl.playerName;
+            playUI.transform.position = GetNodeGlobalPos(game.board.GetNode(pl.position));
+
+        }
     }
 
     public PlayerAnimator GetPlayerGameObject(int playerID = -1)
@@ -341,21 +351,28 @@ public partial class UnityUI
     }
 
 
-    void UI.UpdateConnection(Node otherNode)
+    public void UpdateConnection(Node otherNode, Node current)
     {
-        var x = game.GetCurrentPlayer().position;
+        var x = current.position;
         var y = otherNode.position;
         ConnectionAnimator conui = FindConnectionGameObject(x, y);
-        if (conui is null)
+        if (conui == null)
         {
             conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
             conui.connection = game.board.GetConnection(x, y);
+            Debug.Log(game.board.GetConnection(x, y).ToString());
             conui.transform.position = GetConnectionGlobalPos(x, y);
             conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
         }
         conui.UpdateDisplay();
         //conui.UpdateConnection();
     }
+
+    void UI.UpdateConnection(Node otherNode, Node current)
+    {
+        UpdateConnection(otherNode, current);
+    }
+
 
 
     void UI.UpdateSettlement(Node otherNode)
@@ -386,7 +403,7 @@ public partial class UnityUI
 
     public void OpenInventory()
     {
-        Debug.Log(GameWrapper.Dump(new GameWrapper(game)));
+        JSON_manager.SAVEGAME(game, "TESTFINDME");
         StopAllPlayerCoroutines();
         StartCoroutine(DisplayInventory());
     }
