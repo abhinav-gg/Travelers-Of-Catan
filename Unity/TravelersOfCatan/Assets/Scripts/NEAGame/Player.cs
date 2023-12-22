@@ -50,7 +50,6 @@ namespace NEAGame
             this.playerNumber = player.playerNumber;
             this.playerName = player.playerName;
             this.origin = new Vector3(player.origin.x, player.origin.y, player.origin.z);
-            this.victoryPoints = player.victoryPoints;
             this.moves = player.moves;
             this.position = new Vector3(player.position.x, player.position.y, player.position.z);
             this.resources = new Dictionary<Resource, int>();
@@ -82,6 +81,7 @@ namespace NEAGame
             addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
 
         }
+
         public List<Node> GetBuildings()
         {
             return buildings;

@@ -60,11 +60,6 @@ namespace NEAGame
                         {
 
                             Node n = new Node(x, y, z);
-
-                            // register a list of all existing connections for the AI to use
-
-
-
                             nodes.Add(new Vector3(x, y, z), n);
                             i++;
                         }
@@ -72,22 +67,46 @@ namespace NEAGame
                 }
             }
 
-            foreach (Node n1 in nodes.Values)
-            {
-                foreach (Node n2 in nodes.Values)
-                {
-                    if (!connections.ContainsKey(n1.position))
-                    {
-                        connections.Add(n1.position, new Dictionary<Vector3, Connection>());
-                    }
-                    connections[n1.position].Add(n2.position, new Connection());
-                }
-
-            }
-
-
+            
 
         }
+
+        public Board (BoardWrapper board)
+        {
+
+            int i = 0;
+            foreach (HexagonUnitWrapper hexagonUnitWrapper in board.board)
+            {
+                HexagonUnit unit = new HexagonUnit(hexagonUnitWrapper);
+                this.board[i] = unit;
+                i++;
+            }
+            for (int x = -2; x < 4; x++)
+            {
+                for (int y = -2; y < 4; y++)
+                {
+                    for (int z = -2; z < 4; z++)
+                    {
+                        if ((x + y + z == 1) || (x + y + z == 2))
+                        {
+
+                            Node n = new Node(x, y, z);
+                            nodes.Add(new Vector3(x, y, z), n);
+                        }
+                    }
+                }
+            }
+            i = 0;
+            foreach (NodeWrapper node in board.nodes._Values)
+            {
+                Node n = new Node(node);
+                nodes[new Vector3(board.nodes._Keys[i].x, board.nodes._Keys[i].y, board.nodes._Keys[i].z)] = n;
+                i++ ;
+            }
+
+            
+        }
+
 
 
         public HexagonUnit GetHexAtPosition(Vector3 pos)
@@ -135,26 +154,46 @@ namespace NEAGame
             }
             catch (KeyNotFoundException)
             {
-                return null;
+                return new Connection();
             }
         }
 
-        public void UpdateConnection(Vector3 v1, Vector3 v2, string status, Player currentPlayer) // weakest function in entire project
+        public void UpdateConnection(Vector3 v1, Vector3 v2, Connection con) // weakest function in entire project
         {
-            Connection x = connections[v1][v2];
-            x.SetOccupant(currentPlayer);
-            x.SetStatus(status); 
-            Connection y = connections[v2][v1];
-            y.SetOccupant(currentPlayer);
-            y.SetStatus(status);
-        }
 
-        public void UpdateConnection(Vector3 v1, Vector3 v2, SettlementWrapper con)
-        {
-            connections[v1][v2] = new Connection(con);
-            connections[v2][v1] = new Connection(con);
+            if (connections.ContainsKey(v1))
+            {
+                if (connections[v1].ContainsKey(v2))
+                {
+                    connections[v1][v2] = con;
+                }
+                else
+                {
+                    connections[v1].Add(v2, con);
+                }
+            }
+            else
+            {
+                connections.Add(v1, new Dictionary<Vector3, Connection>());
+                connections[v1].Add(v2, con);
+            }
+            if (connections.ContainsKey(v2))
+            {
+                if (connections[v2].ContainsKey(v1))
+                {
+                    connections[v2][v1] = con;
+                }
+                else
+                {
+                    connections[v2].Add(v1, con);
+                }
+            }
+            else
+            {
+                connections.Add(v2, new Dictionary<Vector3, Connection>());
+                connections[v2].Add(v1, con);
+            }
         }
-
 
         public BoardWrapper SoftSerialize()
         {
@@ -165,41 +204,6 @@ namespace NEAGame
             }
             b.connections = new AdjMatrixWrapper(connections);
             b.nodes = new AllNodesWrapper(nodes);
-
-
-            return b;
-        }
-
-        public static Board SoftDeSerialize(BoardWrapper board)
-        {
-            Board b = new Board();
-            int i = 0;
-            int j = 0;
-            foreach (HexagonUnitWrapper hex in board.board)
-            {
-                b.board[i] = new HexagonUnit(hex);
-                i++;
-            }
-            i = 0;
-            foreach (var v1 in board.connections._Keys)
-            {
-                j = 0;
-                foreach (var v2 in board.connections._Values[i]._Keys)
-                {
-                    Vector3 pos1 = new Vector3(v1.x, v1.y, v1.z);
-                    Vector3 pos2 = new Vector3(v2.x, v2.y, v2.z);
-
-                    b.UpdateConnection(pos1, pos2, board.connections._Values[i]._Values[j]);
-                    j++;
-                }
-
-                i++;
-            }
-
-            foreach (var v in board.nodes._Keys.Zip(board.nodes._Values, (k, v) => new { k, v }))
-            {
-                b.nodes[new Vector3(v.k.x, v.k.y, v.k.z)] = new Node(v.v);
-            }
 
 
             return b;

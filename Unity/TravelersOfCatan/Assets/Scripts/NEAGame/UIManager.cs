@@ -18,7 +18,7 @@ namespace NEAGame
         void LoadGame(string Save);
         void BeginTurn(float time);
         void UpdatePlayer(Node otherNode);
-        void UpdateConnection(Node node1, Node node2);
+        void UpdateConnection(Node node1, Node node2, Connection con);
         void UpdateSettlement(Node otherNode);
         void DisplayPlayers(List<Player> gamePlayers);
     }

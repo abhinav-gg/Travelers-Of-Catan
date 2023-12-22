@@ -78,11 +78,48 @@ namespace NEAGame
                     gamePlayers.Add(new Player(pl));
             }
 
-            board = Board.SoftDeSerialize(game.board);
+            this.board = new Board(game.board);
+            for (int i = 0; i < game.board.connections._Keys.Count; i++)
+            {
+                Vector3 pos1 = new Vector3(game.board.connections._Keys[i].x, game.board.connections._Keys[i].y, game.board.connections._Keys[i].z);
+                for (int j = 0; j < game.board.connections._Values[i]._Keys.Count; j++)
+                {
+                    Vector3 pos2 = new Vector3(game.board.connections._Values[i]._Keys[j].x, game.board.connections._Values[i]._Keys[j].y, game.board.connections._Values[i]._Keys[j].z);
+                    Connection con = new Connection(game.board.connections._Values[i]._Values[j]);
+                    board.UpdateConnection(pos1, pos2, con);
+                    UserInterface.UpdateConnection(board.GetNode(pos1), board.GetNode(pos2), con);
+
+                    foreach (Player pdl in gamePlayers)
+                    {
+                        if (con.GetOccupant() == pdl.GetID())
+                        {
+                            pdl.addConnection(con);
+                            break;
+                        }
+                    }
+
+
+                }
+
+            }
+
+            foreach (NodeWrapper n in game.board.nodes._Values)
+            {
+                Node node = new Node(n);
+                foreach (Player pdl in gamePlayers)
+                {
+                    if (node.status.GetOccupant() == pdl.GetID())
+                    {
+                        pdl.addBuilding(node);
+                        break;
+                    }
+                }
+            }
+
             turn = game.turn;
             UserInterface.DisplayBoard(board);
             UserInterface.DisplayPlayers(gamePlayers);
-
+            currentPlayer = gamePlayers[turn]; // moves are already saved
 
         }
 
@@ -137,11 +174,12 @@ namespace NEAGame
 
             }
 
-
             UserInterface.DisplayBoard(board);
             UserInterface.DisplayPlayers(gamePlayers);
-            StartTurn();
+            turn = -1;
             
+            EndTurn();
+
         }
 
         public Player GetCurrentPlayer()
@@ -154,10 +192,7 @@ namespace NEAGame
             if (timeleft == -1f)
             {
                 timeleft = TimePerMove;
-            }
-            currentPlayer = gamePlayers[turn];
-            currentPlayer.moves = 3; // Allow this to change as a gamemode
-            gatherResources();
+            }     
 
             if (currentPlayer.GetType() == typeof(Player))
             {
@@ -174,12 +209,18 @@ namespace NEAGame
         public void EndTurn()
         {
             if (HasWinner()) return;
+            if (turn != -1)
+            {
 
+                gatherResources();
+            }
             turn++;
             if (turn >= gamePlayers.Count)
             {
                 turn = 0;
             }
+            currentPlayer = gamePlayers[turn];
+            currentPlayer.moves = 3; // Allow this to change as a gamemode
             StartTurn();
         }
 
@@ -394,8 +435,6 @@ namespace NEAGame
 
 
             }
-            UserInterface.CreatePopup(DistanceRule.ToString());
-            UserInterface.CreatePopup(isConnecting.ToString());
 
             if (isConnecting || DistanceRule)
             {
@@ -423,17 +462,19 @@ namespace NEAGame
         }
         public void purchaseRoad(Node other)
         {
-            board.UpdateConnection(currentPlayer.position, other.position, "Road", currentPlayer);
+            board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Road", occupant: currentPlayer.GetID()));
             ChargePlayer("Road");
-            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
-            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position));
+            Connection con = board.GetConnection(currentPlayer.position, other.position);
+            currentPlayer.addConnection(con);
+            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
         }
         public void purchaseWall(Node other)
         {
-            board.UpdateConnection(currentPlayer.position, other.position, "Wall", currentPlayer);
+            board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Wall", occupant: currentPlayer.GetID()));
             ChargePlayer("Wall");
-            currentPlayer.addConnection(board.GetConnection(currentPlayer.position, other.position));
-            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position));
+            Connection con = board.GetConnection(currentPlayer.position, other.position);
+            currentPlayer.addConnection(con);
+            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
 
         }
         public void purchaseVillage(Node otherPos)
@@ -468,7 +509,7 @@ namespace NEAGame
             {
                 valid = true;
                 con = board.GetConnection(pos, currentPlayer.position);
-                if (con == null) continue;
+                if (board.GetNode(pos) == null) continue;
                 target = board.GetNode(pos);
                 if ((con.GetOccupant() != currentPlayer.getNumber()) && (con.GetOccupant() > 0)) 
                 {

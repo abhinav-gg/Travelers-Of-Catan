@@ -149,7 +149,6 @@ public partial class UnityUI
 
     void UI.DisplayBoard(Board board)
     {
-
         if (!hasInitializedBoard)
         {
             hasInitializedBoard = true;
@@ -167,7 +166,7 @@ public partial class UnityUI
 
             foreach (Node n in board.GetAllNodes())
             {
-                //node.transform.position = //  this is a pronblem;
+                
                 NodeButton nodeui = Instantiate(NodePrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
                 nodeui.node = n;
                 nodeui.NodePos = ConvertVector(n.position);
@@ -176,13 +175,6 @@ public partial class UnityUI
 
                 nodes.Add(nodeui);
 
-                foreach (Node n2 in board.GetAllNodes())
-                {
-                    if (n == n2) continue;
-                    if (board.GetConnection(n.position, n2.position).GetStatus() != "Empty")
-                        UpdateConnection(n, n2);
-                    
-                }
             }
 
         }
@@ -200,6 +192,38 @@ public partial class UnityUI
             playUI.transform.position = GetNodeGlobalPos(game.board.GetNode(pl.position));
 
         }
+    }
+
+    void UI.UpdatePlayer(Node otherNode)
+    {
+        Vector3 pos = GetNodeGlobalPos(otherNode);
+        LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
+        LeanTween.move(Camera.main.gameObject, pos + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
+
+    }
+
+    void UI.UpdateConnection(Node otherNode, Node current, Connection con)
+    {
+        var x = current.position;
+        var y = otherNode.position;
+        ConnectionAnimator conui = FindConnectionGameObject(x, y);
+        if (conui == null)
+        {
+            conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
+            conui.connection = con;
+            conui.transform.position = GetConnectionGlobalPos(x, y);
+            conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
+        }
+        conui.UpdateDisplay();
+    }
+
+
+
+    void UI.UpdateSettlement(Node otherNode)
+    {
+        var x = otherNode.position;
+        NodeButton nodeui = FindNodeGameObject(ConvertVector(x)); // no need to instantiate as the nodes were made on startup
+        nodeui.UpdateSettlement();
     }
 
     public PlayerAnimator GetPlayerGameObject(int playerID = -1)
@@ -339,47 +363,6 @@ public partial class UnityUI
         {
             n.DisableButton();
         }
-    }
-
-
-    void UI.UpdatePlayer(Node otherNode)
-    {
-        Vector3 pos = GetNodeGlobalPos(otherNode);
-        LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
-        LeanTween.move(Camera.main.gameObject, pos + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
-
-    }
-
-
-    public void UpdateConnection(Node otherNode, Node current, Connection con)
-    {
-        var x = current.position;
-        var y = otherNode.position;
-        ConnectionAnimator conui = FindConnectionGameObject(x, y);
-        if (conui == null)
-        {
-            Debug.Log("Creating new connection" + x.ToString() + y.ToString());
-            conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
-            conui.connection = game.board.GetConnection(x, y);
-            conui.transform.position = GetConnectionGlobalPos(x, y);
-            conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
-        }
-        conui.UpdateDisplay();
-    }
-
-    void UI.UpdateConnection(Node otherNode, Node current)
-    {
-        Debug.Log("FROM UI");
-        UpdateConnection(otherNode, current);
-    }
-
-
-
-    void UI.UpdateSettlement(Node otherNode)
-    {
-        var x = otherNode.position;
-        NodeButton nodeui = FindNodeGameObject(ConvertVector(x)); // no need to instantiate as the nodes were made on startup
-        nodeui.UpdateSettlement();
     }
 
     public void StopAllPlayerCoroutines()
