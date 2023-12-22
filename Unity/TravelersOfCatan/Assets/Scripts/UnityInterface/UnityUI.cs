@@ -72,17 +72,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         SceneManager.sceneLoaded -= NewScene;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-        /*if (Input.GetKeyDown(KeyCode.Return))
-        {
-            game.ShowBoard();
-        }*/
-        //Debug.Log(JsonUtility.ToJson(game));
-
-    }
+  
 
     public void StartGameButton()
     {

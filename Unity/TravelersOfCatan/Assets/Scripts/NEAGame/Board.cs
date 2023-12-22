@@ -71,9 +71,8 @@ namespace NEAGame
 
         }
 
-        public Board (BoardWrapper board)
+        public Board (BoardWrapper board) : this()
         {
-
             int i = 0;
             foreach (HexagonUnitWrapper hexagonUnitWrapper in board.board)
             {
@@ -81,21 +80,7 @@ namespace NEAGame
                 this.board[i] = unit;
                 i++;
             }
-            for (int x = -2; x < 4; x++)
-            {
-                for (int y = -2; y < 4; y++)
-                {
-                    for (int z = -2; z < 4; z++)
-                    {
-                        if ((x + y + z == 1) || (x + y + z == 2))
-                        {
-
-                            Node n = new Node(x, y, z);
-                            nodes.Add(new Vector3(x, y, z), n);
-                        }
-                    }
-                }
-            }
+            
             i = 0;
             foreach (NodeWrapper node in board.nodes._Values)
             {
@@ -211,4 +196,163 @@ namespace NEAGame
 
 
     }
+
+    /// <summary>
+    /// Minor classes for the game that are not worth their own file and are all serializable
+    /// </summary>
+
+
+
+    public class HexagonUnit
+    {
+        public Vector3 position;
+        public Resource resource;
+
+        public HexagonUnit(Resource R, int x, int y, int z)
+        {
+            resource = R;
+            position = new Vector3(x, y, z);
+        }
+
+        public HexagonUnit(HexagonUnitWrapper hex)
+        {
+            resource = new Resource(hex.resource);
+            position = new Vector3(hex.position.x, hex.position.y, hex.position.z);
+        }
+
+        public override string ToString()
+        {
+            return $"{resource} at {position}";
+        }
+
+    }
+
+    public abstract class Settlement
+    {
+        protected int id { get; set; }
+        protected string[] statuses { get; set; }
+        protected int occupantID { get; set; }
+    }
+
+    public class Building : Settlement
+    {
+
+        public Building(string i = "Empty", int o = -1)
+        {
+            statuses = new string[] { "Empty", "Village", "City" };
+            id = Array.IndexOf(statuses, i);
+            occupantID = o;
+
+        }
+
+        public Building(SettlementWrapper sw)
+        {
+            statuses = new string[] { "Empty", "Village", "City" };
+            occupantID = sw.occupantID;
+            id = Array.IndexOf(statuses, sw.status);
+        }
+
+
+        public void UpgradeVillage()
+        {
+            if (id == 1)
+            {
+                id++;
+            }
+        }
+
+        public bool IsEmpty()
+        {
+            return id == 0;
+        }
+        public override string ToString()
+        {
+            if (occupantID != -1)
+            {
+                return $"{statuses[id]} owned by Player {occupantID}";
+            }
+            else
+            {
+                return $"{statuses[id]}";
+            }
+        }
+
+        public string GetStatus()
+        {
+            return statuses[id];
+        }
+
+        public int GetOccupant()
+        {
+            return occupantID;
+        }
+
+
+    }
+
+    public class Resource
+    {
+        public static readonly string[] resources = { "Empty", "Brick", "Sheep", "Ore", "Wood", "Wheat" };
+        private int id;
+        private static readonly Random rng = new Random();
+
+
+
+        public Resource(int i = 0)
+        {
+            id = i;
+        }
+
+        public Resource(string name)
+        {
+            id = Array.IndexOf(resources, name);
+        }
+
+        public Resource(ResourceWrapper res)
+        {
+            id = res.id;
+        }
+
+
+        public override string ToString()
+        {
+            return resources[id];
+        }
+
+
+        public void CreateRandomResource()
+        {
+            id = rng.Next(1, resources.Length);
+        }
+
+        public override bool Equals(System.Object otherItem)
+        {
+            if (otherItem == null)
+            {
+                return false;
+            }
+
+            Resource otherResource = otherItem as Resource;
+
+            return (id == otherResource.id);
+        }
+
+        public override int GetHashCode()
+        {
+            return id;
+        }
+
+        public static Resource GetRandom()
+        {
+            Resource temp = new Resource();
+            temp.CreateRandomResource();
+            return temp;
+        }
+
+
+    }
+
+
+
+
 }

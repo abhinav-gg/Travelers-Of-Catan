@@ -11,7 +11,8 @@ namespace NEAGame
 {
     class AI : Player
     {
-
+        Dictionary<Node, int> distance = new Dictionary<Node, int>();
+        Dictionary<Node, Node> previous = new Dictionary<Node, Node>();
         public AI(int playerNumber, string name, Vector3 home) : base(playerNumber, name, home)
         {
             isAI = true;
@@ -45,13 +46,36 @@ namespace NEAGame
             return score;
         }
 
-        public void BRS(TravelersOfCatan State, int Turn, int DepthLeft, Stack<Move> MovesMade)
+        public void BRS(TravelersOfCatan State, int Turn, int DepthLeft, int alpha, int beta)
         {
-            if (DepthLeft == 0)
+            if (DepthLeft <= 0)
             {
                 //return StaticEval(State);
             }
+            if (Turn == playerNumber)
+            {
 
+            }
+            else
+            {
+
+            }
+
+
+
+            /*foreach (Move m in AllMoves)
+            {
+                DoMove();
+                int v = -BRS(State, Turn, DepthLeft - 1, MovesMade, -beta, -alpha);
+                UndoMove();
+                if (v >= beta)
+                {
+                    return v;
+                }
+                alpha = Math.Max(alpha, v);
+            }*/
+
+            // figure out how to do a move and then UNDO that move
 
             // First consider all purchases that can be made with the current resources
             // Then consider all possible moves that can be made with the current moves
@@ -64,15 +88,39 @@ namespace NEAGame
             // find resources required and use that to find the closest position to go to
             // The ai can not strategically place walls but it should be able to place roads and settlements somehow...
         }
+
+        public void GenerateMoves()
+        {
+
+        }
+
+
+        public void DoMove(Action act)
+        {
+
+        }
+
+        public void UndoMove(Action act)
+        {
+            // remove from stack
+            // if its a build move
+            // if its a road or wall then update the board connection, remove from players list of connections and add victory points and resources back
+            // if its a settlement then update the board node, remove from players list of nodes and add victory points and resources back
+            // if its a player move
+            // move the player back to the previous position
+
+
+        }
         
 
         public void Dijkstra(Board board, Vector3 start)
         {
 
             // Dijkstra's algorithm
-            
-            Dictionary<Node, int> distance = new Dictionary<Node, int>();
-            Dictionary<Node, Node> previous = new Dictionary<Node, Node>();
+            distance = new Dictionary<Node, int>();
+            previous = new Dictionary<Node, Node>();
+
+
             Node[] gameBoard = board.GetAllNodes();
 
 
@@ -97,52 +145,22 @@ namespace NEAGame
 
                 foreach (var g in current.GetNodeNeighbours())
                 {
-                    //Connection con = board.GetConnection(current.position, g);
-                    //if ()
-                    //{
-                    //    int alt = distance[current] + con.GetWalkingCost(this);
-                    //    if (alt < distance[con.end])
-                    //    {
-                    //        distance[con.end] = alt;
-                    //        previous[current] = current;
-                    //    }
-                    //}
+                    Node neighbour = board.GetNode(g);
+                    if (neighbour == null) continue;
+                    Connection con = board.GetConnection(current.position, g);
+                    int NewDist = distance[current] + con.GetWalkingCost(this);
+                    if (NewDist < distance[neighbour])
+                    {
+                        distance[neighbour] = NewDist;
+                        previous[neighbour] = current;
+                    }
                 }
 
             }
-
-            
-            //Use output and distances for determining positions to go with the AI
-            
-            //return output;
         }
 
 
     }
 
-    class Move
-    {
-        public Vector3 currentPosition;
-        public Vector3 position;
-        public string type;
-        public string status;
-
-        public Move(Vector3 current, Vector3 position)
-        {
-            this.currentPosition = current;
-            this.type = "Move";
-            this.position = position;
-        }
-
-        public Move(Vector3 current, Vector3 position, string status)
-        {
-            this.currentPosition = current;
-            this.type = "Build";
-            this.position = position;
-            this.status = status;
-        }
-
-
-    }
 
 }

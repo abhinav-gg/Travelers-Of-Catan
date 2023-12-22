@@ -38,14 +38,53 @@ public partial class UnityUI
     NodeButton SelectedNode;
 
 
+    bool isZoomed = true;
+    float animationTimer;
+    float zoomCD = 0.0f;
 
-
-    void FixedUpdate()
+    void Update()
     {
         if (TimerActive)
         {
+            animationTimer += Time.deltaTime;
+            zoomCD = Mathf.Clamp(zoomCD - Time.deltaTime, -5f, 5f);
 
-            Timer -= Time.deltaTime;
+            Timer = Mathf.Clamp(Timer - Time.deltaTime, 0, int.MaxValue);
+        }
+    }
+
+    void ZoomButton()
+    {
+        if (zoomCD > 0.0f)
+        {
+            return;
+        }
+        float inDist = 150.0f;
+        float outDist = 300.0f;
+        isZoomed = !isZoomed;
+        zoomCD = 0.85f;
+        animationTimer = 0.0f;
+        if (isZoomed)
+        {
+            StartCoroutine(ZoomLerp(inDist));
+        }
+        else
+        {
+            StartCoroutine(ZoomLerp(outDist));
+        }
+
+    }
+
+    IEnumerator ZoomLerp(float endDist)
+    {
+        float totalTime = 0.5f;
+        float startDist = Camera.main.orthographicSize;
+        float t = 0.0f;
+        while (animationTimer < totalTime)
+        {
+            t = animationTimer / totalTime;
+            Camera.main.orthographicSize = Mathf.Lerp(startDist, endDist, t);
+            yield return 0;
         }
     }
 
@@ -56,11 +95,13 @@ public partial class UnityUI
         overlay.MoveInput.onClick.AddListener(OnPlayerMove);
         overlay.InventoryInput.onClick.AddListener(OpenInventory);
         overlay.ShopInput.onClick.AddListener(OpenShop);
+        overlay.ZoomInput.onClick.AddListener(ZoomButton);
+        // overlay.PauseInput.onClick.AddListener(PauseButton);
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
 
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
-        Timer = time; // ASSIGN TO CONSTANT
+        Timer = time;
         TimerActive = true;
         StartCoroutine(WaitForTurnToEnd());
 
@@ -113,6 +154,10 @@ public partial class UnityUI
 
     public void EndTurn()
     {
+        if (!isZoomed)
+        {
+            ZoomButton();
+        }
         GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).isCurrentPlayer = false;
 
         StopAllPlayerCoroutines();
@@ -216,8 +261,6 @@ public partial class UnityUI
         }
         conui.UpdateDisplay();
     }
-
-
 
     void UI.UpdateSettlement(Node otherNode)
     {
