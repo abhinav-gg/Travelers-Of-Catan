@@ -20,6 +20,7 @@ public partial class UnityUI
     public GameObject shoppingPopup;
     public GameObject pausePopup;
 
+
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
     public Tilemap tilemap;
@@ -41,6 +42,7 @@ public partial class UnityUI
     bool isZoomed = true;
     float animationTimer;
     float zoomCD = 0.0f;
+
 
     void Update()
     {
@@ -97,6 +99,7 @@ public partial class UnityUI
         overlay.ShopInput.onClick.AddListener(OpenShop);
         overlay.ZoomInput.onClick.AddListener(ZoomButton);
         // overlay.PauseInput.onClick.AddListener(PauseButton);
+        overlay.UndoInput.onClick.AddListener(game.UndoAction);
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
 
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
@@ -106,7 +109,7 @@ public partial class UnityUI
         StartCoroutine(WaitForTurnToEnd());
 
         // set camera position to player position on baord!
-        LeanTween.move(Camera.main.gameObject, GetCurrentPlayerGlobalPos() + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine);
+        LeanTween.move(Camera.main.gameObject, GetCurrentPlayerGlobalPos() + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine);
 
     }
 
@@ -169,7 +172,7 @@ public partial class UnityUI
 
         // anim.EndTurnButtonPlay();
         LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
-        LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
+        LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0f, 0f, 0f), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
 
             Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
             Interface.game.EndTurn();
@@ -243,7 +246,7 @@ public partial class UnityUI
     {
         Vector3 pos = GetNodeGlobalPos(otherNode);
         LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
-        LeanTween.move(Camera.main.gameObject, pos + new Vector3(0, 0, -10), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
+        LeanTween.move(Camera.main.gameObject, pos + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
 
     }
 
@@ -255,11 +258,21 @@ public partial class UnityUI
         if (conui == null)
         {
             conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
-            conui.connection = con;
             conui.transform.position = GetConnectionGlobalPos(x, y);
             conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
+            conui.connection = con;
+        }
+        if (conui.connection != con)
+        {
+            Debug.LogError("A");
+        }
+        else if (con.GetStatus() == "Empty")
+        {
+            Debug.Log(conui.gameObject);
+            Destroy(conui.gameObject);
         }
         conui.UpdateDisplay();
+        
     }
 
     void UI.UpdateSettlement(Node otherNode)
@@ -429,7 +442,7 @@ public partial class UnityUI
 
     public void OpenInventory()
     {
-        JSON_manager.SAVEGAME(game, "TESTFINDME");
+        //JSON_manager.SAVEGAME(game, "TESTFINDME");
         StopAllPlayerCoroutines();
         StartCoroutine(DisplayInventory());
     }

@@ -72,6 +72,13 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         SceneManager.sceneLoaded -= NewScene;
     }
 
+    void UI.Assert(bool test)
+    {
+        if (!test)
+        {
+            Debug.LogError("Assertion failed");
+        }
+    }
   
 
     public void StartGameButton()

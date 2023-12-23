@@ -11,8 +11,7 @@ namespace NEAGame
 {
     class AI : Player
     {
-        Dictionary<Node, int> distance = new Dictionary<Node, int>();
-        Dictionary<Node, Node> previous = new Dictionary<Node, Node>();
+
         public AI(int playerNumber, string name, Vector3 home) : base(playerNumber, name, home)
         {
             isAI = true;
@@ -112,52 +111,6 @@ namespace NEAGame
 
         }
         
-
-        public void Dijkstra(Board board, Vector3 start)
-        {
-
-            // Dijkstra's algorithm
-            distance = new Dictionary<Node, int>();
-            previous = new Dictionary<Node, Node>();
-
-
-            Node[] gameBoard = board.GetAllNodes();
-
-
-            List<Node> Q = new List<Node>();
-
-            foreach( Node node in gameBoard)
-            {
-                distance.Add(node, int.MaxValue);
-                previous.Add(node, null);
-                Q.Add(node);
-            }
-            
-            Node current = board.GetNode(start);
-            distance[current] = 0;
-
-            while ( Q.Count > 0 ) 
-            {
-
-                // Linq to sort the list by distance and get first element (Priority Queue Implementation)
-                current = Q.OrderBy(x => distance[x]).First();
-                Q.Remove(current);
-
-                foreach (var g in current.GetNodeNeighbours())
-                {
-                    Node neighbour = board.GetNode(g);
-                    if (neighbour == null) continue;
-                    Connection con = board.GetConnection(current.position, g);
-                    int NewDist = distance[current] + con.GetWalkingCost(this);
-                    if (NewDist < distance[neighbour])
-                    {
-                        distance[neighbour] = NewDist;
-                        previous[neighbour] = current;
-                    }
-                }
-
-            }
-        }
 
 
     }

@@ -15,6 +15,7 @@ public class PlayerUIOverlay : MonoBehaviour
     public Button EndTurnInput;
     public Button PauseInput;
     public Button ZoomInput;
+    public Button UndoInput;
     public TextMeshProUGUI TimerText;
     public TextMeshProUGUI PlayerName;
     public TextMeshProUGUI PlayerScore;

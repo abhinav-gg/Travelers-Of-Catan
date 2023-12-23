@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Diagnostics;
 
 
 
@@ -54,9 +50,20 @@ namespace NEAGame
         public List<Player> gamePlayers = new List<Player>();
         public Board board;
 
-
+        /// <summary>
+        /// Used primarily for the AI interaction
+        /// </summary>
         private Stack<GameAction> actions = new Stack<GameAction>();
+        Dictionary<Node, int> distance = new Dictionary<Node, int>();
+        Dictionary<Node, Node> previous = new Dictionary<Node, Node>();
 
+        /// <summary>
+        /// Constructor for a new game
+        /// </summary>
+        /// <param name="ui"></param>
+        /// <param name="win"></param>
+        /// <param name="start"></param>
+        /// <param name="maxtime"></param>
         public TravelersOfCatan(UI ui, int win, int start, float maxtime)
         {
 
@@ -67,7 +74,11 @@ namespace NEAGame
 
         }
 
-
+        /// <summary>
+        /// Constructor for loading a game from a save file
+        /// </summary>
+        /// <param name="ui"></param>
+        /// <param name="game"></param>
         public TravelersOfCatan(UI ui, GameWrapper game)
         {
             UserInterface = ui;
@@ -211,6 +222,7 @@ namespace NEAGame
         }
         public void EndTurn()
         {
+            actions.Clear();
             if (HasWinner()) return;
             if (turn != -1)
             {
@@ -457,6 +469,7 @@ namespace NEAGame
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
             UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
+            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "Road", other.position));
         }
         public void purchaseWall(Node other)
         {
@@ -465,6 +478,7 @@ namespace NEAGame
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
             UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
+            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "Wall", other.position));
 
         }
         public void purchaseVillage(Node otherPos)
@@ -473,13 +487,15 @@ namespace NEAGame
             ChargePlayer("Village");
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
             UserInterface.UpdateSettlement(otherPos);
+            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "Village"));
         }
         public void purchaseCity(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status.UpgradeVillage();
             ChargePlayer("City");
-            currentPlayer.upgradeCillage(board.GetNode(currentPlayer.position));
+            currentPlayer.upgradeVillage(board.GetNode(currentPlayer.position));
             UserInterface.UpdateSettlement(otherPos);
+            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "City"));
 
         }
 
@@ -541,8 +557,12 @@ namespace NEAGame
 
         private void MovePlayer(Node otherpos)
         {
-            currentPlayer.moves -= board.GetConnection(currentPlayer.position, otherpos.position).GetWalkingCost(currentPlayer); 
+
+            actions.Push(new PlayerMove(currentPlayer.getNumber(), currentPlayer.position, otherpos.position));
+
+            currentPlayer.moves -= board.GetConnection(currentPlayer.position, otherpos.position).GetWalkingCost(currentPlayer); // FLAG replace with DJIKSTRAS
             currentPlayer.position = otherpos.position;
+
 
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
 
@@ -551,40 +571,205 @@ namespace NEAGame
 
         }
 
+        public void Refund(string structure)
+        {
+
+            Dictionary<Resource, int> cost = GetCostOfUpgrade(structure);
+            foreach (var entry in cost)
+            {
+                currentPlayer.addResource(entry.Key, entry.Value);
+            }
+
+
+        }
+
+        public void Dijkstra(Board board, Vector3 start)
+        {
+
+            // Dijkstra's algorithm
+            distance = new Dictionary<Node, int>();
+            previous = new Dictionary<Node, Node>();
+
+
+            Node[] gameBoard = board.GetAllNodes();
+
+
+            List<Node> Q = new List<Node>();
+
+            foreach (Node node in gameBoard)
+            {
+                distance.Add(node, int.MaxValue);
+                previous.Add(node, null);
+                Q.Add(node);
+            }
+
+            Node current = board.GetNode(start);
+            distance[current] = 0;
+
+            while (Q.Count > 0)
+            {
+
+                // Linq to sort the list by distance and get first element (Priority Queue Implementation)
+                current = Q.OrderBy(x => distance[x]).First();
+                Q.Remove(current);
+
+                foreach (var g in current.GetNodeNeighbours())
+                {
+                    Node neighbour = board.GetNode(g);
+                    if (neighbour == null) continue;
+                    
+                    if (neighbour.status.GetOccupant() != currentPlayer.GetID() && neighbour.status.GetStatus() != "Empty") continue; // can not move through enemy settlements
+                    
+                    Connection con = board.GetConnection(current.position, g);
+
+                    int NewDist = distance[current] + con.GetWalkingCost(currentPlayer);
+                    if (NewDist < distance[neighbour])
+                    {
+                        distance[neighbour] = NewDist;
+                        previous[neighbour] = current;
+                    }
+                }
+
+            }
+        }
+
+        public void DoAction(GameAction a)
+        {
+
+        }
+
+        public void UndoAction()
+        {
+            if (actions.Count == 0) return;
+            ShowActions();
+
+            GameAction a = actions.Pop();
+            if (a.type == typeof(PlayerMove))
+            {
+                PlayerMove move = (PlayerMove)a;
+
+                UserInterface.Assert(move.playerID == currentPlayer.getNumber());
+
+                currentPlayer.moves += board.GetConnection(move.position, move.newpos).GetWalkingCost(currentPlayer); // FLAG replace with DJIKSTRAS
+                currentPlayer.position = move.position;
+                UserInterface.UpdatePlayer(board.GetNode(currentPlayer.position));
+
+            }
+            else if (a.type == typeof(PlayerPurchase))
+            {
+                PlayerPurchase purchase = (PlayerPurchase)a;
+
+
+                if (purchase.status == "Road" || purchase.status == "Wall")
+                {
+                    
+
+                    Connection con = board.GetConnection(purchase.position, purchase.otherpos);
+                    UserInterface.Assert(con.GetStatus() == purchase.status);
+                    UserInterface.Assert(con.GetOccupant() == currentPlayer.GetID());
+
+                    currentPlayer.removeConnection(con);
+                    board.UpdateConnection(purchase.position, purchase.otherpos, new Connection());
+                    UserInterface.UpdateConnection(board.GetNode(purchase.position), board.GetNode(purchase.otherpos), new Connection());
+
+                    Refund(purchase.status);
+
+                }
+                else if (purchase.status == "Village")
+                {
+
+                    UserInterface.Assert(board.GetNode(purchase.position).status.GetStatus() == "Village");
+                    UserInterface.Assert(board.GetNode(purchase.position).status.GetOccupant() == currentPlayer.GetID());
+
+                    currentPlayer.removeBuilding(board.GetNode(currentPlayer.position));
+                    board.GetNode(purchase.position).status = new Building();
+                    UserInterface.UpdateSettlement(board.GetNode(purchase.position));
+
+                    Refund("Village");
+
+
+                }
+                else if (purchase.status == "City")
+                {
+
+                    UserInterface.Assert(board.GetNode(purchase.position).status.GetStatus() == "City");
+
+
+                    board.GetNode(purchase.position).status.DowngradeVillage();
+                    currentPlayer.undoUpgradeVillage(board.GetNode(currentPlayer.position));
+                    UserInterface.UpdateSettlement(board.GetNode(purchase.position));
+
+                    Refund("City");
+
+                }
+            }
+        }
+
+        public void ShowActions()
+        {
+
+            // go through stack without changing it
+
+            foreach (GameAction a in actions)
+            {
+                UserInterface.CreatePopup(a.ToString());
+            }
+
+
+        }
+
     }
 
 
-    abstract class GameAction
+    public abstract class GameAction
     {
+        public int playerID; // for verification
         public Vector3 position;
         public Type type;
 
     }
 
-    class PlayerMove : GameAction
+    public class PlayerMove : GameAction
     {
         public Vector3 newpos;
 
-        public PlayerMove(Vector3 position, Vector3 newpos)
+        public PlayerMove(int playerID, Vector3 position, Vector3 newpos)
         {
+            this.playerID = playerID;
             this.position = position;
             this.newpos = newpos;
             type = GetType();
         }
+
+        public override string ToString()
+        {
+            return $"player {playerID} moved from {position} to {newpos}";
+        }
+
+
     }
 
-    class PlayerPurchase : GameAction
+    public class PlayerPurchase : GameAction
     {
         public Vector3 otherpos;
         public string status;
 
-        public PlayerPurchase(Vector3 position, string status, Vector3 otherpos = new Vector3())
+        public PlayerPurchase(int playerID, Vector3 position, string status, Vector3 otherpos = new Vector3())
         {
+            this.playerID = playerID;
             this.position = position;
             this.otherpos = otherpos;
             type = GetType();
             this.status = status;
         }
+
+        public override string ToString()
+        {
+            return $"player {playerID} Purchasing a {status} from {position}";
+        }
+
+
+
     }
 
 

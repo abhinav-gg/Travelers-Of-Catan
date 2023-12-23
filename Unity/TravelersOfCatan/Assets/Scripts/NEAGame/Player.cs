@@ -81,6 +81,18 @@ namespace NEAGame
             addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
 
         }
+        public void removeBuilding(Node building)
+        {
+            if (buildings.Contains(building))
+            {
+                buildings.Remove(building);
+                addVictoryPoints(-TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
+            }
+            else
+            {
+                throw new Exception("Player does not own this building");
+            }
+        }
 
         public List<Node> GetBuildings()
         {
@@ -96,6 +108,19 @@ namespace NEAGame
         {
             connections.Add(connection);
             addVictoryPoints(TravelersOfCatan.victoryPointConvertor[connection.GetStatus()]);
+        }
+
+        public void removeConnection(Connection con)
+        {
+            if (connections.Contains(con))
+            {
+                connections.Remove(con);
+                addVictoryPoints(-TravelersOfCatan.victoryPointConvertor[con.GetStatus()]);
+            }
+            else
+            {
+                throw new Exception("Player does not own this connection");
+            }
         }
 
         public int getVictoryPoints()
@@ -116,6 +141,7 @@ namespace NEAGame
         {
             resources[resource] += amount;
         }
+
 
         public void removeResource(Resource resource, int amount = 1)
         {
@@ -153,16 +179,14 @@ namespace NEAGame
             return (int)wealth;
         }
 
-        public void upgradeCillage(Node node)
+        public void upgradeVillage(Node node)
         {
-            foreach (Node n in buildings)
-            {
-                if (n == node)
-                {
-                    n.status.UpgradeVillage();
-                    addVictoryPoints(TravelersOfCatan.victoryPointConvertor["City"]);
-                }
-            }
+            addVictoryPoints(TravelersOfCatan.victoryPointConvertor["City"]);
+        }
+
+        public void undoUpgradeVillage(Node node)
+        {
+            addVictoryPoints(-TravelersOfCatan.victoryPointConvertor["City"]);
         }
     }
 

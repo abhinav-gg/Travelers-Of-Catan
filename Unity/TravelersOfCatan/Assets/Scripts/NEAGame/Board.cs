@@ -287,7 +287,13 @@ namespace NEAGame
             return occupantID;
         }
 
-
+        public void DowngradeVillage()
+        {
+            if (id == 2)
+            {
+                id--;
+            }
+        }
     }
 
     public class Resource

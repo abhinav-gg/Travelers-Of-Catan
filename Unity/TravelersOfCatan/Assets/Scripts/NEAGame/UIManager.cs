@@ -21,6 +21,7 @@ namespace NEAGame
         void UpdateConnection(Node node1, Node node2, Connection con);
         void UpdateSettlement(Node otherNode);
         void DisplayPlayers(List<Player> gamePlayers);
+        void Assert(bool test);
     }
 
     public class TerminalUI { }
