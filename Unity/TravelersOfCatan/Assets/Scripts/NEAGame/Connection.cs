@@ -75,7 +75,7 @@ namespace NEAGame
             {
                 return int.MaxValue;
             }
-            return -1; // should never happen
+            throw new Exception("Invalid Player Number");
         }
 
 
@@ -83,6 +83,8 @@ namespace NEAGame
         {
             return $"{statuses[id]} Owned by {occupantID}";
         }
+
+
 
     }
 

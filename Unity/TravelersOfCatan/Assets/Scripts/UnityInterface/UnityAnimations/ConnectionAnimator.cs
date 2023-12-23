@@ -44,6 +44,7 @@ public class ConnectionAnimator : MonoBehaviour
 
     public void UpdateDisplay()
     {
+        Debug.Log(connection);
         switch (connection.GetStatus())
         {
             case "Road":
@@ -55,13 +56,9 @@ public class ConnectionAnimator : MonoBehaviour
                 Wall.SetActive(true);
                 break;
             default:
-                Road.SetActive(false);
-                Wall.SetActive(false);
+                LeanTween.scale(gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeOutBack).setOnComplete(() => { Destroy(gameObject); });
                 break;
         }   
-
-        // add player color flag here in future
-
 
     }
 

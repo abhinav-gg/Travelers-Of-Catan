@@ -506,10 +506,9 @@ namespace NEAGame
         public void attemptPlayerMove()
         {
             
-            Connection con;
-            Node target;
             List<Node> viableLocations = new List<Node>();
-            bool possible = false;
+            /*Connection con;
+            Node target;
             bool valid;
             foreach (Vector3 pos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
@@ -544,8 +543,12 @@ namespace NEAGame
                     viableLocations.Add(target);
                     
             }
+            */
+            Dijkstra(board, currentPlayer.position);
+            // use a Linq to only select the nodes that are within the players movement range
+            viableLocations = distance.Where(x => x.Value <= currentPlayer.moves).Select(x => x.Key).ToList();
 
-            if (viableLocations.Count == 0 && !possible)
+            if (viableLocations.Count == 0)
             {
                 UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital();
@@ -557,17 +560,22 @@ namespace NEAGame
 
         private void MovePlayer(Node otherpos)
         {
-
             actions.Push(new PlayerMove(currentPlayer.getNumber(), currentPlayer.position, otherpos.position));
 
-            currentPlayer.moves -= board.GetConnection(currentPlayer.position, otherpos.position).GetWalkingCost(currentPlayer); // FLAG replace with DJIKSTRAS
+            Node current = otherpos;
+            Stack<Node> path = new Stack<Node>();
+            while (current != board.GetNode(currentPlayer.position))
+            {
+                path.Push(current);
+                current = previous[current];
+                //actions.Push(new PlayerMove(currentPlayer.getNumber(), current.position, previous[current].position));
+            }
+
+            currentPlayer.moves -= distance[otherpos];
             currentPlayer.position = otherpos.position;
-
-
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
 
-            UserInterface.UpdatePlayer(otherpos);
-
+            UserInterface.UpdatePlayer(path);
 
         }
 
@@ -612,13 +620,19 @@ namespace NEAGame
                 // Linq to sort the list by distance and get first element (Priority Queue Implementation)
                 current = Q.OrderBy(x => distance[x]).First();
                 Q.Remove(current);
-
+                if (distance[current] == int.MaxValue) break; // all remaining nodes are inaccessible
+                if (current.status.GetOccupant() != currentPlayer.GetID() && current.status.GetStatus() != "Empty")
+                {
+                    // can not move through enemy settlements
+                    distance[current] = int.MaxValue;
+                    previous[current] = null;
+                    continue;
+                }
                 foreach (var g in current.GetNodeNeighbours())
                 {
                     Node neighbour = board.GetNode(g);
                     if (neighbour == null) continue;
                     
-                    if (neighbour.status.GetOccupant() != currentPlayer.GetID() && neighbour.status.GetStatus() != "Empty") continue; // can not move through enemy settlements
                     
                     Connection con = board.GetConnection(current.position, g);
 
@@ -631,6 +645,9 @@ namespace NEAGame
                 }
 
             }
+
+            distance[board.GetNode(start)] = int.MaxValue; // this is to prevent the player from moving back onto their current position
+
         }
 
         public void DoAction(GameAction a)
@@ -647,12 +664,22 @@ namespace NEAGame
             if (a.type == typeof(PlayerMove))
             {
                 PlayerMove move = (PlayerMove)a;
+                UserInterface.Assert(currentPlayer.position == move.newpos);
+                Dijkstra(board, move.newpos);
+                Node otherpos = board.GetNode(move.position);
+                Node current = otherpos;
+                Stack<Node> path = new Stack<Node>();
+                while (current != board.GetNode(currentPlayer.position))
+                {
+                    path.Push(current);
+                    current = previous[current];
+                }
 
-                UserInterface.Assert(move.playerID == currentPlayer.getNumber());
+                currentPlayer.moves += distance[otherpos];
+                currentPlayer.position = otherpos.position;
 
-                currentPlayer.moves += board.GetConnection(move.position, move.newpos).GetWalkingCost(currentPlayer); // FLAG replace with DJIKSTRAS
-                currentPlayer.position = move.position;
-                UserInterface.UpdatePlayer(board.GetNode(currentPlayer.position));
+                UserInterface.UpdatePlayer(path);
+
 
             }
             else if (a.type == typeof(PlayerPurchase))
@@ -670,7 +697,7 @@ namespace NEAGame
 
                     currentPlayer.removeConnection(con);
                     board.UpdateConnection(purchase.position, purchase.otherpos, new Connection());
-                    UserInterface.UpdateConnection(board.GetNode(purchase.position), board.GetNode(purchase.otherpos), new Connection());
+                    UserInterface.UpdateConnection(board.GetNode(purchase.position), board.GetNode(purchase.otherpos), board.GetConnection(purchase.position, purchase.otherpos));
 
                     Refund(purchase.status);
 

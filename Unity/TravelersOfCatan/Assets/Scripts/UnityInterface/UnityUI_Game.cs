@@ -26,7 +26,6 @@ public partial class UnityUI
     public Tilemap tilemap;
 
     public List<NodeButton> nodes = new List<NodeButton>();
-    public List<ConnectionAnimator> connections = new List<ConnectionAnimator>();
 
     bool hasInitializedBoard = false;
 
@@ -184,10 +183,10 @@ public partial class UnityUI
 
     public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
     {
-        Connection searching = game.board.GetConnection(v1, v2);
-        foreach (ConnectionAnimator con in connections)
+        Vector3 searchingpos = GetConnectionGlobalPos(v1, v2);
+        foreach (ConnectionAnimator con in FindObjectsOfType<ConnectionAnimator>())
         {
-            if (con.connection == searching)
+            if (con.transform.position == searchingpos)
             {
                 return con;
             }
@@ -242,13 +241,26 @@ public partial class UnityUI
         }
     }
 
-    void UI.UpdatePlayer(Node otherNode)
+    void UI.UpdatePlayer(Stack<Node> path)
     {
-        Vector3 pos = GetNodeGlobalPos(otherNode);
-        LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
-        LeanTween.move(Camera.main.gameObject, pos + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
+        StartCoroutine(MovePlayerAlongPath(path));
+    }
+
+    public IEnumerator MovePlayerAlongPath(Stack<Node> path)
+    {
+        while (path.Count > 0)
+        {
+            Node otherNode = path.Pop();
+            Vector3 pos = GetNodeGlobalPos(otherNode);
+            LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
+            LeanTween.move(Camera.main.gameObject, pos + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
+            yield return new WaitForSeconds(0.55f);
+        }
+        yield return null;
 
     }
+
+
 
     void UI.UpdateConnection(Node otherNode, Node current, Connection con)
     {
@@ -258,19 +270,10 @@ public partial class UnityUI
         if (conui == null)
         {
             conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
-            conui.transform.position = GetConnectionGlobalPos(x, y);
             conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
-            conui.connection = con;
+            conui.transform.position = GetConnectionGlobalPos(x, y);
         }
-        if (conui.connection != con)
-        {
-            Debug.LogError("A");
-        }
-        else if (con.GetStatus() == "Empty")
-        {
-            Debug.Log(conui.gameObject);
-            Destroy(conui.gameObject);
-        }
+        conui.connection = con;
         conui.UpdateDisplay();
         
     }
