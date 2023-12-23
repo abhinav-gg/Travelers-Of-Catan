@@ -48,7 +48,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
                 this.game = new TravelersOfCatan(Interface, 130, 40, 90f);
                 //StartCoroutine(GetNewPlayer(2));
                 game.AddPlayer("bob");
-                game.AddPlayer("joe");
+                game.AddPlayer("test");
                 game.startGame();
 
             }

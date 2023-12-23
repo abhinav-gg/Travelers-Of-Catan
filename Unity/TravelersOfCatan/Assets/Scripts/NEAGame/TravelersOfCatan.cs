@@ -548,10 +548,13 @@ namespace NEAGame
             // use a Linq to only select the nodes that are within the players movement range
             viableLocations = distance.Where(x => x.Value <= currentPlayer.moves).Select(x => x.Key).ToList();
 
-            if (viableLocations.Count == 0)
+            if (viableLocations.Count == 0 && currentPlayer.moves > 0)
             {
                 UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital();
+                Stack<Node> home = new Stack<Node>();
+                home.Push(board.GetNode(currentPlayer.origin));
+                UserInterface.UpdatePlayer(home);
                 return;
             }
             UserInterface.GetUserNodeChoice(viableLocations.ToArray(), MovePlayer);
@@ -603,6 +606,8 @@ namespace NEAGame
 
 
             List<Node> Q = new List<Node>();
+            // use linq to get the nodes of all other players
+            List<Node> occupied = gamePlayers.Where(gamePlayers => gamePlayers.GetID() != currentPlayer.GetID()).Select(gamePlayers => board.GetNode(gamePlayers.position)).ToList();
 
             foreach (Node node in gameBoard)
             {
@@ -621,7 +626,7 @@ namespace NEAGame
                 current = Q.OrderBy(x => distance[x]).First();
                 Q.Remove(current);
                 if (distance[current] == int.MaxValue) break; // all remaining nodes are inaccessible
-                if (current.status.GetOccupant() != currentPlayer.GetID() && current.status.GetStatus() != "Empty")
+                if ((current.status.GetOccupant() != currentPlayer.GetID() && current.status.GetStatus() != "Empty") || occupied.Contains(current))
                 {
                     // can not move through enemy settlements
                     distance[current] = int.MaxValue;
