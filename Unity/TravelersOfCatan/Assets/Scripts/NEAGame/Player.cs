@@ -10,6 +10,18 @@ namespace NEAGame
 {
     [System.Serializable]
 
+    public enum PlayerColors
+    {
+        blue,
+        cyan,
+        green,
+        grey,
+        magenta,
+        red,
+        white,
+        yellow
+    }
+    // Unity static color options
 
     public class Player
     {

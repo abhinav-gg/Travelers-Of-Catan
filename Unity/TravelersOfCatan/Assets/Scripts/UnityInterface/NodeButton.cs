@@ -8,6 +8,7 @@ public class NodeButton : MonoBehaviour
 {
     public Vector3 NodePos;
     public Node node;
+    public GameObject flag;
     public Button btn;
     public SpriteRenderer img;
     [InspectorName("Village")]
@@ -57,7 +58,8 @@ public class NodeButton : MonoBehaviour
     {
 
         img.enabled = true;
-        
+        flag.SetActive(true);
+        flag.GetComponent<SpriteRenderer>().color = UnityUI.Interface.GetPlayerColor(node.status.GetOccupant());
         if (node.status.GetStatus() == "Village")
         {
             img.sprite = village;
@@ -68,6 +70,7 @@ public class NodeButton : MonoBehaviour
         }
         else
         {
+            flag.SetActive(false);
             img.enabled = false;
         }
         var sc = img.transform.localScale;

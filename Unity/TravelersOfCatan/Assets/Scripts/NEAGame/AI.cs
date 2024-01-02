@@ -18,7 +18,7 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         Stack<GameAction> currentMove = new Stack<GameAction>();
-        int MaxDepth = 5; // make readonly
+        int MaxDepth = 4; // make readonly
         TravelersOfCatan gameRef;
         
 
@@ -93,21 +93,18 @@ namespace NEAGame
                     {
                         continue;
                     }
-                    gameRef.UpdateCurrentPlayer(pdl.GetID());
                     AllMoves.AddRange(GenerateMoves(pdl));
                 }
             }
-
+            Console.Write(AllMoves);
             foreach (GameAction m in AllMoves)
             {
 
                 gameRef.UpdateCurrentPlayer(m.playerID);
+                currentMove.Push(m);
                 gameRef.DoAction(m);
-                int v;
-                if (depth == MaxDepth)
-                {
-                    currentMove.Push(m);
-                }
+                int v = int.MinValue;
+                
                 if (m.type == typeof(PlayerMove))
                 {
                     
@@ -117,64 +114,60 @@ namespace NEAGame
                         // gather resources for all other players
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
-                            if (pdl.GetID() != playerNumber)
+                            if (pdl.GetID() != this.playerNumber)
                             {
                                 gameRef.gatherResources(pdl);
                             }
                         }
-                        v = -BRS(-beta, -alpha, depth-1, Turn.Min);
+                        v = BRS(-beta, -alpha, depth-1, Turn.Min);
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
-                            if (pdl.GetID() != playerNumber)
+                            if (pdl.GetID() != this.playerNumber)
                             {
                                 gameRef.undoGatherResources(pdl);
                             }
                         }
                     }
-                    else
+                    else if (turn == Turn.Min)
                     {
-                        // gather resources for all other players
-                        gameRef.UpdateCurrentPlayer(playerNumber);
                         gameRef.gatherResources(this);
-                        v = -BRS(-beta, -alpha, depth-1, Turn.Max);
+                        v = BRS(-beta, -alpha, depth-1, Turn.Max);
                         gameRef.undoGatherResources(this);
                     }
 
                 } 
                 else
                 {
-                    
                     v = BRS(alpha, beta, depth, turn); // only update the position!
-
-                    
                 }
+                
                 gameRef.UpdateCurrentPlayer(m.playerID);
                 gameRef.UndoAction(m);
+                currentMove.Pop();
                 
                 if (v >= beta)
                 {
+                    if (depth == MaxDepth && m.type == typeof(PlayerMove))
+                    {
+                        selectedMoves = Clone(currentMove);
+                        selectedMoves.Push(m);
+                    }
                     return v;
                 }
                 if (v > alpha)
                 {
-                    alpha = v;
                     if (depth == MaxDepth && m.type == typeof(PlayerMove))
                     {
-                        selectedMoves = Clone(currentMove);                  
+                        selectedMoves = Clone(currentMove);
+                        selectedMoves.Push(m);
                     }
-
+                    alpha = v;
                 }
-
-                if (depth == MaxDepth)
-                {
-                    currentMove.Pop();
-                }
-
-
+                
 
             }
 
-            return -alpha;
+            return alpha;
 
 
             // find resources required and use that to find the closest position to go to
@@ -185,7 +178,7 @@ namespace NEAGame
         {
 
             // base case move to the same position
-
+            gameRef.UpdateCurrentPlayer(pdl.GetID());
             if (gameRef.tryPurchaseCity() != null)
             {
                 yield return new PlayerPurchase(pdl.GetID(), pdl.position, "City");

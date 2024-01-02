@@ -225,7 +225,6 @@ namespace NEAGame
                 timeleft = TimePerMove;
             }     
 
-            UserInterface.BeginTurn(timeleft);
             if (currentPlayer.GetType() == typeof(Player))
             {
                 isAICalculation = false;
@@ -234,23 +233,30 @@ namespace NEAGame
             else if (currentPlayer.GetType() == typeof(AI))
             {
                 isAICalculation = true;
-                UserInterface.CreatePopup(((AI)currentPlayer).BRS(int.MinValue, int.MaxValue).ToString());
-                isAICalculation = false;
-                Stack<GameAction> selectedMoves = ((AI)currentPlayer).selectedMoves;
-                // reverse order of stack
-                Stack<GameAction> temp = new Stack<GameAction>();
-                while (selectedMoves.Count > 0)
-                {
-                    temp.Push(selectedMoves.Pop());
-                }
-                while (temp.Count > 0)
-                {
-                    DoAction(temp.Pop());
-                }
-                // AI will take its turn here and the UI must be updated with their moves.
             }
+            UserInterface.BeginTurn(timeleft);
 
         }
+
+        public void DisplayAIMoves()
+        {
+            currentPlayer = gamePlayers[turn];
+            isAICalculation = false;
+            Stack<GameAction> selectedMoves = ((AI)currentPlayer).selectedMoves;
+            // reverse order of stack
+            Stack<GameAction> temp = new Stack<GameAction>();
+            while (selectedMoves.Count > 0)
+            {
+                temp.Push(selectedMoves.Pop());
+            }
+            while (temp.Count > 0)
+            {
+                DoAction(temp.Pop());
+            }
+            
+        }
+
+
         public void EndTurn()
         {
             actions.Clear();
@@ -610,7 +616,6 @@ namespace NEAGame
             viableLocations = distance.Where(x => x.Value <= currentPlayer.moves).Select(x => x.Key).ToList();
             // sort viable locations by distance descending (AI optimisation)
             viableLocations = viableLocations.OrderByDescending(x => distance[x]).ToList();
-            // overall time complexity of n + n log n
 
             if (viableLocations.Count == 0 && currentPlayer.moves > 0 && !isAICalculation)
             {
@@ -723,12 +728,13 @@ namespace NEAGame
             }
 
             distance[board.GetNode(start)] = int.MaxValue; // this is to prevent the player from moving back onto their current position
-
+            Console.WriteLine("Dijkstra Complete");
         }
 
         public void UndoPlayerAction()
         {
             UserInterface.Assert(!currentPlayer.isPlayerAI());
+            
             GameAction act = actions.Pop();
             UndoAction(act);
 
@@ -741,18 +747,16 @@ namespace NEAGame
             {
                 PlayerMove move = (PlayerMove)a;
                 
+                UserInterface.Assert(currentPlayer.position == move.newpos);
 
-
-                currentPlayer.position = move.position;
 
                 if (!isAICalculation)
                 {
-
-                    Dijkstra(board, move.newpos);
                     Node otherpos = board.GetNode(move.position);
+                    Dijkstra(board, move.newpos);
                     Node current = otherpos;
                     Stack<Node> path = new Stack<Node>();
-                    while (current != board.GetNode(currentPlayer.position))
+                    while (current != board.GetNode(move.newpos))
                     {
                         path.Push(current);
                         current = previous[current];
@@ -761,6 +765,7 @@ namespace NEAGame
                     UserInterface.UpdatePlayer(path);
                 }
 
+                currentPlayer.position = move.position;
 
             }
             else if (a.type == typeof(PlayerPurchase))

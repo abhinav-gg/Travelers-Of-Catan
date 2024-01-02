@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using System.Threading;
+using Unity.VisualScripting;
 
 public class AudioManager : MonoBehaviour
 {
@@ -14,10 +15,11 @@ public class AudioManager : MonoBehaviour
 
     public bool muted = false;
     public Sound[] sounds;
-    public Sound[] BGmusic;
+    public Sound[] BackgroundMusic;
 
     public static AudioManager i;
-    public float VolumeModifier = 1f;
+    // add inspector range to this from 0 to 1
+    [Range(0f, 1f)] public float VolumeModifier = 1f;
 
     void Awake()
     {
@@ -43,7 +45,7 @@ public class AudioManager : MonoBehaviour
 
         }
 
-        foreach (Sound s in BGmusic)
+        foreach (Sound s in BackgroundMusic)
         {
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.Clip;
@@ -54,14 +56,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        Sound s = BackgroundMusic[0];
+        s.source.Play();
+    }
+
     void Update()
     {
         AudioListener.volume = VolumeModifier;
-    }
-
-    public void StartSongs()
-    {
-
     }
 
 
@@ -124,10 +127,10 @@ public class Sound
     public AudioClip Clip;
 
     [Range(0f, 1f)]
-    public float Vol = 0.5f;
+    public float Vol = 1f;
 
     [Range(1f, 3f)]
-    public float Pitch = 1;
+    public float Pitch = 1f;
 
     public bool Loop = false;
 

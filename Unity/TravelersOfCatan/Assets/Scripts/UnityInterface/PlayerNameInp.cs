@@ -9,8 +9,13 @@ public class PlayerNameInp : MonoBehaviour
 
 
     public string FinalName;
+    public bool IsBot = false;
+
+    public Toggle toggle;   
     public TMP_InputField inputField;
     public Button button;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,12 +46,24 @@ public class PlayerNameInp : MonoBehaviour
         {
             button.interactable = false;
         }
+        string output = "";
+
+        foreach (char x in name.ToCharArray())
+        {
+            if (char.IsLetterOrDigit(x))
+            {
+                output += x;
+            }
+        }
+        inputField.text = output;
+        // sanitize input
+
     }
 
     public void NameSubmit()
     {
         FinalName = inputField.text;
-
+        IsBot = toggle.isOn;
     }
 
 

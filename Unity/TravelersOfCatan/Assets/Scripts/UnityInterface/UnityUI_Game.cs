@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using System.Threading;
 using NEAGame;
 using System;
 using System.Linq;
@@ -38,56 +39,16 @@ public partial class UnityUI
     NodeButton SelectedNode;
 
 
-    bool isZoomed = true;
-    float animationTimer;
-    float zoomCD = 0.0f;
-
 
     void Update()
     {
         if (TimerActive)
         {
-            animationTimer += Time.deltaTime;
-            zoomCD = Mathf.Clamp(zoomCD - Time.deltaTime, -5f, 5f);
-
+            
             Timer = Mathf.Clamp(Timer - Time.deltaTime, 0, int.MaxValue);
         }
     }
 
-    void ZoomButton()
-    {
-        if (zoomCD > 0.0f)
-        {
-            return;
-        }
-        float inDist = 150.0f;
-        float outDist = 300.0f;
-        isZoomed = !isZoomed;
-        zoomCD = 0.85f;
-        animationTimer = 0.0f;
-        if (isZoomed)
-        {
-            StartCoroutine(ZoomLerp(inDist));
-        }
-        else
-        {
-            StartCoroutine(ZoomLerp(outDist));
-        }
-
-    }
-
-    IEnumerator ZoomLerp(float endDist)
-    {
-        float totalTime = 0.5f;
-        float startDist = Camera.main.orthographicSize;
-        float t = 0.0f;
-        while (animationTimer < totalTime)
-        {
-            t = animationTimer / totalTime;
-            Camera.main.orthographicSize = Mathf.Lerp(startDist, endDist, t);
-            yield return 0;
-        }
-    }
 
     void UI.BeginTurn(float time)
     {
@@ -97,21 +58,19 @@ public partial class UnityUI
         if (game.GetCurrentPlayer().isPlayerAI())
         {
             overlay.SetAI();
+            StartCoroutine(BeginAI());
 
         }
         else
         {
-            overlay.MoveInput.onClick.AddListener(OnPlayerMove);
             overlay.ShopInput.onClick.AddListener(OpenShop);
             overlay.UndoInput.onClick.AddListener(game.UndoPlayerAction);
-
-            StartCoroutine(WaitForTurnToEnd());
-
-        }
             overlay.EndTurnInput.onClick.AddListener(EndTurn);
             overlay.InventoryInput.onClick.AddListener(OpenInventory);
-            // overlay.PauseInput.onClick.AddListener(PauseButton);
-        overlay.ZoomInput.onClick.AddListener(ZoomButton);
+            overlay.PauseInput.onClick.AddListener(PauseButton);
+            StartCoroutine(WaitForTurnToEnd());
+        }
+
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
@@ -119,6 +78,27 @@ public partial class UnityUI
         LeanTween.move(Camera.main.gameObject, GetPlayerGameObject(game.GetCurrentPlayer().GetID()).transform.position + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine);
 
     }
+
+    IEnumerator BeginAI()
+    {
+
+        // call the AI BRS in a thread and wait for it to finish
+        Thread t = new Thread(() => ((AI)game.GetCurrentPlayer()).BRS(int.MinValue, int.MaxValue));
+        t.Start();
+        while (t.IsAlive)
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        game.DisplayAIMoves();
+
+        yield return new WaitForSeconds(7.5f);
+        EndTurn();
+
+    }
+
 
     void SetupGameScene()
     {
@@ -136,8 +116,15 @@ public partial class UnityUI
         EndTurn();
     }
 
+    public void PauseButton()
+    {
+        TimerActive = false;
+        GameObject overlay = Instantiate(pausePopup);
+    }
+
     public void OnPlayerMove()
     {
+        
         StopAllPlayerCoroutines();
         //anim.MoveButtonPlay();
         game.attemptPlayerMove();
@@ -159,9 +146,9 @@ public partial class UnityUI
 
     public void EndTurn()
     {
-        if (!isZoomed)
+        if (!overlay.isZoomed)
         {
-            ZoomButton();
+            overlay.ZoomButton();
         }
         GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).isCurrentPlayer = false;
 
@@ -170,17 +157,25 @@ public partial class UnityUI
         // Close all GUIS
         FindAnyObjectByType<InventoryPopup>()?.CloseGUI();
         FindAnyObjectByType<ShopOverlay>()?.CloseGUI();
+        // FindAnyObjectByType<TradeOverlay>()?.CloseGUI();
 
 
-        // anim.EndTurnButtonPlay();
-        LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
-        LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0f, 0f, 0f), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
 
+        if (!game.GetCurrentPlayer().isPlayerAI())
+        {
+            LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
+            LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0f, 0f, 0f), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
+                Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
+                Interface.game.EndTurn();
+
+            });
+        }
+        else
+        {
             Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
             Interface.game.EndTurn();
-
-        });
-
+        }   
+        
     }
 
     public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
@@ -250,6 +245,7 @@ public partial class UnityUI
 
     public IEnumerator MovePlayerAlongPath(Stack<Node> path)
     {
+        overlay.FinishMove();
         while (path.Count > 0)
         {
             Node otherNode = path.Pop();
@@ -280,6 +276,12 @@ public partial class UnityUI
         
     }
 
+    public Color GetPlayerColor(int playerID)
+    {
+        // return color from string
+        return Color.cyan;
+
+    }
     void UI.UpdateSettlement(Node otherNode)
     {
         var x = otherNode.position;
