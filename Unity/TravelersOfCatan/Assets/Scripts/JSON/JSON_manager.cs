@@ -77,16 +77,18 @@ namespace NEAGame
     public class HexagonUnitWrapper : JSONWrapper<HexagonUnitWrapper>
     {
 
-        public Vector3 position;
-        public ResourceWrapper resource;
+        public List<Vector3> _Keys;
+        public List<ResourceWrapper> _Values;
 
         public HexagonUnitWrapper() { }
-        public HexagonUnitWrapper(HexagonUnit unit)
+        public HexagonUnitWrapper(Dictionary<System.Numerics.Vector3, Resource> board)
         {
-            position = UnityUI.ConvertVector(unit.position);
-            resource = new ResourceWrapper(unit.resource);
+            foreach (var entry in board)
+            {
+                _Keys.Add(UnityUI.ConvertVector(entry.Key));
+                _Values.Add(new ResourceWrapper(entry.Value));
+            }
         }
-
 
     }
 
@@ -173,7 +175,7 @@ namespace NEAGame
         public PlayerWrapper(Player player)
         {
             position = UnityUI.ConvertVector(player.position);
-            playerNumber = player.getNumber();
+            playerNumber = player.GetID();
             playerName = player.playerName;
             victoryPoints = player.getVictoryPoints();
             moves = player.moves;
@@ -240,7 +242,7 @@ namespace NEAGame
     public class BoardWrapper : JSONWrapper<BoardWrapper>
     {
 
-        public List<HexagonUnitWrapper> board = new List<HexagonUnitWrapper>();
+        public HexagonUnitWrapper board;
         public AdjMatrixWrapper connections;
         public AllNodesWrapper nodes;
 

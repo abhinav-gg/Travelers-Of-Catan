@@ -41,7 +41,7 @@ namespace NEAGame
 
         public void SetOccupant(Player p)
         {
-            occupantID = p.getNumber();
+            occupantID = p.GetID();
         }
 
         public string GetStatus()
@@ -60,7 +60,7 @@ namespace NEAGame
             {
                 return 1;
             }
-            if (otherPlayer.getNumber() == occupantID)
+            if (otherPlayer.GetID() == occupantID)
             {
                 if (id == 1)
                 {
@@ -71,7 +71,7 @@ namespace NEAGame
                     return 2;
                 }
             }
-            else if (otherPlayer.getNumber() != occupantID)
+            else if (otherPlayer.GetID() != occupantID)
             {
                 return int.MaxValue;
             }

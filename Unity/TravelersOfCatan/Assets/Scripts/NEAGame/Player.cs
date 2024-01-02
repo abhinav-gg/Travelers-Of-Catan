@@ -47,12 +47,12 @@ namespace NEAGame
 
         public Player(PlayerWrapper player)
         {
-            this.playerNumber = player.playerNumber;
-            this.playerName = player.playerName;
-            this.origin = new Vector3(player.origin.x, player.origin.y, player.origin.z);
-            this.moves = player.moves;
-            this.position = new Vector3(player.position.x, player.position.y, player.position.z);
-            this.resources = new Dictionary<Resource, int>();
+            playerNumber = player.playerNumber;
+            playerName = player.playerName;
+            origin = new Vector3(player.origin.x, player.origin.y, player.origin.z);
+            moves = player.moves;
+            position = new Vector3(player.position.x, player.position.y, player.position.z);
+            resources = new Dictionary<Resource, int>();
             foreach (var entry in player.resources._Keys.Zip(player.resources._Values, (k, v) => new { k, v }))
             {
                 this.resources.Add(new Resource(entry.k), entry.v);
@@ -128,11 +128,6 @@ namespace NEAGame
             return victoryPoints;
         }
 
-        public int getNumber()
-        {
-            return playerNumber;
-        }
-
         public int getMovesLeft()
         {
             return moves;
@@ -171,9 +166,9 @@ namespace NEAGame
             float wealth = 0;
             foreach (KeyValuePair<Resource, int> resource in resources)
             {
-                wealth += resource.Value / 5;
+                wealth += resource.Value;
             }
-            wealth += victoryPoints * 2;
+            wealth += victoryPoints * 10;
             
             // int cast wealth 
             return (int)wealth;

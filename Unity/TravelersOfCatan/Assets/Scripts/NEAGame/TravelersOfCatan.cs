@@ -53,10 +53,11 @@ namespace NEAGame
         /// <summary>
         /// Used primarily for the AI interaction
         /// </summary>
-        private Stack<GameAction> actions = new Stack<GameAction>();
         Dictionary<Node, int> distance = new Dictionary<Node, int>();
         Dictionary<Node, Node> previous = new Dictionary<Node, Node>();
-
+        // AI func
+        public bool isAICalculation;
+        public Stack<GameAction> actions = new Stack<GameAction>();
         /// <summary>
         /// Constructor for a new game
         /// </summary>
@@ -92,7 +93,7 @@ namespace NEAGame
                     gamePlayers.Add(new Player(pl));
             }
 
-            this.board = new Board(game.board);
+            board = new Board(game.board);
             for (int i = 0; i < game.board.connections._Keys.Count; i++)
             {
                 Vector3 pos1 = new Vector3(game.board.connections._Keys[i].x, game.board.connections._Keys[i].y, game.board.connections._Keys[i].z);
@@ -147,10 +148,25 @@ namespace NEAGame
         public void AddAI()
         {
             int i = gamePlayers.Count;
-            gamePlayers.Add(new AI(i + 1, "AI" + (i + 1), StartingCoords[i]));
+            gamePlayers.Add(new AI(i + 1, "AI" + (i + 1), StartingCoords[i], this));
 
 
         }
+
+        public void UpdateCurrentPlayer(int id)
+        {
+            foreach (Player pdl in gamePlayers)
+            {
+                if (pdl.GetID() == id)
+                {
+                    currentPlayer = pdl;
+                }
+            }
+            currentPlayer.moves = 3;
+            UserInterface.Assert(isAICalculation);
+            
+        }
+
 
         public static Dictionary<Resource, int> GetCostOfUpgrade(string entityName)
         {
@@ -170,7 +186,7 @@ namespace NEAGame
             foreach (Player current in gamePlayers)
             {
 
-                Building capital = new Building("City", current.getNumber());
+                Building capital = new Building("City", current.GetID());
                 board.GetNode(current.position).status = capital;
                 current.addBuilding(board.GetNode(current.position));
 
@@ -205,17 +221,32 @@ namespace NEAGame
         {
             if (timeleft == -1f)
             {
+                gatherResources(currentPlayer);
                 timeleft = TimePerMove;
             }     
 
+            UserInterface.BeginTurn(timeleft);
             if (currentPlayer.GetType() == typeof(Player))
             {
-                UserInterface.BeginTurn(timeleft);
+                isAICalculation = false;
+                
             }
             else if (currentPlayer.GetType() == typeof(AI))
             {
-                //UserInterface.;
-                //((AI)currentPlayer).TakeTurn();
+                isAICalculation = true;
+                UserInterface.CreatePopup(((AI)currentPlayer).BRS(int.MinValue, int.MaxValue).ToString());
+                isAICalculation = false;
+                Stack<GameAction> selectedMoves = ((AI)currentPlayer).selectedMoves;
+                // reverse order of stack
+                Stack<GameAction> temp = new Stack<GameAction>();
+                while (selectedMoves.Count > 0)
+                {
+                    temp.Push(selectedMoves.Pop());
+                }
+                while (temp.Count > 0)
+                {
+                    DoAction(temp.Pop());
+                }
                 // AI will take its turn here and the UI must be updated with their moves.
             }
 
@@ -224,11 +255,6 @@ namespace NEAGame
         {
             actions.Clear();
             if (HasWinner()) return;
-            if (turn != -1)
-            {
-
-                gatherResources();
-            }
             turn++;
             if (turn >= gamePlayers.Count)
             {
@@ -258,18 +284,18 @@ namespace NEAGame
             return gamePlayers.Any(p => p.getVictoryPoints() >= WinningVictoryPoints);
         }
 
-        public void gatherResources()
+        public void gatherResources(Player pdl)
         {
-            foreach (Vector3 u in board.GetNode(currentPlayer.position).GetHexNeighbours())
+            foreach (Vector3 u in board.GetNode(pdl.position).GetHexNeighbours())
             {
                 if (board.GetHexAtPosition(u) != null)
                 {
-                    if (board.GetHexAtPosition(u).resource.ToString() == "Empty") continue;
-                    currentPlayer.addResource(board.GetHexAtPosition(u).resource);
+                    if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
+                    pdl.addResource(board.GetHexAtPosition(u));
                 }
             }
 
-            foreach (Node n in currentPlayer.GetBuildings())
+            foreach (Node n in pdl.GetBuildings())
             {
                 if (n.status.GetStatus() == "City")
                 {
@@ -277,8 +303,36 @@ namespace NEAGame
                     {
                         if (board.GetHexAtPosition(u) != null)
                         {
-                            if (board.GetHexAtPosition(u).resource.ToString() == "Empty") continue;
-                            currentPlayer.addResource(board.GetHexAtPosition(u).resource);
+                            if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
+                            pdl.addResource(board.GetHexAtPosition(u));
+                        }
+                    }
+                }
+            }   
+
+        }
+        
+        public void undoGatherResources(Player pdl)
+        {
+            foreach (Vector3 u in board.GetNode(pdl.position).GetHexNeighbours())
+            {
+                if (board.GetHexAtPosition(u) != null)
+                {
+                    if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
+                    pdl.removeResource(board.GetHexAtPosition(u));
+                }
+            }
+
+            foreach (Node n in pdl.GetBuildings())
+            {
+                if (n.status.GetStatus() == "City")
+                {
+                    foreach (Vector3 u in n.GetHexNeighbours())
+                    {
+                        if (board.GetHexAtPosition(u) != null)
+                        {
+                            if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
+                            pdl.removeResource(board.GetHexAtPosition(u));
                         }
                     }
                 }
@@ -300,8 +354,12 @@ namespace NEAGame
             {
                 currentPlayer.removeResource(entry.Key, entry.Value);
             }
-            UserInterface.CreatePopup("Purchase Successful");
-            CheckWinner();
+            if (!isAICalculation)
+            {
+                CheckWinner();
+                UserInterface.CreatePopup("Purchase Successful");
+
+            }
 
         }
         public Dictionary<Resource, int> GetDifference(string structure) // can be used in the UI to show the player what they need to buy
@@ -328,12 +386,17 @@ namespace NEAGame
             }
             return canAfford;
         }
-        public void tryPurchaseRoad()
+        public List<Node> tryPurchaseRoad()
         {
-
+            if (!CheckCosts("Road"))
+            {
+                if (!isAICalculation)
+                    UserInterface.CreatePopup("You can not afford this");
+                return new List<Node>();
+            }
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
-            bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.getNumber(); // player must be standing on their own settlement to build a road
+            bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.GetID(); // player must be standing on their own settlement to build a road
             
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours() )
             {
@@ -345,11 +408,11 @@ namespace NEAGame
                 {
                     continue; // can not build a road on existing connections of any sort
                 }
-                else if ((otherPos.status.GetOccupant() != currentPlayer.getNumber()) && (otherPos.status.GetStatus() != "Empty"))
+                else if ((otherPos.status.GetOccupant() != currentPlayer.GetID()) && (otherPos.status.GetStatus() != "Empty"))
                 {
                     continue; // The enemy controls the settlement at the end of this road
                 }
-                else if (!canconnect && (otherPos.status.GetOccupant() != currentPlayer.getNumber()))
+                else if (!canconnect && (otherPos.status.GetOccupant() != currentPlayer.GetID()))
                 {
                     continue; // player must be connecting to their own settlement
                 }
@@ -359,18 +422,23 @@ namespace NEAGame
                 }
 
             }
-
-            UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseRoad);
-        
+            if (!isAICalculation)
+                UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseRoad);
+            return viableLocations;
         
         }
-        public void tryPurchaseWall()
+        public List<Node> tryPurchaseWall()
         {
-
+            if (!CheckCosts("Wall"))
+            {
+                if (!isAICalculation)
+                    UserInterface.CreatePopup("You can not afford this");
+                return new List<Node>();
+            }
 
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
-            bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.getNumber(); // player must be standing on their own settlement to build a road
+            bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.GetID(); // player must be standing on their own settlement to build a road
 
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
@@ -388,20 +456,26 @@ namespace NEAGame
                 }
 
             }
-
-            UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseWall);
-
+            if (!isAICalculation)
+                UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseWall);
+            return viableLocations;
 
         }
-        public void tryPurchaseVillage()
+        public Node tryPurchaseVillage()
         {
-
+            if (!CheckCosts("Village"))
+            {
+                if (!isAICalculation)
+                    UserInterface.CreatePopup("You can not afford this");
+                return null;
+            }
             Node otherPos;
             Node current = board.GetNode(currentPlayer.position);
             if (current.status.GetStatus() != "Empty")
             {
-                UserInterface.CreatePopup("You can not build a settlement on an existing settlement");
-                return;
+                if (!isAICalculation)
+                    UserInterface.CreatePopup("You can not build a settlement on an existing settlement");
+                return null;
             }
 
 
@@ -440,27 +514,40 @@ namespace NEAGame
 
             if (isConnecting || DistanceRule)
             {
-                purchaseVillage(current);
-
+                if (!isAICalculation)
+                    UserInterface.GetUserNodeChoice(new Node[] { current }, purchaseVillage);
+                return current;
+            }
+            else
+            {
+                if (!isAICalculation)
+                    UserInterface.CreatePopup($"{DistanceRule} {isConnecting}");
+                return null;
             }
 
 
         }
-        public void tryPurchaseCity()
+        public Node tryPurchaseCity()
         {
-
+            if (!CheckCosts("City"))
+            {
+                if (!isAICalculation)
+                    UserInterface.CreatePopup("You can not afford this");
+                return null;
+            }
             Node current = board.GetNode(currentPlayer.position);
             if (current.status.GetStatus() == "Village" && current.status.GetOccupant() == currentPlayer.GetID())
             {
-                //purchaseCity(current);
-                UserInterface.GetUserNodeChoice(new Node[] { current }, purchaseCity);
-
+                if (!isAICalculation)
+                    UserInterface.GetUserNodeChoice(new Node[] { current }, purchaseCity);
+                return current;
             }
             else 
             { 
-                UserInterface.CreatePopup("Player must be on their village to upgrade");
+                if (!isAICalculation)
+                    UserInterface.CreatePopup("Player must be on their village to upgrade");
+                return null;
             }
-
         }
         public void purchaseRoad(Node other)
         {
@@ -468,119 +555,103 @@ namespace NEAGame
             ChargePlayer("Road");
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
-            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
-            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "Road", other.position));
+            actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Road", other.position));
+            if (!isAICalculation)
+            {
+                UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
+            }
         }
         public void purchaseWall(Node other)
         {
+            if (board.GetConnection(currentPlayer.position, other.position).GetStatus() != "Empty")
+            {
+                UserInterface.Assert(isAICalculation);
+                return; // issue caused by the AI 
+            }
             board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Wall", occupant: currentPlayer.GetID()));
             ChargePlayer("Wall");
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
-            UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
-            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "Wall", other.position));
+            actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Wall", other.position));
+            if (!isAICalculation)
+                UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
 
         }
         public void purchaseVillage(Node otherPos)
         {
-            board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.getNumber());
+            board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.GetID());
             ChargePlayer("Village");
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
-            UserInterface.UpdateSettlement(otherPos);
-            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "Village"));
+            actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Village"));
+            if (!isAICalculation)
+                UserInterface.UpdateSettlement(otherPos);
         }
         public void purchaseCity(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status.UpgradeVillage();
             ChargePlayer("City");
             currentPlayer.upgradeVillage(board.GetNode(currentPlayer.position));
-            UserInterface.UpdateSettlement(otherPos);
-            actions.Push(new PlayerPurchase(currentPlayer.getNumber(), currentPlayer.position, "City"));
-
+            actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "City"));
+            if (!isAICalculation)
+                UserInterface.UpdateSettlement(otherPos);
         }
+
 
         /// <summary>
         /// Player Movement
         /// </summary>
 
-        public void attemptPlayerMove()
+        public List<Node> attemptPlayerMove()
         {
             
             List<Node> viableLocations = new List<Node>();
-            /*Connection con;
-            Node target;
-            bool valid;
-            foreach (Vector3 pos in board.GetNode(currentPlayer.position).GetNodeNeighbours())
-            {
-                valid = true;
-                con = board.GetConnection(pos, currentPlayer.position);
-                if (board.GetNode(pos) == null) continue;
-                target = board.GetNode(pos);
-                if ((con.GetOccupant() != currentPlayer.getNumber()) && (con.GetOccupant() > 0)) 
-                {
-                    valid = false; // the enemy controls this road or wall
-                }
-                else if ((target.status.GetOccupant() != currentPlayer.getNumber()) && (target.status.GetOccupant() > 0))
-                {
-                    valid = false; // The enemy controls the settlement at the end of this road
-                }
-                // Check that none of the other plauers are at this location
-                foreach (Player p in gamePlayers)
-                {
-                    if (p.position == target.position)
-                    {
-                        valid = false ;
-                    }
-                }
-                possible = possible || valid;
-                // Check that the player has enough movement points to move to this location
-                if (currentPlayer.moves < con.GetWalkingCost(currentPlayer))
-                {
-                    valid = false;
-                }
-
-                if (valid)
-                    viableLocations.Add(target);
-                    
-            }
-            */
             Dijkstra(board, currentPlayer.position);
             // use a Linq to only select the nodes that are within the players movement range
             viableLocations = distance.Where(x => x.Value <= currentPlayer.moves).Select(x => x.Key).ToList();
+            // sort viable locations by distance descending (AI optimisation)
+            viableLocations = viableLocations.OrderByDescending(x => distance[x]).ToList();
+            // overall time complexity of n + n log n
 
-            if (viableLocations.Count == 0 && currentPlayer.moves > 0)
+            if (viableLocations.Count == 0 && currentPlayer.moves > 0 && !isAICalculation)
             {
                 UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital();
                 Stack<Node> home = new Stack<Node>();
                 home.Push(board.GetNode(currentPlayer.origin));
                 UserInterface.UpdatePlayer(home);
-                return;
+                
             }
-            UserInterface.GetUserNodeChoice(viableLocations.ToArray(), MovePlayer);
-
+            if (!isAICalculation)
+                UserInterface.GetUserNodeChoice(viableLocations.ToArray(), MovePlayer);
+            return viableLocations;
         }
 
         private void MovePlayer(Node otherpos)
         {
-            actions.Push(new PlayerMove(currentPlayer.getNumber(), currentPlayer.position, otherpos.position));
 
-            Node current = otherpos;
-            Stack<Node> path = new Stack<Node>();
-            while (current != board.GetNode(currentPlayer.position))
+            if (!isAICalculation)
             {
-                path.Push(current);
-                current = previous[current];
-                //actions.Push(new PlayerMove(currentPlayer.getNumber(), current.position, previous[current].position));
+                Dijkstra(board, currentPlayer.position);
+                actions.Push(new PlayerMove(currentPlayer.GetID(), currentPlayer.position, otherpos.position));
+                Node current = otherpos;
+                Stack<Node> path = new Stack<Node>();
+                while (current != board.GetNode(currentPlayer.position))
+                {
+                    path.Push(current);
+                    current = previous[current];
+                }
+                UserInterface.UpdatePlayer(path);
+                currentPlayer.moves -= distance[otherpos];
             }
-
-            currentPlayer.moves -= distance[otherpos];
             currentPlayer.position = otherpos.position;
             if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
 
-            UserInterface.UpdatePlayer(path);
 
         }
+
+        /// <summary>
+        /// AI Functions
+        /// </summary>
 
         public void Refund(string structure)
         {
@@ -655,35 +726,40 @@ namespace NEAGame
 
         }
 
-        public void DoAction(GameAction a)
+        public void UndoPlayerAction()
         {
+            UserInterface.Assert(!currentPlayer.isPlayerAI());
+            GameAction act = actions.Pop();
+            UndoAction(act);
 
         }
 
-        public void UndoAction()
+        public void UndoAction(GameAction a)
         {
-            if (actions.Count == 0) return;
-            ShowActions();
 
-            GameAction a = actions.Pop();
             if (a.type == typeof(PlayerMove))
             {
                 PlayerMove move = (PlayerMove)a;
-                UserInterface.Assert(currentPlayer.position == move.newpos);
-                Dijkstra(board, move.newpos);
-                Node otherpos = board.GetNode(move.position);
-                Node current = otherpos;
-                Stack<Node> path = new Stack<Node>();
-                while (current != board.GetNode(currentPlayer.position))
+                
+
+
+                currentPlayer.position = move.position;
+
+                if (!isAICalculation)
                 {
-                    path.Push(current);
-                    current = previous[current];
+
+                    Dijkstra(board, move.newpos);
+                    Node otherpos = board.GetNode(move.position);
+                    Node current = otherpos;
+                    Stack<Node> path = new Stack<Node>();
+                    while (current != board.GetNode(currentPlayer.position))
+                    {
+                        path.Push(current);
+                        current = previous[current];
+                    }
+                    currentPlayer.moves += distance[otherpos];
+                    UserInterface.UpdatePlayer(path);
                 }
-
-                currentPlayer.moves += distance[otherpos];
-                currentPlayer.position = otherpos.position;
-
-                UserInterface.UpdatePlayer(path);
 
 
             }
@@ -702,9 +778,11 @@ namespace NEAGame
 
                     currentPlayer.removeConnection(con);
                     board.UpdateConnection(purchase.position, purchase.otherpos, new Connection());
-                    UserInterface.UpdateConnection(board.GetNode(purchase.position), board.GetNode(purchase.otherpos), board.GetConnection(purchase.position, purchase.otherpos));
-
                     Refund(purchase.status);
+                    
+                    if (!isAICalculation)
+                        UserInterface.UpdateConnection(board.GetNode(purchase.position), board.GetNode(purchase.otherpos), board.GetConnection(purchase.position, purchase.otherpos));
+
 
                 }
                 else if (purchase.status == "Village")
@@ -715,9 +793,10 @@ namespace NEAGame
 
                     currentPlayer.removeBuilding(board.GetNode(currentPlayer.position));
                     board.GetNode(purchase.position).status = new Building();
-                    UserInterface.UpdateSettlement(board.GetNode(purchase.position));
-
                     Refund("Village");
+
+                    if (!isAICalculation)
+                        UserInterface.UpdateSettlement(board.GetNode(purchase.position));
 
 
                 }
@@ -735,17 +814,63 @@ namespace NEAGame
 
                 }
             }
+            else
+            {
+                UserInterface.CreatePopup("Unknown Type");
+            }
         }
 
-        public void ShowActions()
+        public void DoAction(GameAction a)
         {
+           
+            if (a.type == typeof(PlayerMove))
+            {
 
+                PlayerMove move = (PlayerMove)a;                    
+                MovePlayer(board.GetNode(move.newpos));
+
+                
+            }
+            else if (a.type == typeof(PlayerPurchase))
+            {
+                PlayerPurchase purchase = (PlayerPurchase)a;
+                if (purchase.status == "Road")
+                {
+                    purchaseRoad(board.GetNode(purchase.otherpos));
+                }
+                else if (purchase.status == "Wall")
+                {
+                    purchaseWall(board.GetNode(purchase.otherpos));
+                }
+                else if (purchase.status == "Village")
+                {
+                    purchaseVillage(board.GetNode(purchase.position));
+                }
+                else if (purchase.status == "City")
+                {
+                    purchaseCity(board.GetNode(purchase.position));
+                }
+            }
+            else
+            {
+                UserInterface.CreatePopup("Unknown Type");
+            }
+            
+        }
+        
+
+
+        public void ShowActions(Stack<GameAction> actions)
+        {
+            string allacts = "";
             // go through stack without changing it
 
             foreach (GameAction a in actions)
             {
-                UserInterface.CreatePopup(a.ToString());
+                allacts += a.ToString() + "\n";
             }
+
+            UserInterface.CreatePopup(allacts);
 
 
         }
@@ -755,7 +880,7 @@ namespace NEAGame
 
     public abstract class GameAction
     {
-        public int playerID; // for verification
+        public int playerID; 
         public Vector3 position;
         public Type type;
 
@@ -797,13 +922,18 @@ namespace NEAGame
 
         public override string ToString()
         {
-            return $"player {playerID} Purchasing a {status} from {position}";
+            if (otherpos == new Vector3())
+            {
+                return $"player {playerID} Purchasing a {status} at {position}";
+            }
+            else
+            {
+                return $"player {playerID} Purchasing a {status} from {position} to {otherpos}";
+            }
         }
 
 
 
     }
-
-
 
 }

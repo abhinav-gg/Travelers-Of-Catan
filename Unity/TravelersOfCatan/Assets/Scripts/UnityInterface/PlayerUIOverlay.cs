@@ -20,6 +20,7 @@ public class PlayerUIOverlay : MonoBehaviour
     public TextMeshProUGUI PlayerName;
     public TextMeshProUGUI PlayerScore;
     public TextMeshProUGUI PlayerMoves;
+    public bool isAI = false;
 
     // Start is called before the first frame update
     void Start()
@@ -37,8 +38,24 @@ public class PlayerUIOverlay : MonoBehaviour
         // Moves these to main GUi class
 
         TimerText.text = UnityUI.Interface.GetTime();
-        PlayerMoves.text = UnityUI.Interface.game.GetCurrentPlayer().getMovesLeft().ToString();
-        PlayerScore.text = UnityUI.Interface.game.GetCurrentPlayer().getVictoryPoints().ToString();
+        if (!isAI)
+        {
+            PlayerMoves.text = UnityUI.Interface.game.GetCurrentPlayer().getMovesLeft().ToString();
+            PlayerScore.text = UnityUI.Interface.game.GetCurrentPlayer().getVictoryPoints().ToString();
+
+        }
+    }
+
+    public void SetAI()
+    {
+        isAI = true;
+        Destroy(MoveInput.gameObject);
+        //Destroy(InventoryInput.gameObject);
+        //Destroy(EndTurnInput.gameObject);
+        Destroy(ShopInput.gameObject);
+        Destroy(UndoInput.gameObject);
+        Destroy(TradeInput.gameObject);
+
     }
 
 

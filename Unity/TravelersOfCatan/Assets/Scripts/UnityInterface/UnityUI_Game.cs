@@ -91,24 +91,32 @@ public partial class UnityUI
 
     void UI.BeginTurn(float time)
     {
-        overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
-        overlay.EndTurnInput.onClick.AddListener(EndTurn);
-        overlay.MoveInput.onClick.AddListener(OnPlayerMove);
-        overlay.InventoryInput.onClick.AddListener(OpenInventory);
-        overlay.ShopInput.onClick.AddListener(OpenShop);
-        overlay.ZoomInput.onClick.AddListener(ZoomButton);
-        // overlay.PauseInput.onClick.AddListener(PauseButton);
-        overlay.UndoInput.onClick.AddListener(game.UndoAction);
-        overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
-
-        GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
-
         Timer = time;
         TimerActive = true;
-        StartCoroutine(WaitForTurnToEnd());
+        overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
+        if (game.GetCurrentPlayer().isPlayerAI())
+        {
+            overlay.SetAI();
 
-        // set camera position to player position on baord!
-        LeanTween.move(Camera.main.gameObject, GetCurrentPlayerGlobalPos() + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine);
+        }
+        else
+        {
+            overlay.MoveInput.onClick.AddListener(OnPlayerMove);
+            overlay.ShopInput.onClick.AddListener(OpenShop);
+            overlay.UndoInput.onClick.AddListener(game.UndoPlayerAction);
+
+            StartCoroutine(WaitForTurnToEnd());
+
+        }
+            overlay.EndTurnInput.onClick.AddListener(EndTurn);
+            overlay.InventoryInput.onClick.AddListener(OpenInventory);
+            // overlay.PauseInput.onClick.AddListener(PauseButton);
+        overlay.ZoomInput.onClick.AddListener(ZoomButton);
+        overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
+        GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
+
+        // set camera position to player position on board!
+        LeanTween.move(Camera.main.gameObject, GetPlayerGameObject(game.GetCurrentPlayer().GetID()).transform.position + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine);
 
     }
 
@@ -133,11 +141,6 @@ public partial class UnityUI
         StopAllPlayerCoroutines();
         //anim.MoveButtonPlay();
         game.attemptPlayerMove();
-    }
-
-    public Vector3 GetCurrentPlayerGlobalPos()
-    {
-        return GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).transform.position;
     }
 
     public string GetTime()
@@ -176,7 +179,6 @@ public partial class UnityUI
             Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
             Interface.game.EndTurn();
 
-
         });
 
     }
@@ -202,7 +204,7 @@ public partial class UnityUI
 
             int resourceID;
             Vector3Int gridPos;
-            foreach (KeyValuePair<System.Numerics.Vector3, Resource> entry in board.GetResourcesOnBoard())
+            foreach (var entry in board.GetResourcesOnBoard())
             {
 
                 resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources

@@ -13,7 +13,7 @@ namespace NEAGame
     public class Board // A graph of nodes
     {
 
-        HexagonUnit[] board = new HexagonUnit[19];
+        Dictionary<Vector3, Resource> board = new Dictionary<Vector3, Resource>();
         Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
         Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
 
@@ -32,17 +32,17 @@ namespace NEAGame
                     {
                         if (x + y + z == 0)
                         {
-                            HexagonUnit unit;
+                            Resource unit;
                             if (x == 0 && y == 0 && z == 0)
                             {
-                                unit = new HexagonUnit(new Resource(0), x, y, z); // center of board is Empty in classical Catan
+                                unit = new Resource(0); // center of board is Empty in classical Catan
                             }
                             else
                             {
-                                unit = new HexagonUnit(Resource.GetRandom(), x, y, z);
+                                unit = Resource.GetRandom();
 
                             }
-                            board[i] = unit;
+                            board.Add(new Vector3(x, y, z), unit);
                             i++;
                         }
                     }
@@ -74,11 +74,12 @@ namespace NEAGame
         public Board (BoardWrapper board) : this()
         {
             int i = 0;
-            foreach (HexagonUnitWrapper hexagonUnitWrapper in board.board)
+            foreach (ResourceWrapper res in board.board._Values)
             {
-                HexagonUnit unit = new HexagonUnit(hexagonUnitWrapper);
-                this.board[i] = unit;
+                Resource n = new Resource(res);
+                this.board[new Vector3(board.board._Keys[i].x, board.board._Keys[i].y, board.board._Keys[i].z)] = n;
                 i++;
+                
             }
             
             i = 0;
@@ -86,7 +87,7 @@ namespace NEAGame
             {
                 Node n = new Node(node);
                 nodes[new Vector3(board.nodes._Keys[i].x, board.nodes._Keys[i].y, board.nodes._Keys[i].z)] = n;
-                i++ ;
+                i++;
             }
 
             
@@ -94,16 +95,13 @@ namespace NEAGame
 
 
 
-        public HexagonUnit GetHexAtPosition(Vector3 pos)
+        public Resource GetHexAtPosition(Vector3 pos)
         {
-            foreach (HexagonUnit unit in board)
-            {
-                if (unit.position == pos)
-                {
-                    return unit;
-                }
-            }
-            return null;
+            // lookup the resource at a given position or return null if it doesn't exist
+            if (board.ContainsKey(pos))
+                return board[pos];
+            else
+                return null;
         }
 
         public Node GetNode(Vector3 pos)
@@ -121,13 +119,9 @@ namespace NEAGame
         }
 
 
-        public IEnumerable<KeyValuePair<Vector3, Resource>> GetResourcesOnBoard()
+        public Dictionary<Vector3, Resource> GetResourcesOnBoard()
         {
-            foreach (HexagonUnit hex in board)
-            {
-                yield return new KeyValuePair<Vector3, Resource>(hex.position, hex.resource);
-                
-            }
+            return board;
         }
 
 
@@ -183,10 +177,7 @@ namespace NEAGame
         public BoardWrapper SoftSerialize()
         {
             BoardWrapper b = new BoardWrapper();
-            foreach (HexagonUnit u in board)
-            {
-                b.board.Add(new HexagonUnitWrapper(u));
-            }
+            b.board = new HexagonUnitWrapper(board);
             b.connections = new AdjMatrixWrapper(connections);
             b.nodes = new AllNodesWrapper(nodes);
 
@@ -200,32 +191,6 @@ namespace NEAGame
     /// <summary>
     /// Minor classes for the game that are not worth their own file and are all serializable
     /// </summary>
-
-
-
-    public class HexagonUnit
-    {
-        public Vector3 position;
-        public Resource resource;
-
-        public HexagonUnit(Resource R, int x, int y, int z)
-        {
-            resource = R;
-            position = new Vector3(x, y, z);
-        }
-
-        public HexagonUnit(HexagonUnitWrapper hex)
-        {
-            resource = new Resource(hex.resource);
-            position = new Vector3(hex.position.x, hex.position.y, hex.position.z);
-        }
-
-        public override string ToString()
-        {
-            return $"{resource} at {position}";
-        }
-
-    }
 
     public abstract class Settlement
     {

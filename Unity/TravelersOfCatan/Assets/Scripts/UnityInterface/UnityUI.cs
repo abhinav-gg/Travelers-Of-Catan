@@ -45,17 +45,17 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
             SetupGameScene();
             if (LoadFile == "")
             {
-                this.game = new TravelersOfCatan(Interface, 130, 40, 90f);
+                game = new TravelersOfCatan(Interface, 130, 1, 910f);
                 //StartCoroutine(GetNewPlayer(2));
-                game.AddPlayer("bob");
-                game.AddPlayer("test");
+                game.AddPlayer("test2");
+                game.AddAI();
                 game.startGame();
 
             }
             else
             {
                 GameWrapper gw = JSON_manager.LOADGAME(LoadFile);
-                this.game = new TravelersOfCatan(Interface, gw);
+                game = new TravelersOfCatan(Interface, gw);
                 
                 game.StartTurn(gw.timer);
             }
@@ -68,7 +68,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     void OnDisable()
     {
-        Debug.Log("OnDisable");
         SceneManager.sceneLoaded -= NewScene;
     }
 
@@ -77,6 +76,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         if (!test)
         {
             Debug.LogError("Assertion failed");
+            Debug.Break();
         }
     }
   
