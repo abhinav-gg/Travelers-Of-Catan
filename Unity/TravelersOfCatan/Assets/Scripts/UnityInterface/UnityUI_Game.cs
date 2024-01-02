@@ -378,6 +378,30 @@ public partial class UnityUI
         return new Vector3Int(col, row, 0);
     }
 
+    public static Color textToColor(string color)
+    {
+        switch (color)
+        {
+            case "blue":
+                return Color.blue;
+            case "cyan":
+                return Color.cyan;
+            case "green":
+                return Color.green;
+            case "grey":
+                return Color.grey;
+            case "magenta":
+                return Color.magenta;
+            case "red":
+                return Color.red;
+            case "white":
+                return Color.white;
+            case "yellow":
+                return Color.yellow;
+            default:
+                return Color.white;
+        }
+    }
 
     public NodeButton FindNodeGameObject(Vector3 pos)
     {
