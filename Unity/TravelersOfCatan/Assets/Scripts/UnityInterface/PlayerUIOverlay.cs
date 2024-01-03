@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PlayerUIOverlay : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class PlayerUIOverlay : MonoBehaviour
     public TextMeshProUGUI PlayerName;
     public TextMeshProUGUI PlayerScore;
     public TextMeshProUGUI PlayerMoves;
+    public Image ColorMe;
     public bool isAI = false;
 
     public Sprite CancelImage;
@@ -29,19 +31,29 @@ public class PlayerUIOverlay : MonoBehaviour
     float animationTimer;
     float zoomCD = 0.0f;
     float moveCD = 0.0f;
-
-
+    float turnEndCD = 0.0f;
     bool isTryingToMove = false;
     Sprite buffer;
 
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Canvas>().worldCamera = Camera.main;
-        GetComponent<Canvas>().sortingLayerID = 2;
-        GetComponent<Canvas>().sortingOrder = 200;
+        Canvas myCanvas = GetComponent<Canvas>();
+        myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        myCanvas.worldCamera = Camera.main;
+        myCanvas.sortingLayerName = "UI";
+        myCanvas.sortingOrder = 200;
         ZoomInput.onClick.AddListener(ZoomButton);
         MoveInput.onClick.AddListener(MoveButton);
+        EndTurnInput.onClick.AddListener(EndTurnButton);
+        InventoryInput.onClick.AddListener(() =>
+        {
+            AudioManager.i.Play("UIClick");
+            LeanTween.scale(InventoryInput.gameObject, InventoryInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
+            UnityUI.Interface.OpenInventory();
+        });
+
+
     }
 
     // Update is called once per frame
@@ -58,6 +70,7 @@ public class PlayerUIOverlay : MonoBehaviour
         animationTimer += Time.deltaTime;
         zoomCD = Mathf.Clamp(zoomCD - Time.deltaTime, -5f, 5f);
         moveCD = Mathf.Clamp(moveCD - Time.deltaTime, -3f, 3f);
+        turnEndCD = Mathf.Clamp(turnEndCD - Time.deltaTime, -3f, 3f);
     }
 
     public void SetAI()
@@ -74,19 +87,19 @@ public class PlayerUIOverlay : MonoBehaviour
 
     public void MoveButton()
     {
-        if (moveCD > 0.0f)
-        {
-            return;
-        }
         AudioManager.i.Play("UIClick");
         if (LeanTween.isTweening(MoveInput.gameObject))
         {
             LeanTween.scale(MoveInput.gameObject, MoveInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
+        if (moveCD > 0.0f)
+        {
+            return;
+        }
         isTryingToMove = !isTryingToMove;
         if (isTryingToMove)
         {
-            zoomCD = 0.5f;
+            moveCD = 0.5f;
             UnityUI.Interface.OnPlayerMove();
             buffer = MoveInput.image.sprite;
             MoveInput.image.sprite = CancelImage;
@@ -99,10 +112,30 @@ public class PlayerUIOverlay : MonoBehaviour
 
             FinishMove();
         }
-
-
-
     }
+
+
+    public void EndTurnButton()
+    {
+        if (turnEndCD > 0.0f)
+        {
+            return;
+        }
+        turnEndCD = 2f;
+        AudioManager.i.Play("UIClick");
+        if (!EndTurnInput.gameObject.IsDestroyed())
+        {
+            LeanTween.moveLocalY(EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
+            LeanTween.scale(EndTurnInput.gameObject, new Vector3(0f, 0f, 0f), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
+                Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
+
+                UnityUI.Interface.EndTurn();
+
+            });
+        }
+    }
+
+
 
     public void FinishMove()
     {

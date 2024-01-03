@@ -11,16 +11,28 @@ public class TextAnim : MonoBehaviour
 
     public string[] stringArray;
 
-    [SerializeField] float timeBtwnChars;
-    [SerializeField] float timeBtwnWords;
-    [SerializeField] float timeBtwnSentences;
-    [SerializeField] bool loop;
+    [SerializeField] bool muted = false;
+    [SerializeField] float timeBtwnChars = 0.1f;
+    [SerializeField] float timeBtwnWords = 0.5f;
+    [SerializeField] float timeBtwnSentences = 0.75f;
+    [SerializeField] bool loop = false;
 
     int i = 0;
 
-    void Start()
+    public void OnEnable()
     {
+        i = 0;
+        if (_textMeshPro == null)
+        {
+            ResetTool();
+        }
         EndCheck();
+    }
+
+    public void ResetTool()
+    {
+        _textMeshPro = GetComponent<TextMeshProUGUI>();
+        stringArray = _textMeshPro.text.Split('\n');
     }
 
     public void EndCheck()
@@ -40,6 +52,8 @@ public class TextAnim : MonoBehaviour
 
     private IEnumerator TextVisible()
     {
+        if (!muted)
+            AudioManager.i.Play("Write");
         _textMeshPro.ForceMeshUpdate();
         int totalVisibleCharacters = _textMeshPro.textInfo.characterCount;
         int counter = 0;
@@ -63,7 +77,7 @@ public class TextAnim : MonoBehaviour
 
 
         }
-
+        AudioManager.i.Stop("Write");
         yield return new WaitForSeconds(timeBtwnSentences);
         Invoke("EndCheck", timeBtwnWords);
 

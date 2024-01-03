@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using TMPro.EditorUtilities;
 using UnityEngine.UI;
 using NEAGame;
 
@@ -23,9 +22,11 @@ public class ShopOverlay : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Canvas>().worldCamera = Camera.main;
-        GetComponent<Canvas>().sortingLayerID = 2;
-        GetComponent<Canvas>().sortingOrder = 1000;
+        Canvas myCanvas = GetComponent<Canvas>();
+        myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        myCanvas.worldCamera = Camera.main;
+        myCanvas.sortingLayerName = "UI";
+        myCanvas.sortingOrder = 700;
         purchase.onClick.AddListener(() => OnPurchase());
         purchase.gameObject.GetComponent<Image>().sprite = shoopingImages[currentID];
         UpdateDisplayCounts();

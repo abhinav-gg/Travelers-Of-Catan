@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8311583128090885638}
   - component: {fileID: 8311583128090885633}
+  - component: {fileID: 288191070365992951}
   m_Layer: 0
   m_Name: Catan
   m_TagString: Untagged
@@ -25,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8311583128090885639}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.0323803, y: 3.8996065, z: -0.031763427}
-  m_LocalScale: {x: 14.037714, y: 14.037714, z: 14.037714}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -46,35 +47,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NameGetOverlay: {fileID: 7016893585919283161, guid: b251f8400da97ab4fb56cb1b80be244e, type: 3}
   game:
-    victoryPoints: 
-    gamePlayers: []
-    board:
-      board:
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
-      - {}
+    isAICalculation: 0
   NodePrefab: {fileID: 955635130051763877, guid: b09d4fe1c57ec05408bc24dcd97fcc48, type: 3}
   ConnectionPrefab: {fileID: 582317903075557195, guid: 8f21b5cdb32863e4594fa0921e6ccb09, type: 3}
   PlayerPrefab: {fileID: 6867297139346083432, guid: 293c13eeed8e74d4c93395e6b0dd32da, type: 3}
   PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
   inventoryPopup: {fileID: 2111445291719360313, guid: 643f130cbe33cff49bdab615e3348778, type: 3}
   shoppingPopup: {fileID: 5544107271328446751, guid: 2a0b4ccbb3543ea4dafb6dfcdf61aff4, type: 3}
+  pausePopup: {fileID: 7027665097758371271, guid: cf9a5d9b441297f4a987427a666a3b83, type: 3}
   resources:
   - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
   - {fileID: 11400000, guid: 95f2ad4aff2d2f040bb4877644c3d001, type: 2}
@@ -85,6 +65,51 @@ MonoBehaviour:
   gridLayout: {fileID: 0}
   tilemap: {fileID: 0}
   nodes: []
-  connections: []
   Timer: 0
   TimerActive: 0
+--- !u!114 &288191070365992951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8311583128090885639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51940d4a79fe84043ad26d423dfc4458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  muted: 0
+  sounds:
+  - name: UIClick
+    Clip: {fileID: 8300000, guid: 51e9205cbfc5f7440b8f731ecccf0dfc, type: 3}
+    Vol: 1
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: Write
+    Clip: {fileID: 8300000, guid: ecc5597051e99664bac4d29cebbce2eb, type: 3}
+    Vol: 1
+    Pitch: 1
+    Loop: 1
+    source: {fileID: 0}
+  - name: GetSetGo
+    Clip: {fileID: 8300000, guid: 17fb4076ff87e9941bbba996b0952fdf, type: 3}
+    Vol: 1
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: Ding1
+    Clip: {fileID: 8300000, guid: cee0ef05d1e443b438eebbc4ee35930c, type: 3}
+    Vol: 1
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  BackgroundMusic:
+  - name: Casual
+    Clip: {fileID: 8300000, guid: cbd5ee476a488444aaeb06b7e1fb04e0, type: 3}
+    Vol: 0.209
+    Pitch: 1
+    Loop: 1
+    source: {fileID: 0}
+  VolumeModifier: 0.29

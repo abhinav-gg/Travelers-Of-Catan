@@ -59,13 +59,14 @@ public class NodeButton : MonoBehaviour
 
         img.enabled = true;
         flag.SetActive(true);
-        flag.GetComponent<SpriteRenderer>().color = UnityUI.Interface.GetPlayerColor(node.status.GetOccupant());
         if (node.status.GetStatus() == "Village")
         {
+            flag.GetComponent<SpriteRenderer>().color = UnityUI.Interface.GetPlayerColor(node.status.GetOccupant());
             img.sprite = village;
         }
         else if (node.status.GetStatus() == "City")
         {
+            flag.GetComponent<SpriteRenderer>().color = UnityUI.Interface.GetPlayerColor(node.status.GetOccupant());
             img.sprite = city;
         }
         else

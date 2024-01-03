@@ -8,6 +8,7 @@ TagManager:
   - ConnectionParent
   - PlayerParent
   - Board
+  - CardCollection
   layers:
   - Default
   - TransparentFX

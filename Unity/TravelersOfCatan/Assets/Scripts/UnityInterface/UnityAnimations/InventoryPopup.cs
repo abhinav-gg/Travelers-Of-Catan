@@ -16,8 +16,11 @@ public class InventoryPopup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Canvas>().worldCamera = Camera.main;
-        GetComponent<Canvas>().sortingLayerID = 2;
+        Canvas myCanvas = GetComponent<Canvas>();
+        myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        myCanvas.worldCamera = Camera.main;
+        myCanvas.sortingLayerName = "UI";
+        myCanvas.sortingOrder = 500;
         CloseButton.onClick.AddListener(CloseGUI);
 
         Background.LeanScale(new Vector3(0, 0, 0), 0);

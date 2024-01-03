@@ -139,16 +139,16 @@ namespace NEAGame
         }
 
 
-        public void AddPlayer(string Name)
+        public void AddPlayer(string Name, string color="teal")
         {
             int i = gamePlayers.Count;
-            gamePlayers.Add(new Player(i + 1, Name, StartingCoords[i]));
+            gamePlayers.Add(new Player(playerNumber: i + 1,playerName: Name, playerColor: color, origin: StartingCoords[i]));
         }
 
-        public void AddAI()
+        public void AddAI(string Name, string color)
         {
             int i = gamePlayers.Count;
-            gamePlayers.Add(new AI(i + 1, "AI" + (i + 1), StartingCoords[i], this));
+            gamePlayers.Add(new AI(playerID: i + 1, name: Name, playerColor: color, home: StartingCoords[i], this));
 
 
         }
@@ -298,6 +298,8 @@ namespace NEAGame
                 {
                     if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
                     pdl.addResource(board.GetHexAtPosition(u));
+                    if (!isAICalculation)
+                        UserInterface.ShowResource(u, board.GetHexAtPosition(u));
                 }
             }
 
@@ -311,6 +313,8 @@ namespace NEAGame
                         {
                             if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
                             pdl.addResource(board.GetHexAtPosition(u));
+                            if (!isAICalculation)
+                                UserInterface.ShowResource(u, board.GetHexAtPosition(u));
                         }
                     }
                 }

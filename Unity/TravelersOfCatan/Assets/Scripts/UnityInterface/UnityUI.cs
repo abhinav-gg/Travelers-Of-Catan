@@ -43,25 +43,24 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         if (scene.name == "Game")
         {
             SetupGameScene();
-            if (LoadFile == "")
-            {
-                game = new TravelersOfCatan(Interface, 130, 1, 910f);
-                //StartCoroutine(GetNewPlayer(2));
-                game.AddPlayer("test2");
-                game.AddAI();
-                game.startGame();
-
-            }
-            else
+            if (LoadFile != "")
             {
                 GameWrapper gw = JSON_manager.LOADGAME(LoadFile);
                 game = new TravelersOfCatan(Interface, gw);
                 
                 game.StartTurn(gw.timer);
             }
-
+            else
+            {
+                game.startGame();
+            }
 
             
+        }
+        else if (scene.name == "GameSetup")
+        {
+            game = new TravelersOfCatan(Interface, 130, 1, 910f);
+
         }
     }
 
@@ -80,10 +79,16 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         }
     }
   
+    public void CommenceGame()
+    {
+        SceneManager.LoadScene("Game");
+        
+    }
+
 
     public void StartGameButton()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("GameSetup");
     }
 
     public void LoadGameButton()
@@ -93,10 +98,13 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     }
 
-    void MenuButtonPressed()
+    public void GoHome()
     {
-        // add confirm here
-        SceneManager.LoadScene("Menu");
+
+        // add scene animation here
+
+
+        SceneManager.LoadScene("Hub");
     }
 
     void QuitButtonPressed()
@@ -104,33 +112,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         // add confirm here
         Application.Quit();
     }
-
-    IEnumerator GetNewPlayer(int playersLeft)
-    {
-
-        if (playersLeft > 0)
-        {
-            Instantiate(Interface.NameGetOverlay);
-            
-            while (FindObjectOfType<PlayerNameInp>().FinalName == "")
-            {
-                yield return null;
-            }
-
-            string name = FindObjectOfType<PlayerNameInp>().FinalName;
-            game.AddPlayer(name);
-            Destroy(FindObjectOfType<PlayerNameInp>().gameObject);
-            playersLeft--;
-            yield return StartCoroutine(GetNewPlayer(playersLeft));
-        }
-        else
-        {
-            game.startGame();
-
-        }
-    }
-
-
     bool UI.GetUserConfirm()
     {
         return true;

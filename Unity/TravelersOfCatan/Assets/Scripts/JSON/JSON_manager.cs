@@ -166,10 +166,10 @@ namespace NEAGame
         public int victoryPoints;
         public int moves;
         public bool isAI;
+        public string color;
         public Vector3 origin;
         public InventoryWrapper resources;
 
-        //public Dictionary<int, int> resources = new Dictionary<int, int>();
 
         public PlayerWrapper() { }
         public PlayerWrapper(Player player)
@@ -180,6 +180,7 @@ namespace NEAGame
             victoryPoints = player.getVictoryPoints();
             moves = player.moves;
             isAI = player.isPlayerAI();
+            color = player.color;
             origin = UnityUI.ConvertVector(player.origin);
             resources = new InventoryWrapper(player.getResources());
         }
@@ -269,7 +270,6 @@ namespace NEAGame
             winVictoryPoints = game.WinningVictoryPoints;
             timePerMove = game.TimePerMove;
             timer = game.UserInterface.GetTimer();
-            // get index of current player in game.gamePlayers
             turn = game.gamePlayers.IndexOf(game.GetCurrentPlayer());
             foreach (Player player in game.gamePlayers)
             {

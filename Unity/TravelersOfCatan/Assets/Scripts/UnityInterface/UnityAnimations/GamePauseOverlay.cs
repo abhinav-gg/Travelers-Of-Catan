@@ -15,7 +15,7 @@ public class GamePauseOverlay : MonoBehaviour
     {
         GetComponent<Canvas>().worldCamera = Camera.main;
         GetComponent<Canvas>().sortingLayerID = 2;
-        GetComponent<Canvas>().sortingOrder = 700;
+        GetComponent<Canvas>().sortingOrder = 1700;
         Slider.onValueChanged.AddListener((float t) => AudioManager.i.ChangeMasterVolume(t));
     }
 

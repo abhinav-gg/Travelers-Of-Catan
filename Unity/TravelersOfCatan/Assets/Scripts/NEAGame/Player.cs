@@ -45,13 +45,15 @@ namespace NEAGame
         public readonly Vector3 origin;
         public int moves;
         public Vector3 position;
+        public string color;
         protected bool isAI = false; // gets changed by child AI class
 
-        public Player(int playerNumber, string playerName, Vector3 origin)
+        public Player(int playerNumber, string playerName, Vector3 origin, string playerColor)
         {
             this.playerNumber = playerNumber;
             this.playerName = playerName;
             this.origin = origin;
+            this.color = playerColor;
             victoryPoints = 0;
             position = origin;
         }

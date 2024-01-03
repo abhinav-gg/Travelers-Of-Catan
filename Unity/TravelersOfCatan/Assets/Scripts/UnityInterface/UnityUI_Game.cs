@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.UI;
-using System.Threading;
-using NEAGame;
 using System;
 using System.Linq;
-
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+using Unity.VisualScripting;
+using NEAGame;
 
 [Serializable]
 public partial class UnityUI
@@ -65,12 +64,11 @@ public partial class UnityUI
         {
             overlay.ShopInput.onClick.AddListener(OpenShop);
             overlay.UndoInput.onClick.AddListener(game.UndoPlayerAction);
-            overlay.EndTurnInput.onClick.AddListener(EndTurn);
-            overlay.InventoryInput.onClick.AddListener(OpenInventory);
             overlay.PauseInput.onClick.AddListener(PauseButton);
             StartCoroutine(WaitForTurnToEnd());
         }
-
+        overlay.ColorMe.color = textToColor(game.GetCurrentPlayer().color);
+        overlay.PlayerScore.text = game.GetCurrentPlayer().getVictoryPoints().ToString();
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
@@ -83,18 +81,18 @@ public partial class UnityUI
     {
 
         // call the AI BRS in a thread and wait for it to finish
-        Thread t = new Thread(() => ((AI)game.GetCurrentPlayer()).BRS(int.MinValue, int.MaxValue));
+        Thread t = new Thread(() => ((AI)game.GetCurrentPlayer()).BRS());
         t.Start();
         while (t.IsAlive)
         {
             yield return null;
         }
-
+        t.Interrupt();
         yield return new WaitForSeconds(0.5f);
 
-        game.DisplayAIMoves();
+        game.DisplayAIMoves(); // apparently this is not technically called from the main thread!
 
-        yield return new WaitForSeconds(7.5f);
+        yield return new WaitForSeconds(5f);
         EndTurn();
 
     }
@@ -160,21 +158,9 @@ public partial class UnityUI
         // FindAnyObjectByType<TradeOverlay>()?.CloseGUI();
 
 
-
-        if (!game.GetCurrentPlayer().isPlayerAI())
-        {
-            LeanTween.moveLocalY(overlay.EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
-            LeanTween.scale(overlay.EndTurnInput.gameObject, new Vector3(0f, 0f, 0f), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
-                Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
-                Interface.game.EndTurn();
-
-            });
-        }
-        else
-        {
-            Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
-            Interface.game.EndTurn();
-        }   
+        Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
+        Interface.game.EndTurn();
+        
         
     }
 
@@ -278,10 +264,17 @@ public partial class UnityUI
 
     public Color GetPlayerColor(int playerID)
     {
-        // return color from string
-        return Color.cyan;
-
+        foreach (Player pdl in game.gamePlayers)
+        {
+            if (pdl.GetID() == playerID)
+            {
+                return textToColor(pdl.color);
+            }
+        }
+        Debug.LogError("Failed to find color");
+        return Color.clear;
     }
+
     void UI.UpdateSettlement(Node otherNode)
     {
         var x = otherNode.position;
@@ -430,6 +423,20 @@ public partial class UnityUI
         }
         coroutine = WaitForNodeChoice(callback);
         StartCoroutine(coroutine);
+    }
+
+    void UI.ShowResource(System.Numerics.Vector3 u, NEAGame.Resource resource)
+    {
+        StartCoroutine(AnimateResource(u, resource));
+    }
+
+    IEnumerator AnimateResource(System.Numerics.Vector3 u, NEAGame.Resource resource)
+    {
+        yield return new WaitForSeconds(0.1f);
+        Vector3 spawnpos = GetHexGlobalPos(CubicToOddRow(u));
+        CardCollection card = Instantiate(Resources.Load("CollectionAnimation"), spawnpos, Quaternion.identity).GetComponent<CardCollection>();
+        card.gameObject.transform.position = spawnpos;
+        card.SetCard(resource.GetHashCode());
     }
 
     IEnumerator WaitForNodeChoice(Action<Node> callback) // pass in function for moving vs buying

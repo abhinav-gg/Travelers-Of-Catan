@@ -22,7 +22,7 @@ namespace NEAGame
         TravelersOfCatan gameRef;
         
 
-        public AI(int playerNumber, string name, Vector3 home, TravelersOfCatan reference) : base(playerNumber, name, home)
+        public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, playerColor: playerColor, origin:home)
         {
             isAI = true;
             gameRef = reference;
@@ -68,7 +68,7 @@ namespace NEAGame
             return score;
         }
 
-        public int BRS(int alpha, int beta, int depth=-1, Turn turn=Turn.Max)
+        public int BRS(int alpha=int.MinValue, int beta=int.MaxValue, int depth=-1, Turn turn=Turn.Max)
         {
             if (depth == -1)
             {
@@ -96,6 +96,8 @@ namespace NEAGame
                     AllMoves.AddRange(GenerateMoves(pdl));
                 }
             }
+            int initAlpha = alpha;
+            int initBeta = beta;
             Console.Write(AllMoves);
             foreach (GameAction m in AllMoves)
             {
@@ -119,7 +121,7 @@ namespace NEAGame
                                 gameRef.gatherResources(pdl);
                             }
                         }
-                        v = BRS(-beta, -alpha, depth-1, Turn.Min);
+                        v = -BRS(-beta, -alpha, depth-1, Turn.Min);
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
                             if (pdl.GetID() != this.playerNumber)
@@ -130,15 +132,18 @@ namespace NEAGame
                     }
                     else if (turn == Turn.Min)
                     {
+                        gameRef.UpdateCurrentPlayer(this.playerNumber);
                         gameRef.gatherResources(this);
-                        v = BRS(-beta, -alpha, depth-1, Turn.Max);
+                        v = -BRS(-beta, -alpha, depth-1, Turn.Max);
+                        gameRef.UpdateCurrentPlayer(this.playerNumber);
                         gameRef.undoGatherResources(this);
                     }
 
                 } 
                 else
                 {
-                    v = BRS(alpha, beta, depth, turn); // only update the position!
+                    v = BRS(initAlpha, initBeta, depth, turn); // only update the position!
+                    // alpha and beta are updated in the recursive call so the original values are preserved for the next iteration
                 }
                 
                 gameRef.UpdateCurrentPlayer(m.playerID);
@@ -147,11 +152,6 @@ namespace NEAGame
                 
                 if (v >= beta)
                 {
-                    if (depth == MaxDepth && m.type == typeof(PlayerMove))
-                    {
-                        selectedMoves = Clone(currentMove);
-                        selectedMoves.Push(m);
-                    }
                     return v;
                 }
                 if (v > alpha)
@@ -167,7 +167,7 @@ namespace NEAGame
 
             }
 
-            return alpha;
+            return -alpha;
 
 
             // find resources required and use that to find the closest position to go to
