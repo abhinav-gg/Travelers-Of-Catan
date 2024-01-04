@@ -31,8 +31,9 @@ public class PlayerUIOverlay : MonoBehaviour
     float animationTimer;
     float zoomCD = 0.0f;
     float moveCD = 0.0f;
-    float turnEndCD = 0.0f;
+    float turnEndCD = 5f;
     bool isTryingToMove = false;
+    bool isTryingBuy = false;
     Sprite buffer;
 
     // Start is called before the first frame update
@@ -48,10 +49,16 @@ public class PlayerUIOverlay : MonoBehaviour
         EndTurnInput.onClick.AddListener(EndTurnButton);
         InventoryInput.onClick.AddListener(() =>
         {
+            if (FindObjectOfType<InventoryPopup>() != null)
+            {
+                return;
+            }
             AudioManager.i.Play("UIClick");
             LeanTween.scale(InventoryInput.gameObject, InventoryInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
             UnityUI.Interface.OpenInventory();
+
         });
+        // shopping will also require multiple funcs
 
 
     }
@@ -71,7 +78,10 @@ public class PlayerUIOverlay : MonoBehaviour
         zoomCD = Mathf.Clamp(zoomCD - Time.deltaTime, -5f, 5f);
         moveCD = Mathf.Clamp(moveCD - Time.deltaTime, -3f, 3f);
         turnEndCD = Mathf.Clamp(turnEndCD - Time.deltaTime, -3f, 3f);
+        
     }
+
+
 
     public void SetAI()
     {
@@ -84,6 +94,7 @@ public class PlayerUIOverlay : MonoBehaviour
         Destroy(TradeInput.gameObject);
 
     }
+
 
     public void MoveButton()
     {
@@ -121,7 +132,7 @@ public class PlayerUIOverlay : MonoBehaviour
         {
             return;
         }
-        turnEndCD = 2f;
+        turnEndCD = 5f;
         AudioManager.i.Play("UIClick");
         if (!EndTurnInput.gameObject.IsDestroyed())
         {

@@ -121,7 +121,7 @@ namespace NEAGame
                                 gameRef.gatherResources(pdl);
                             }
                         }
-                        v = -BRS(-beta, -alpha, depth-1, Turn.Min);
+                        v = BRS(-beta, -alpha, depth-1, Turn.Min);
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
                             if (pdl.GetID() != this.playerNumber)
@@ -134,7 +134,7 @@ namespace NEAGame
                     {
                         gameRef.UpdateCurrentPlayer(this.playerNumber);
                         gameRef.gatherResources(this);
-                        v = -BRS(-beta, -alpha, depth-1, Turn.Max);
+                        v = BRS(-beta, -alpha, depth-1, Turn.Max);
                         gameRef.UpdateCurrentPlayer(this.playerNumber);
                         gameRef.undoGatherResources(this);
                     }
@@ -167,7 +167,7 @@ namespace NEAGame
 
             }
 
-            return -alpha;
+            return alpha;
 
 
             // find resources required and use that to find the closest position to go to

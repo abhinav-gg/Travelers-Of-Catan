@@ -13,7 +13,7 @@ public class PlayersSetup : MonoBehaviour
     public Button Remove;
 
     public PlayerSlot[] playerAdders;
-    [SerializeField] Stack<PlayerTemplate> players = new Stack<PlayerTemplate>();
+    [SerializeField] List<PlayerTemplate> players = new List<PlayerTemplate>();
     [SerializeField] GameObject newPlayerGUI;
 
     public Button back;
@@ -60,7 +60,7 @@ public class PlayersSetup : MonoBehaviour
         playerAdders[players.Count].transform.localScale = new Vector3();
         playerAdders[players.Count].gameObject.SetActive(true);
         LeanTween.scale(playerAdders[players.Count].gameObject, init, 0.5f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.5f);
-        AddPlayer = playerAdders[players.Count].GetComponentInChildren<Button>();
+        AddPlayer = playerAdders[players.Count].AddButton.GetComponent<Button>();
         AddPlayer.onClick.AddListener(PlayerAddButton);
         isGetting = false;
     }
@@ -123,7 +123,7 @@ public class PlayersSetup : MonoBehaviour
             playerAdders[index].AddButton.SetActive(false);
             string col = FirstAvailableColor();
             playerAdders[index].Color.GetComponent<Image>().color = UnityUI.textToColor(col);
-            players.Push(new PlayerTemplate { name = name, ai = isbot, color = col.ToString() });
+            players.Add(new PlayerTemplate { name = name, ai = isbot, color = col.ToString() });
             updateContinue();
             SetupPlayerAdder();
         });    
@@ -146,16 +146,13 @@ public class PlayersSetup : MonoBehaviour
         if (RemoveCD > 0.0f)
             return;
         RemoveCD = 0.8f;
-        players.Pop();
+        players.RemoveAt(players.Count-1);
         updateContinue();
         if (players.Count == 0)
         {
             Remove.interactable = false;
         }
-        if (players.Count != 3)
-        {
-            SetupPlayerAdder();
-        }
+        SetupPlayerAdder();
         LeanTween.rotateAround(playerAdders[players.Count].Parent, Vector3.forward, 360, 0.5f).setEase(LeanTweenType.easeInOutElastic).setOnComplete(() => {
             playerAdders[players.Count].Parent.SetActive(false);
             playerAdders[players.Count].AddButton.SetActive(true);
@@ -166,9 +163,8 @@ public class PlayersSetup : MonoBehaviour
     
     public void Continue()
     {
-        while (players.Count > 0)
-        {
-            PlayerTemplate p = players.Pop();
+        foreach (PlayerTemplate p in players) 
+        { 
             if (p.ai)
             {
                 UnityUI.Interface.game.AddAI(p.name, p.color);

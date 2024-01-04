@@ -219,6 +219,7 @@ public partial class UnityUI
             PlayerAnimator playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerAnimator>();
             playUI.player = pl;
             playUI.gameObject.name = pl.playerName;
+            playUI.GetComponent<SpriteRenderer>().color = textToColor(pl.color);
             playUI.transform.position = GetNodeGlobalPos(game.board.GetNode(pl.position));
 
         }

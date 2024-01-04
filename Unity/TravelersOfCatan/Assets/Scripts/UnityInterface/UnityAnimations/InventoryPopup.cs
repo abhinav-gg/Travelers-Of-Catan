@@ -37,6 +37,7 @@ public class InventoryPopup : MonoBehaviour
 
     public void CloseGUI()
     {
+        AudioManager.i.Play("UIClick");
         LeanTween.scale(CloseButton.gameObject, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
 
         LeanTween.moveLocalY(Brick.gameObject, -1000, 0.75f).setEase(LeanTweenType.easeOutSine).setDelay(0.2f);
