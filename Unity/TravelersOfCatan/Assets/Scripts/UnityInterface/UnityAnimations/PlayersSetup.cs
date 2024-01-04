@@ -56,10 +56,9 @@ public class PlayersSetup : MonoBehaviour
         {
             return;
         }
-        Vector3 init = playerAdders[players.Count].transform.localScale;
         playerAdders[players.Count].transform.localScale = new Vector3();
         playerAdders[players.Count].gameObject.SetActive(true);
-        LeanTween.scale(playerAdders[players.Count].gameObject, init, 0.5f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.5f);
+        LeanTween.scale(playerAdders[players.Count].gameObject, new Vector3(1, 1, 1), 0.5f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.5f);
         AddPlayer = playerAdders[players.Count].AddButton.GetComponent<Button>();
         AddPlayer.onClick.AddListener(PlayerAddButton);
         isGetting = false;
@@ -151,6 +150,10 @@ public class PlayersSetup : MonoBehaviour
         if (players.Count == 0)
         {
             Remove.interactable = false;
+        }
+        if (players.Count < 3)
+        {
+            LeanTween.scale(playerAdders[players.Count+1].gameObject, new Vector3(), 0.5f).setEase(LeanTweenType.easeInOutElastic);
         }
         SetupPlayerAdder();
         LeanTween.rotateAround(playerAdders[players.Count].Parent, Vector3.forward, 360, 0.5f).setEase(LeanTweenType.easeInOutElastic).setOnComplete(() => {

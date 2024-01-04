@@ -350,6 +350,22 @@ namespace NEAGame
 
         }
 
+        public void CompleteTrade(Player otherPlayer, Dictionary<Resource, int> CurrentPlayerChange)
+        {
+            foreach (var entry in CurrentPlayerChange)
+            {
+                if (entry.Value > 0)
+                {
+                    currentPlayer.removeResource(entry.Key, entry.Value);
+                    otherPlayer.addResource(entry.Key, entry.Value);
+                }
+                else if (entry.Value < 0)
+                {
+                    currentPlayer.addResource(entry.Key, entry.Value);
+                    otherPlayer.removeResource(entry.Key, entry.Value);
+                }
+            }
+        }
 
         /// <summary>
         /// Shopping Methods
@@ -367,7 +383,7 @@ namespace NEAGame
             if (!isAICalculation)
             {
                 CheckWinner();
-                UserInterface.CreatePopup("Purchase Successful");
+                //UserInterface.CreatePopup("Purchase Successful");
 
             }
 
@@ -706,18 +722,20 @@ namespace NEAGame
                 current = Q.OrderBy(x => distance[x]).First();
                 Q.Remove(current);
                 if (distance[current] == int.MaxValue) break; // all remaining nodes are inaccessible
-                if ((current.status.GetOccupant() != currentPlayer.GetID() && current.status.GetStatus() != "Empty") || occupied.Contains(current))
-                {
-                    // can not move through enemy settlements
-                    distance[current] = int.MaxValue;
-                    previous[current] = null;
-                    continue;
-                }
+                
                 foreach (var g in current.GetNodeNeighbours())
                 {
                     Node neighbour = board.GetNode(g);
-                    if (neighbour == null) continue;
-                    
+                    if (neighbour == null)
+                    {
+                        continue;
+                    }
+                    else if ((neighbour.status.GetOccupant() != currentPlayer.GetID() && neighbour.status.GetStatus() != "Empty") || occupied.Contains(neighbour))
+                    {
+                        distance[neighbour] = int.MaxValue;
+                        previous[neighbour] = null;
+                        continue;
+                    }
                     
                     Connection con = board.GetConnection(current.position, g);
 
@@ -732,7 +750,7 @@ namespace NEAGame
             }
 
             distance[board.GetNode(start)] = int.MaxValue; // this is to prevent the player from moving back onto their current position
-            Console.WriteLine("Dijkstra Complete");
+
         }
 
         public void UndoPlayerAction()

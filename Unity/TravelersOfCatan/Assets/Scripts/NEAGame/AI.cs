@@ -20,7 +20,7 @@ namespace NEAGame
         Stack<GameAction> currentMove = new Stack<GameAction>();
         int MaxDepth = 4; // make readonly
         TravelersOfCatan gameRef;
-        
+        int Settler;
 
         public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, playerColor: playerColor, origin:home)
         {
@@ -73,6 +73,7 @@ namespace NEAGame
             if (depth == -1)
             {
                 depth = MaxDepth;
+                Settler = 5 - gameRef.gamePlayers.Count;
             }
 
             List<GameAction> AllMoves = new List<GameAction>();
@@ -87,13 +88,27 @@ namespace NEAGame
             }
             else if (turn == Turn.Min)
             {
-                foreach (Player pdl in gameRef.gamePlayers)
+                GameAction lastMove = currentMove.Peek();
+                if (lastMove.type != typeof(PlayerMove) && lastMove.playerID != playerNumber)
                 {
-                    if (pdl.GetID() == playerNumber)
+                    foreach (Player pdl in gameRef.gamePlayers)
                     {
-                        continue;
+                        if (pdl.GetID() == lastMove.playerID)
+                        {
+                            AllMoves.AddRange(GenerateMoves(pdl));
+                        }
                     }
-                    AllMoves.AddRange(GenerateMoves(pdl));
+                }
+                else
+                {
+                    foreach (Player pdl in gameRef.gamePlayers)
+                    {
+                        if (pdl.GetID() == playerNumber)
+                        {
+                            continue;
+                        }
+                        AllMoves.AddRange(GenerateMoves(pdl));
+                    }
                 }
             }
             int initAlpha = alpha;
@@ -116,7 +131,7 @@ namespace NEAGame
                         // gather resources for all other players
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
-                            if (pdl.GetID() != this.playerNumber)
+                            if (pdl.GetID() != playerNumber)
                             {
                                 gameRef.gatherResources(pdl);
                             }
@@ -124,7 +139,7 @@ namespace NEAGame
                         v = BRS(-beta, -alpha, depth-1, Turn.Min);
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
-                            if (pdl.GetID() != this.playerNumber)
+                            if (pdl.GetID() != playerNumber)
                             {
                                 gameRef.undoGatherResources(pdl);
                             }
@@ -132,10 +147,10 @@ namespace NEAGame
                     }
                     else if (turn == Turn.Min)
                     {
-                        gameRef.UpdateCurrentPlayer(this.playerNumber);
+                        gameRef.UpdateCurrentPlayer(playerNumber);
                         gameRef.gatherResources(this);
                         v = BRS(-beta, -alpha, depth-1, Turn.Max);
-                        gameRef.UpdateCurrentPlayer(this.playerNumber);
+                        gameRef.UpdateCurrentPlayer(playerNumber);
                         gameRef.undoGatherResources(this);
                     }
 
@@ -160,6 +175,11 @@ namespace NEAGame
                     {
                         selectedMoves = Clone(currentMove);
                         selectedMoves.Push(m);
+                        Settler--;
+                        if (Settler <= 0)
+                        {
+                            return v; // return the value of the move that was just made if it is the last move of the turn to save time
+                        }
                     }
                     alpha = v;
                 }

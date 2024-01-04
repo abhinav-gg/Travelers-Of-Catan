@@ -15,7 +15,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     [Header("UI overlay prefabs")] 
     public GameObject NameGetOverlay;
-
+    public Animator NameGetAnimator;
 
 
     [Header("Serialized Game View")] 
@@ -85,10 +85,17 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         
     }
 
+    IEnumerator GoToGameSetup()
+    {
+        NameGetAnimator.SetTrigger("Exit");
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene("GameSetup");
+    }
+
 
     public void StartGameButton()
     {
-        SceneManager.LoadScene("GameSetup");
+        StartCoroutine(GoToGameSetup());
     }
 
     public void LoadGameButton()

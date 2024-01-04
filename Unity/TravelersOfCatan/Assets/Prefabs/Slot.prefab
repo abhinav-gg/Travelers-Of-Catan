@@ -33,10 +33,10 @@ RectTransform:
   m_Father: {fileID: 2262680486658190208}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 75.6, y: -18.4}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 189.7, y: 0}
+  m_SizeDelta: {x: 119.8691, y: 57.4898}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &729871830830582910
 CanvasRenderer:
@@ -202,10 +202,10 @@ RectTransform:
   m_Father: {fileID: 2262680486550402888}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 110.83, y: -38.162}
-  m_SizeDelta: {x: 183, y: 76.3241}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0.0010986328, y: -0.000077248}
+  m_SizeDelta: {x: -435.31, y: 119.23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2262680486658190209
 MonoBehaviour:
@@ -263,8 +263,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -23.012, y: 0}
-  m_SizeDelta: {x: 136.98, y: 42.911}
+  m_AnchoredPosition: {x: -26.6, y: -0.0000014013}
+  m_SizeDelta: {x: 157.8864, y: 76.324}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2262680486790562051
 CanvasRenderer:
@@ -321,7 +321,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.14
+  m_fontSize: 26
   m_fontSizeBase: 26.14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -18.318382, y: -0.000007638528, z: -12.212288, w: -34.601418}
+  m_margin: {x: -1.9995956, y: -0.000007638528, z: -12.212288, w: -3.3236923}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -377,6 +377,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _textMeshPro: {fileID: 0}
   stringArray: []
+  muted: 0
   timeBtwnChars: 0.15
   timeBtwnWords: 0.5
   timeBtwnSentences: 0.75
