@@ -299,7 +299,7 @@ namespace NEAGame
                     if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
                     pdl.addResource(board.GetHexAtPosition(u));
                     if (!isAICalculation)
-                        UserInterface.ShowResource(u, board.GetHexAtPosition(u));
+                        UserInterface.ShowResource(u, board.GetHexAtPosition(u), Vector3.Zero);
                 }
             }
 
@@ -314,7 +314,7 @@ namespace NEAGame
                             if (board.GetHexAtPosition(u).ToString() == "Empty") continue;
                             pdl.addResource(board.GetHexAtPosition(u));
                             if (!isAICalculation)
-                                UserInterface.ShowResource(u, board.GetHexAtPosition(u));
+                                UserInterface.ShowResource(u, board.GetHexAtPosition(u), Vector3.Zero);
                         }
                     }
                 }
@@ -362,13 +362,17 @@ namespace NEAGame
             {
                 if (entry.Value > 0)
                 {
-                    currentPlayer.removeResource(entry.Key, entry.Value);
-                    otherPlayer.addResource(entry.Key, entry.Value);
+                    currentPlayer.addResource(entry.Key, entry.Value);
+                    otherPlayer.removeResource(entry.Key, entry.Value);
+                    for (int _ = 0; _ < entry.Value; _++)
+                        UserInterface.ShowResource(otherPlayer.position, entry.Key, currentPlayer.position);
                 }
                 else if (entry.Value < 0)
                 {
-                    currentPlayer.addResource(entry.Key, entry.Value);
-                    otherPlayer.removeResource(entry.Key, entry.Value);
+                    currentPlayer.removeResource(entry.Key, entry.Value);
+                    otherPlayer.addResource(entry.Key, entry.Value);
+                    for (int _ = 0; _ < entry.Value; _++)
+                        UserInterface.ShowResource(currentPlayer.position, entry.Key, otherPlayer.position);
                 }
             }
         }

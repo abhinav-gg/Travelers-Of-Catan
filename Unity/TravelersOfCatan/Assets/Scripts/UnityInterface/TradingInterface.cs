@@ -23,6 +23,8 @@ public class TradingInterface : MonoBehaviour
     public GameObject PTrade1;
     public GameObject PTrade2;
     public GameObject Card;
+    public GameObject POverallVal1;
+    public GameObject POverallVal2;
 
     [Header("Animation")]
     public GameObject PanelText;
@@ -30,7 +32,9 @@ public class TradingInterface : MonoBehaviour
     Dictionary<int, int> MaxGain = new Dictionary<int, int>();
     Dictionary<int, int> MaxLoss = new Dictionary<int, int>();
     Dictionary<int, int> CurrentTrades = new Dictionary<int, int>();
-    int currentResource = 1;
+    int currentResource = 0;
+    int overallVal = 0;
+    Player other;
     // Start is called before the first frame update
     void Start()
     {
@@ -64,7 +68,8 @@ public class TradingInterface : MonoBehaviour
     public void CloseGUI()
     {
         // tween everything out of existance
-        
+        Destroy(POverallVal1);
+        Destroy(POverallVal2);
         LeanTween.scale(PName2.transform.parent.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutElastic);
         LeanTween.scale(PName1.transform.parent.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutElastic);
         LeanTween.scale(accept.gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInOutElastic);
@@ -73,12 +78,13 @@ public class TradingInterface : MonoBehaviour
         //LeanTween.rotateAround()
         LeanTween.moveLocalX(left.gameObject, -600f, 0.5f).setEase(LeanTweenType.easeOutBack);
         LeanTween.moveLocalX(right.gameObject, 600f, 0.5f).setEase(LeanTweenType.easeOutBack);
-        LeanTween.scale(gameObject, new Vector3(0, 0, 0), 2f).setEase(LeanTweenType.easeInOutElastic).setDelay(1f).setOnComplete(() => Destroy(gameObject));
+        LeanTween.alphaCanvas(PanelText.GetComponent<CanvasGroup>(), 0f, 0.5f).setEase(LeanTweenType.easeOutBack).setDelay(1f).setOnComplete(() => Destroy(gameObject));
     }
 
 
     public void Setup(Player current, Player other)
     {
+        this.other = other;
         PName1.GetComponent<TextMeshProUGUI>().text = current.playerName;
         PName1.SetActive(true);
         PName2.GetComponent<TextMeshProUGUI>().text = other.playerName;
@@ -87,12 +93,12 @@ public class TradingInterface : MonoBehaviour
         PCol2.GetComponent<Image>().color = UnityUI.textToColor(other.color.ToString());
         foreach (var entry in current.getResources())
         {
-            CurrentTrades.Add(entry.Key.GetHashCode(), 0);
-            MaxLoss.Add(entry.Key.GetHashCode(), entry.Value);
+            CurrentTrades.Add(entry.Key.GetHashCode()-1, 0);
+            MaxLoss.Add(entry.Key.GetHashCode()-1, entry.Value);
         }
         foreach (var entry in other.getResources())
         {
-            MaxGain.Add(entry.Key.GetHashCode(), entry.Value);
+            MaxGain.Add(entry.Key.GetHashCode()-1, entry.Value);
         }
 
         // set Ptrade texts
@@ -108,64 +114,99 @@ public class TradingInterface : MonoBehaviour
         Card.GetComponent<Image>().sprite = Cards[currentResource];
         if (CurrentTrades[currentResource] > 0)
         {
-            PTrade2.GetComponent<TextMeshProUGUI>().text = "+" + CurrentTrades[currentResource].ToString();
-            PTrade2.GetComponent<TextMeshProUGUI>().text = CurrentTrades[currentResource].ToString();
+            PTrade1.GetComponent<TextMeshProUGUI>().text = "+" + CurrentTrades[currentResource].ToString();
+            PTrade2.GetComponent<TextMeshProUGUI>().text = "-" + CurrentTrades[currentResource].ToString();
         }
         else if (CurrentTrades[currentResource] < 0)
         {
-            PTrade2.GetComponent<TextMeshProUGUI>().text = "+" + CurrentTrades[currentResource].ToString();
-            PTrade2.GetComponent<TextMeshProUGUI>().text = CurrentTrades[currentResource].ToString();
+            PTrade2.GetComponent<TextMeshProUGUI>().text = "+" + Mathf.Abs(CurrentTrades[currentResource]).ToString();
+            PTrade1.GetComponent<TextMeshProUGUI>().text = CurrentTrades[currentResource].ToString();
         }
         else
         {
             PTrade1.GetComponent<TextMeshProUGUI>().text = "0";
             PTrade2.GetComponent<TextMeshProUGUI>().text = "0";
         }
-        if (MaxLoss[currentResource] == 0)
+
+        if (overallVal > 0)
         {
-            decrease.interactable = false;
+            POverallVal1.GetComponent<TextMeshProUGUI>().text = "+" + overallVal.ToString();
+            POverallVal1.GetComponent<TextMeshProUGUI>().color = Color.green;
+            POverallVal2.GetComponent<TextMeshProUGUI>().text = "-" + overallVal.ToString();
+            POverallVal2.GetComponent<TextMeshProUGUI>().color = Color.red;
         }
-        if (MaxGain[currentResource] == 0)
+        else if (overallVal < 0)
         {
-            increase.interactable = false;
+            POverallVal2.GetComponent<TextMeshProUGUI>().text = "+" + Mathf.Abs(overallVal).ToString();
+            POverallVal2.GetComponent<TextMeshProUGUI>().color = Color.green;
+            POverallVal1.GetComponent<TextMeshProUGUI>().text = overallVal.ToString();
+            POverallVal1.GetComponent<TextMeshProUGUI>().color = Color.red;
+        }
+        else
+        {
+            POverallVal1.GetComponent<TextMeshProUGUI>().text = "0";
+            POverallVal1.GetComponent<TextMeshProUGUI>().color = Color.white;
+            POverallVal2.GetComponent<TextMeshProUGUI>().text = "0";
+            POverallVal2.GetComponent<TextMeshProUGUI>().color = Color.white;
         }
 
+
+
+        decrease.interactable = !(MaxLoss[currentResource] == CurrentTrades[currentResource]);
+        increase.interactable = !(MaxGain[currentResource] == CurrentTrades[currentResource]);
+        
     }
 
 
     // referenced by Unity Button
     void AddToCurrent()
     {
+        AudioManager.i.Play("UIClick");
+        if (!LeanTween.isTweening(increase.gameObject))
+        {
+            LeanTween.scale(increase.gameObject, increase.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
+        }
+        overallVal++;
         decrease.interactable = true;  
-        int nw = CurrentTrades[currentResource] + 1;
+        CurrentTrades[currentResource] ++ ;
+        UpdateGUI();
 
     }
 
     void GiveToEnemy()
     {
+        AudioManager.i.Play("UIClick");
+        if (!LeanTween.isTweening(decrease.gameObject))
+        {
+            LeanTween.scale(decrease.gameObject, decrease.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
+        }
+        overallVal--;
         increase.interactable = true;
-        int nw = CurrentTrades[currentResource] - 1;
-
+        CurrentTrades[currentResource] -- ;
+        UpdateGUI();
     }
 
     void Left()
     {
+        accept.interactable = false;
+        right.interactable = true;
         AudioManager.i.Play("UIClick");
         if (!LeanTween.isTweening(left.gameObject))
         {
             LeanTween.scale(left.gameObject, left.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
-        currentResource--; if (currentResource < 1) { currentResource = 5; }
+        currentResource--; if (currentResource == 0) { left.interactable = false; }
         UpdateGUI();
     }
      void Right()
     {
+        left.interactable = true;
         AudioManager.i.Play("UIClick");
         if (!LeanTween.isTweening(right.gameObject))
         {
             LeanTween.scale(right.gameObject, right.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
-        currentResource++; if (currentResource > 5) { currentResource = 1; }
+        currentResource++; if (currentResource == 4) { right.interactable = false; accept.interactable = true; }
         UpdateGUI();
     }
 
@@ -176,6 +217,8 @@ public class TradingInterface : MonoBehaviour
         {
             LeanTween.scale(accept.gameObject, accept.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
+        StartCoroutine(UnityUI.Interface.RegisterTrade(CurrentTrades, other));
+        CloseGUI();
     }
 
 

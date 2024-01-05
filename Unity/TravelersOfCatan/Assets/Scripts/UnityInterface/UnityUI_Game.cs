@@ -19,6 +19,7 @@ public partial class UnityUI
     public GameObject inventoryPopup;
     public GameObject shoppingPopup;
     public GameObject TradePopup;
+    public GameObject CardObj;
     [Space(10)]
 
     public Tile[] resources = new Tile[6];
@@ -428,18 +429,29 @@ public partial class UnityUI
         StartCoroutine(coroutine);
     }
 
-    void UI.ShowResource(System.Numerics.Vector3 u, NEAGame.Resource resource)
+    void UI.ShowResource(System.Numerics.Vector3 u, NEAGame.Resource resource, System.Numerics.Vector3 endDest)
     {
-        StartCoroutine(AnimateResource(u, resource));
+
+        StartCoroutine(AnimateResource(u, resource, endDest));
     }
 
-    IEnumerator AnimateResource(System.Numerics.Vector3 u, NEAGame.Resource resource)
+    IEnumerator AnimateResource(System.Numerics.Vector3 u, NEAGame.Resource resource, System.Numerics.Vector3 Dest)
     {
+        Vector3 spawnpos;
         yield return new WaitForSeconds(0.1f);
-        Vector3 spawnpos = GetHexGlobalPos(CubicToOddRow(u));
-        CardCollection card = Instantiate(Resources.Load("CollectionAnimation"), spawnpos, Quaternion.identity).GetComponent<CardCollection>();
+        Vector3 destination = ConvertVector(Dest);
+        if (destination == new Vector3(0, 0, 0))
+        {
+             spawnpos = GetHexGlobalPos(CubicToOddRow(u));
+        }
+        else
+        {
+            destination = GetNodeGlobalPos(game.board.GetNode(Dest));
+            spawnpos = GetNodeGlobalPos(game.board.GetNode(u));
+        }
+        CardCollection card = Instantiate(CardObj, spawnpos, Quaternion.identity).GetComponent<CardCollection>();
         card.gameObject.transform.position = spawnpos;
-        card.SetCard(resource.GetHashCode());
+        card.SetCard(resource.GetHashCode(), destination);
     }
 
     IEnumerator WaitForNodeChoice(Action<Node> callback) // pass in function for moving vs buying
@@ -499,9 +511,22 @@ public partial class UnityUI
         SceneTransition.i.PlayAnimation();
         yield return new WaitForSeconds(1f);
         TradingInterface inv = Instantiate(TradePopup).GetComponent<TradingInterface>();
-        inv.Setup(Interface.game.GetCurrentPlayer(), Interface.game.GetCurrentPlayer());
+        inv.Setup(Interface.game.gamePlayers[0], Interface.game.gamePlayers[1]);
         yield return null;
     }
+
+
+    public IEnumerator RegisterTrade(Dictionary<int, int> trades, Player other)
+    {
+        yield return new WaitForSeconds(1.25f);
+        Dictionary<Resource, int> GameDict = new Dictionary<Resource, int>();
+        foreach (var entry in trades)
+        {
+            GameDict.Add(new Resource(entry.Key + 1), entry.Value);
+        }
+        game.CompleteTrade(other, GameDict);
+    }
+
 
 
     /// <summary>

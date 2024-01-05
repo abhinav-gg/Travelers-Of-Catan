@@ -22,7 +22,7 @@ namespace NEAGame
         void UpdateSettlement(Node otherNode);
         void DisplayPlayers(List<Player> gamePlayers);
         void Assert(bool test);
-        void ShowResource(Vector3 u, Resource resource);
+        void ShowResource(Vector3 u, Resource resource, Vector3 optional);
     }
 
     public class TerminalUI { }
