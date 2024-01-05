@@ -350,6 +350,12 @@ namespace NEAGame
 
         }
 
+        /// <summary>
+        /// Trading Function!
+        /// </summary>
+        /// <param name="otherPlayer"></param>
+        /// <param name="CurrentPlayerChange"></param>
+
         public void CompleteTrade(Player otherPlayer, Dictionary<Resource, int> CurrentPlayerChange)
         {
             foreach (var entry in CurrentPlayerChange)

@@ -46,17 +46,8 @@ public class PlayerUIOverlay : MonoBehaviour
         ZoomInput.onClick.AddListener(ZoomButton);
         MoveInput.onClick.AddListener(MoveButton);
         EndTurnInput.onClick.AddListener(EndTurnButton);
-        InventoryInput.onClick.AddListener(() =>
-        {
-            if (FindObjectOfType<InventoryPopup>() != null)
-            {
-                return;
-            }
-            AudioManager.i.Play("UIClick");
-            LeanTween.scale(InventoryInput.gameObject, InventoryInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
-            UnityUI.Interface.OpenInventory();
-
-        });
+        InventoryInput.onClick.AddListener(OnInventory);
+        TradeInput.onClick.AddListener(OnTrade);
     }
 
     // Update is called once per frame
@@ -94,6 +85,7 @@ public class PlayerUIOverlay : MonoBehaviour
 
     public void MoveButton()
     {
+        
         AudioManager.i.Play("UIClick");
         if (LeanTween.isTweening(MoveInput.gameObject))
         {
@@ -218,9 +210,38 @@ public class PlayerUIOverlay : MonoBehaviour
             Camera.main.orthographicSize = Mathf.Lerp(startDist, endDist, t);
             yield return 0;
         }
+
+
+        // make this more rigid
     }
 
+    public void OnInventory()
+    {
+        SceneTransition.i.PlayAnimation();
+        if (FindObjectOfType<InventoryPopup>() != null)
+        {
+            return;
+        }
+        AudioManager.i.Play("UIClick");
+        LeanTween.scale(InventoryInput.gameObject, InventoryInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
+        StartCoroutine(UnityUI.Interface.OpenInventory());
+    }
 
+    public void OnTrade()
+    {
+        if (FindObjectOfType<TradingInterface>() != null) // might need to be changed to a bool
+        {
+            return;
+        }
+        AudioManager.i.Play("UIClick");
+        if (!LeanTween.isTweening(TradeInput.gameObject))
+        {
+            LeanTween.scale(TradeInput.gameObject, TradeInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
+        }
+
+        StartCoroutine(UnityUI.Interface.OpenTrade());
+        
+    }
 
 
 

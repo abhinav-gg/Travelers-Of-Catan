@@ -22,6 +22,7 @@ public class GamePauseOverlay : MonoBehaviour
         myCanvas.sortingLayerName = "UI";
         myCanvas.sortingOrder = 500;
         Slider.onValueChanged.AddListener((float t) => AudioManager.i.ChangeMasterVolume(t));
+        Slider.value = AudioManager.i.VolumeModifier;
         Resume.onClick.AddListener(CloseGUI);
     }
 

@@ -30,6 +30,18 @@ public class SceneTransition : MonoBehaviour
         
     }
 
+    public void PlayAnimation()
+    {
+        StartCoroutine(AnimationSameScene());
+    }
+
+    IEnumerator AnimationSameScene()
+    {
+        GetComponentInChildren<Animator>().SetTrigger("Exit");
+        yield return new WaitForSeconds(1.75f);
+        GetComponentInChildren<Animator>().SetTrigger("Enter");
+    }
+
     void OnNewScene()
     {
         Canvas myCanvas = GetComponent<Canvas>();

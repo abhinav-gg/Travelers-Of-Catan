@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7293d32f28ae81a45bd90fce006e61e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NameGetOverlay: {fileID: 7016893585919283161, guid: b251f8400da97ab4fb56cb1b80be244e, type: 3}
   game:
     isAICalculation: 0
   NodePrefab: {fileID: 955635130051763877, guid: b09d4fe1c57ec05408bc24dcd97fcc48, type: 3}
@@ -54,7 +53,7 @@ MonoBehaviour:
   PlayerUI: {fileID: 892454372537867235, guid: 76a01f68f9c14eb4fba6ba07fe126fe3, type: 3}
   inventoryPopup: {fileID: 2111445291719360313, guid: 643f130cbe33cff49bdab615e3348778, type: 3}
   shoppingPopup: {fileID: 5544107271328446751, guid: 2a0b4ccbb3543ea4dafb6dfcdf61aff4, type: 3}
-  pausePopup: {fileID: 7027665097758371271, guid: cf9a5d9b441297f4a987427a666a3b83, type: 3}
+  TradePopup: {fileID: 6803633201060136057, guid: 1f12e2c4c90a19e43b061ff10b2a767a, type: 3}
   resources:
   - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
   - {fileID: 11400000, guid: 95f2ad4aff2d2f040bb4877644c3d001, type: 2}

@@ -10,10 +10,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     public static UnityUI Interface { get; private set; }
 
-    [Header("UI overlay prefabs")] 
-    public GameObject NameGetOverlay;
-
-
     [Header("Serialized Game View")] 
     public TravelersOfCatan game;
 

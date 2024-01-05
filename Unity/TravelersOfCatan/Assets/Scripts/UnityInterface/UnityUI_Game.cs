@@ -11,15 +11,15 @@ using NEAGame;
 [Serializable]
 public partial class UnityUI
 {
-
+    [Header("UI overlay prefabs")]
     public GameObject NodePrefab;
     public GameObject ConnectionPrefab;
     public GameObject PlayerPrefab;
     public GameObject PlayerUI;
     public GameObject inventoryPopup;
     public GameObject shoppingPopup;
-    public GameObject pausePopup;
-
+    public GameObject TradePopup;
+    [Space(10)]
 
     public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
@@ -37,8 +37,6 @@ public partial class UnityUI
     PlayerUIOverlay overlay;
     NodeButton SelectedNode;
 
-    private Dictionary<Resource, int> Trades;
-
 
     void Update()
     {
@@ -48,7 +46,7 @@ public partial class UnityUI
             Timer = Mathf.Clamp(Timer - Time.deltaTime, 0, int.MaxValue);
         }
     }
-
+    //JSON_manager.SAVEGAME(game, "TESTFINDME");
 
     void UI.BeginTurn(float time)
     {
@@ -118,7 +116,7 @@ public partial class UnityUI
     public void PauseButton()
     {
         TimerActive = false;
-        GameObject overlay = Instantiate(pausePopup);
+        SceneTransition.i.PlayAnimation();
     }
 
     public void OnPlayerMove()
@@ -482,17 +480,9 @@ public partial class UnityUI
     /// Inventory handler
     /// </summary>
 
-
-    public void OpenInventory()
+    public IEnumerator OpenInventory()
     {
-        //JSON_manager.SAVEGAME(game, "TESTFINDME");
         StopAllPlayerCoroutines();
-        StartCoroutine(DisplayInventory());
-    }
-
-
-    IEnumerator DisplayInventory()
-    {
         InventoryPopup inv = Instantiate(inventoryPopup).GetComponent<InventoryPopup>();
         foreach (KeyValuePair<Resource, int> entry in Interface.game.GetCurrentPlayer().getResources())
         {
@@ -500,6 +490,17 @@ public partial class UnityUI
             yield return new WaitForSeconds(0.1f);
         }
 
+    } 
+    
+    
+    public IEnumerator OpenTrade()
+    {
+        StopAllPlayerCoroutines();
+        SceneTransition.i.PlayAnimation();
+        yield return new WaitForSeconds(1f);
+        TradingInterface inv = Instantiate(TradePopup).GetComponent<TradingInterface>();
+        inv.Setup(Interface.game.GetCurrentPlayer(), Interface.game.GetCurrentPlayer());
+        yield return null;
     }
 
 
