@@ -37,6 +37,7 @@ public partial class UnityUI
     PlayerUIOverlay overlay;
     NodeButton SelectedNode;
 
+    private Dictionary<Resource, int> Trades;
 
 
     void Update()
@@ -411,6 +412,9 @@ public partial class UnityUI
     }
 
 
+
+
+
     void UI.GetUserNodeChoice(Node[] options, Action<Node> callback)
     {
 
@@ -547,9 +551,14 @@ public partial class UnityUI
         EndTurn();
 
         // Show winner screen
-
-
-
     }
+
+
+
+
+
+
+
+
 
 }

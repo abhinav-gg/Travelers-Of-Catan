@@ -36,7 +36,6 @@ public class PlayerUIOverlay : MonoBehaviour
     bool isTryingBuy = false;
     Sprite buffer;
 
-    // Start is called before the first frame update
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();
@@ -58,9 +57,6 @@ public class PlayerUIOverlay : MonoBehaviour
             UnityUI.Interface.OpenInventory();
 
         });
-        // shopping will also require multiple funcs
-
-
     }
 
     // Update is called once per frame

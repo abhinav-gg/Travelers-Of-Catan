@@ -843,6 +843,11 @@ RectTransform:
   m_AnchoredPosition: {x: 213, y: -0.0024109}
   m_SizeDelta: {x: 221.7, y: 423.97}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!95 &827848461 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7981952026462215165, guid: a99efcff04732e84692cbb293dd00825, type: 3}
+  m_PrefabInstance: {fileID: 7981952024809379992}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &865030118
 GameObject:
   m_ObjectHideFlags: 0
@@ -2166,6 +2171,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4683312900352664036, guid: a99efcff04732e84692cbb293dd00825, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 827848461}
     - target: {fileID: 7981952024717886112, guid: a99efcff04732e84692cbb293dd00825, type: 3}
       propertyPath: m_Name
       value: SceneTransition

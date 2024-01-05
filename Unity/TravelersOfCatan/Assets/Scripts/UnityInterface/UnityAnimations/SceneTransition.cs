@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneTransition : MonoBehaviour
 {
-    public static SceneTransition Interface { get; private set; }
+    public static SceneTransition i { get; private set; }
     public Animator animator;
     // Start is called before the first frame update
     void Start()
     {
-        if (Interface == null)
+        if (i == null)
         {
-            Interface = this;
+            i = this;
         }
         else
         {
@@ -20,12 +21,25 @@ public class SceneTransition : MonoBehaviour
         animator = GetComponent<Animator>();
 
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += (scene, mode) => OnNewScene();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void OnNewScene()
+    {
+        Canvas myCanvas = GetComponent<Canvas>();
+        myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        myCanvas.planeDistance = 100;
+        myCanvas.worldCamera = Camera.main;
+        myCanvas.sortingLayerName = "UI";
+        myCanvas.sortingOrder = 2000;
+        GetComponentInChildren<Animator>().SetTrigger("Enter");
+
     }
 
     public void SendToScene(string sceneName)
@@ -35,10 +49,13 @@ public class SceneTransition : MonoBehaviour
 
     IEnumerator LoadScene(string sceneName)
     {
-        animator.SetTrigger("Exit");
-        yield return new WaitForSeconds(1.5f);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+        GetComponentInChildren<Animator>().SetTrigger("Exit");
+        yield return new WaitForSeconds(1f);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
-
 
 }

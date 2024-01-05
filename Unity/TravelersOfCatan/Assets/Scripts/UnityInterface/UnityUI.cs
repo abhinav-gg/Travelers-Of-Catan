@@ -8,14 +8,10 @@ using NEAGame;
 public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
 
-
-
-
     public static UnityUI Interface { get; private set; }
 
     [Header("UI overlay prefabs")] 
     public GameObject NameGetOverlay;
-    public Animator NameGetAnimator;
 
 
     [Header("Serialized Game View")] 
@@ -81,21 +77,16 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
   
     public void CommenceGame()
     {
-        SceneManager.LoadScene("Game");
-        
+        SceneTransition.i.SendToScene("Game");
+
     }
 
-    IEnumerator GoToGameSetup()
-    {
-        NameGetAnimator.SetTrigger("Exit");
-        yield return new WaitForSeconds(1.5f);
-        SceneManager.LoadScene("GameSetup");
-    }
+
 
 
     public void StartGameButton()
     {
-        StartCoroutine(GoToGameSetup());
+        SceneTransition.i.SendToScene("GameSetup");
     }
 
     public void LoadGameButton()
@@ -108,10 +99,8 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     public void GoHome()
     {
 
-        // add scene animation here
+        SceneTransition.i.SendToScene("Hub");
 
-
-        SceneManager.LoadScene("Hub");
     }
 
     void QuitButtonPressed()
