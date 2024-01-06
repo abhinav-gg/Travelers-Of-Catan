@@ -113,7 +113,7 @@ RectTransform:
   - {fileID: 2004452914169289775}
   - {fileID: 5318817586987146874}
   - {fileID: 6596707439290546108}
-  - {fileID: 7166756586849363126}
+  - {fileID: 7725688804503752664}
   - {fileID: 6058155318085202754}
   - {fileID: 4563204645775594042}
   - {fileID: 6542319989123982746}
@@ -722,12 +722,12 @@ RectTransform:
   m_LocalScale: {x: 0.6537382, y: 0.7067593, z: 0.7067593}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7166756586849363126}
-  m_RootOrder: 0
+  m_Father: {fileID: 892454372537867239}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.4108448, y: -0.4202423}
+  m_AnchoredPosition: {x: 350.9, y: 68.3}
   m_SizeDelta: {x: 66.0483, y: 63.4452}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7058041057999950884
@@ -1131,43 +1131,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &3504444791630349485
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7166756586849363126}
-  m_Layer: 5
-  m_Name: CollectionPoint
-  m_TagString: CardCollection
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &7166756586849363126
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3504444791630349485}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7725688804503752664}
-  m_Father: {fileID: 892454372537867239}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 349.024, y: 66.125946}
-  m_SizeDelta: {x: 43.178284, y: 44.840485}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3725671488588751144
 GameObject:
   m_ObjectHideFlags: 0

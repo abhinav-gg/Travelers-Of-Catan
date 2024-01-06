@@ -27,7 +27,6 @@ public class PlayerNameInp : MonoBehaviour
     public GameObject doneBox;
     int NameMaxLength = 10;
 
-
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();

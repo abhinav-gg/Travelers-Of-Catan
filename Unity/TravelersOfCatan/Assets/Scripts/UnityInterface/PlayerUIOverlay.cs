@@ -74,7 +74,7 @@ public class PlayerUIOverlay : MonoBehaviour
     {
         isAI = true;
         Destroy(MoveInput.gameObject);
-        Destroy(InventoryInput.gameObject);
+        InventoryInput.interactable = false;
         Destroy(EndTurnInput.gameObject);
         Destroy(ShopInput.gameObject);
         Destroy(UndoInput.gameObject);
@@ -154,11 +154,11 @@ public class PlayerUIOverlay : MonoBehaviour
     
 
 
-    public void AlterAllGameButton( bool state, bool changeZoom = false )
+    public void AlterAllGameButton( bool state, bool changeZoom = false ) // only called by player movement and shopping
     {
         MoveInput.gameObject.SetActive(state);
         ShopInput.gameObject.SetActive(state);
-        InventoryInput.gameObject.SetActive(state);
+        InventoryInput.interactable = state;
         TradeInput.gameObject.SetActive(state);
         EndTurnInput.gameObject.SetActive(state);
         UndoInput.gameObject.SetActive(state);

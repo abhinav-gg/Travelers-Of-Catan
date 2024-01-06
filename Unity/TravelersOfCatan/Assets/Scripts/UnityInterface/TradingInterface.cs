@@ -151,9 +151,11 @@ public class TradingInterface : MonoBehaviour
         }
 
 
-
-        decrease.interactable = !(MaxLoss[currentResource] == CurrentTrades[currentResource]);
-        increase.interactable = !(MaxGain[currentResource] == CurrentTrades[currentResource]);
+        
+        decrease.interactable = (-CurrentTrades[currentResource] < MaxLoss[currentResource]);
+        increase.interactable = (CurrentTrades[currentResource] < MaxGain[currentResource]);
+        
+        
         
     }
 
@@ -167,7 +169,6 @@ public class TradingInterface : MonoBehaviour
             LeanTween.scale(increase.gameObject, increase.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
         overallVal++;
-        decrease.interactable = true;  
         CurrentTrades[currentResource] ++ ;
         UpdateGUI();
 
@@ -181,7 +182,6 @@ public class TradingInterface : MonoBehaviour
             LeanTween.scale(decrease.gameObject, decrease.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
         overallVal--;
-        increase.interactable = true;
         CurrentTrades[currentResource] -- ;
         UpdateGUI();
     }

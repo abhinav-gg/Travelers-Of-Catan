@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using NEAGame;
 using TMPro;
 using System.Reflection;
+using System.Dynamic;
 
 public class PlayersSetup : MonoBehaviour
 {
@@ -15,16 +16,21 @@ public class PlayersSetup : MonoBehaviour
     public PlayerSlot[] playerAdders;
     [SerializeField] List<PlayerTemplate> players = new List<PlayerTemplate>();
     [SerializeField] GameObject newPlayerGUI;
+    [SerializeField] GameObject ColorSelector;
 
     public Button back;
     public Button cont;
 
     Button AddPlayer;
     PlayerNameInp overlay;
+    ColorChoiceControl colorChoice;
 
     List<string> colors = new List<string>();
     float RemoveCD = 0.0f;
     bool isGetting;
+    bool submittedName;
+    bool gettingColor;
+    int playerChangingColor;
 
     // Start is called before the first frame update
     void Start()
@@ -61,6 +67,7 @@ public class PlayersSetup : MonoBehaviour
         LeanTween.scale(playerAdders[players.Count].gameObject, new Vector3(1, 1, 1), 0.5f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.5f);
         AddPlayer = playerAdders[players.Count].AddButton.GetComponent<Button>();
         AddPlayer.onClick.AddListener(PlayerAddButton);
+        
         isGetting = false;
     }
 
@@ -82,6 +89,7 @@ public class PlayersSetup : MonoBehaviour
             overlay.toggle.interactable = false;
             // The first player is always a human
         }
+        submittedName = false;
     }
 
     bool checkIfColorIsTaken(string color)
@@ -101,6 +109,29 @@ public class PlayersSetup : MonoBehaviour
         return "clear"; // never happens as there are always more colors than players
     }
 
+    void ColorChangeButton(int index)
+    {
+        if (gettingColor)
+            return;
+        gettingColor = true;
+        colorChoice = Instantiate(ColorSelector).GetComponent<ColorChoiceControl>();
+        // use linq to get a list of the color indexes that are taken already by other players
+        List<int> indexes = players.Where(p => players.IndexOf(p) != index).Select(p => colors.IndexOf(p.color)).ToList();
+        colorChoice.Setup(colors, indexes);
+        colorChoice.SetCurrent(players[index].color);
+        playerChangingColor = index;
+
+    }
+
+    public void NewColorSave(string choice)
+    {
+        gettingColor = false;
+        players[playerChangingColor].color = choice;
+        playerAdders[playerChangingColor].Color.GetComponent<Image>().color = UnityUI.textToColor(choice);
+    }
+
+
+
     void updateContinue()
     {
         cont.interactable = players.Count > 1;
@@ -108,6 +139,8 @@ public class PlayersSetup : MonoBehaviour
 
     void SaveNewPlayer()
     {
+        if (submittedName) return;
+        submittedName = true;
         string name = overlay.inputField.text;
         bool isbot = overlay.toggle.isOn;
 
@@ -122,6 +155,7 @@ public class PlayersSetup : MonoBehaviour
             playerAdders[index].AddButton.SetActive(false);
             string col = FirstAvailableColor();
             playerAdders[index].Color.GetComponent<Image>().color = UnityUI.textToColor(col);
+            playerAdders[index].Color.GetComponent<Button>().onClick.AddListener(() => { ColorChangeButton(index); });
             players.Add(new PlayerTemplate { name = name, ai = isbot, color = col.ToString() });
             updateContinue();
             SetupPlayerAdder();

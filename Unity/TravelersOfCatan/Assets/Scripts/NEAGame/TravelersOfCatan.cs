@@ -360,18 +360,19 @@ namespace NEAGame
         {
             foreach (var entry in CurrentPlayerChange)
             {
+                int change = Math.Abs(entry.Value);
                 if (entry.Value > 0)
                 {
-                    currentPlayer.addResource(entry.Key, entry.Value);
-                    otherPlayer.removeResource(entry.Key, entry.Value);
-                    for (int _ = 0; _ < entry.Value; _++)
+                    currentPlayer.addResource(entry.Key, change);
+                    otherPlayer.removeResource(entry.Key, change);
+                    for (int _ = 0; _ < change; _++)
                         UserInterface.ShowResource(otherPlayer.position, entry.Key, currentPlayer.position);
                 }
                 else if (entry.Value < 0)
                 {
-                    currentPlayer.removeResource(entry.Key, entry.Value);
-                    otherPlayer.addResource(entry.Key, entry.Value);
-                    for (int _ = 0; _ < entry.Value; _++)
+                    currentPlayer.removeResource(entry.Key, change);
+                    otherPlayer.addResource(entry.Key, change);
+                    for (int _ = 0; _ < change; _++)
                         UserInterface.ShowResource(currentPlayer.position, entry.Key, otherPlayer.position);
                 }
             }

@@ -438,11 +438,12 @@ public partial class UnityUI
     IEnumerator AnimateResource(System.Numerics.Vector3 u, NEAGame.Resource resource, System.Numerics.Vector3 Dest)
     {
         Vector3 spawnpos;
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
         Vector3 destination = ConvertVector(Dest);
         if (destination == new Vector3(0, 0, 0))
         {
-             spawnpos = GetHexGlobalPos(CubicToOddRow(u));
+            spawnpos = GetHexGlobalPos(CubicToOddRow(u));
+            destination = overlay.InventoryInput.transform.position;
         }
         else
         {
@@ -450,7 +451,6 @@ public partial class UnityUI
             spawnpos = GetNodeGlobalPos(game.board.GetNode(u));
         }
         CardCollection card = Instantiate(CardObj, spawnpos, Quaternion.identity).GetComponent<CardCollection>();
-        card.gameObject.transform.position = spawnpos;
         card.SetCard(resource.GetHashCode(), destination);
     }
 
