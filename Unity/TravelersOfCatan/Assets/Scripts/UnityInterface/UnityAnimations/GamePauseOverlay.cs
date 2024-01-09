@@ -9,6 +9,9 @@ public class GamePauseOverlay : MonoBehaviour
     public Button Resume;
     [SerializeField] Slider Slider;
     [Space(10)]
+    public Button MuteBG;
+    public Button MuteSFX;
+    [Space(10)]
     public GameObject Panel;
     public GameObject PauseBtn;
     public GameObject InfoBtn;
@@ -24,6 +27,11 @@ public class GamePauseOverlay : MonoBehaviour
         Slider.onValueChanged.AddListener((float t) => AudioManager.i.ChangeMasterVolume(t));
         Slider.value = AudioManager.i.VolumeModifier;
         Resume.onClick.AddListener(CloseGUI);
+        MuteBG.onClick.AddListener(() => 
+        {
+            AudioManager.i.ToggleMute(Background: true);
+
+        });
     }
 
     // Update is called once per frame

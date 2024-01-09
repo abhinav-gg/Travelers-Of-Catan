@@ -13,7 +13,7 @@ public class AudioManager : MonoBehaviour
     // Credit to Brackeys for the tutorial on this script https://www.youtube.com/watch?v=6OT43pvUyfY
 
 
-    public bool muted = false;
+    public bool mutedSFX = false;
     public Sound[] sounds;
     public Sound[] BackgroundMusic;
 
@@ -71,7 +71,7 @@ public class AudioManager : MonoBehaviour
     public void Play(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
-        if (s == null || muted)
+        if (s == null || mutedSFX)
         {
             return;
         }
@@ -81,7 +81,7 @@ public class AudioManager : MonoBehaviour
     public void Stop(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
-        if (s == null || muted)
+        if (s == null)
         {
             return;
         }
@@ -106,16 +106,24 @@ public class AudioManager : MonoBehaviour
         
     }
 
-    public void Mute()
+    public void ToggleMute(bool Background)
     {
-        muted = true;
-        StopAll();
+        if (Background)
+        {
+            Sound s = BackgroundMusic[0];
+            s.source.Stop();
+
+        }
+        else
+        {
+            mutedSFX = !mutedSFX;
+            if (mutedSFX)
+            {
+                StopAll();
+            }
+        }
     }
 
-    public void Unmute()
-    {
-        muted = false;
-    }
 
 }
 
