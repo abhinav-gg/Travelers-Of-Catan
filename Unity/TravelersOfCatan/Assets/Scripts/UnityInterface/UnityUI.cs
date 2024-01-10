@@ -112,6 +112,14 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     void UI.CreatePopup(string message)
     {
         Debug.Log(message);
+
+        return;
+
+        var bar = Instantiate(PopupPrefab);
+
+
+
+
     }
 
     //void UI.DisplayPlayers(List<Player> players)

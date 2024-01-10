@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Unity.VisualScripting;
 using NEAGame;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public partial class UnityUI
@@ -116,8 +117,14 @@ public partial class UnityUI
 
     public void PauseButton()
     {
-        TimerActive = false;
+        //TimerActive = false;
         SceneTransition.i.PlayAnimation();
+
+        // load pause menu scene on top of current scene
+
+
+
+
     }
 
     public void OnPlayerMove()
@@ -509,11 +516,21 @@ public partial class UnityUI
     {
         StopAllPlayerCoroutines();
         SceneTransition.i.PlayAnimation();
-        yield return new WaitForSeconds(1f);
-        TradingInterface inv = Instantiate(TradePopup).GetComponent<TradingInterface>();
-        inv.Setup(Interface.game.gamePlayers[0], Interface.game.gamePlayers[1]);
+        // make the other popup
+
         yield return null;
     }
+
+
+    public IEnumerator SelectPartner(Player pl)
+    {
+        yield return new WaitForSeconds(1f);
+        TradingInterface inv = Instantiate(TradePopup).GetComponent<TradingInterface>();
+        inv.Setup(Interface.game.GetCurrentPlayer(), pl);
+        yield return null;
+
+    }
+
 
 
     public IEnumerator RegisterTrade(Dictionary<int, int> trades, Player other)
@@ -575,16 +592,7 @@ public partial class UnityUI
     void UI.HandleWinner(Player winner)
     {
         EndTurn();
-
-        // Show winner screen
+        SceneTransition.i.SendToScene("Victory");
     }
-
-
-
-
-
-
-
-
 
 }
