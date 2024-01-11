@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZoomAnim : MonoBehaviour
+public class PlayerTradeSlot : MonoBehaviour
 {
+
+    public GameObject ButtonObj;
+    public GameObject PlayerName;
+    public GameObject PlayerColor;
     // Start is called before the first frame update
     void Start()
     {

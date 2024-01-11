@@ -20,6 +20,7 @@ public partial class UnityUI
     public GameObject inventoryPopup;
     public GameObject shoppingPopup;
     public GameObject TradePopup;
+    public GameObject PlayerChoicePopup;
     public GameObject CardObj;
     [Space(10)]
 
@@ -33,6 +34,7 @@ public partial class UnityUI
 
     public float Timer = 0.0f;
     public bool TimerActive = false;
+    float MaxTime;
 
     private IEnumerator coroutine;
 
@@ -53,6 +55,7 @@ public partial class UnityUI
     void UI.BeginTurn(float time)
     {
         Timer = time;
+        MaxTime = time;
         TimerActive = true;
         overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
         if (game.GetCurrentPlayer().isPlayerAI())
@@ -86,14 +89,15 @@ public partial class UnityUI
         t.Start();
         while (t.IsAlive)
         {
+            if (Timer <= 5f)
+            {
+                break; // if the timer is less than 5 seconds, break out of the loop and end the search. The best recorded move found so far will instead be used.
+            }
             yield return null;
         }
         t.Interrupt();
-        yield return new WaitForSeconds(0.5f);
-
-        game.DisplayAIMoves(); // apparently this is not technically called from the main thread!
-
-        yield return new WaitForSeconds(5f);
+        game.DisplayAIMoves(); 
+        yield return new WaitForSeconds(2.5f);
         EndTurn();
 
     }
@@ -146,6 +150,10 @@ public partial class UnityUI
 
     float UI.GetTimer()
     {
+        if (game.GetCurrentPlayer().isPlayerAI())
+        {
+            return MaxTime;
+        } 
         return Timer;
     }
 
@@ -269,7 +277,7 @@ public partial class UnityUI
         conui.UpdateDisplay();
         
     }
-
+    // check references...
     public Color GetPlayerColor(int playerID)
     {
         foreach (Player pdl in game.gamePlayers)
@@ -418,9 +426,6 @@ public partial class UnityUI
     }
 
 
-
-
-
     void UI.GetUserNodeChoice(Node[] options, Action<Node> callback)
     {
 
@@ -516,19 +521,34 @@ public partial class UnityUI
     {
         StopAllPlayerCoroutines();
         SceneTransition.i.PlayAnimation();
-        // make the other popup
-
+        yield return new WaitForSeconds(0.25f);
+        PlayerChoice overlay = Instantiate(PlayerChoicePopup).GetComponent<PlayerChoice>();
+        List<Player> options = new List<Player>();
+        foreach (Player pl in Interface.game.gamePlayers)
+        {
+            if (pl != Interface.game.GetCurrentPlayer() && !pl.isPlayerAI())
+            {
+                options.Add(pl);
+            }
+        }
+        overlay.Setup(options);
         yield return null;
     }
 
 
-    public IEnumerator SelectPartner(Player pl)
+    public void SelectPartner(Player pl)
     {
-        yield return new WaitForSeconds(1f);
+        
+        StartCoroutine(DisplayTrade(pl));
+    }
+
+    IEnumerator DisplayTrade(Player pl)
+    {
+        SceneTransition.i.PlayAnimation();
+        yield return new WaitForSeconds(0.1f);
         TradingInterface inv = Instantiate(TradePopup).GetComponent<TradingInterface>();
         inv.Setup(Interface.game.GetCurrentPlayer(), pl);
         yield return null;
-
     }
 
 

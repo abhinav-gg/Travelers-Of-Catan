@@ -136,7 +136,7 @@ namespace NEAGame
                                 gameRef.gatherResources(pdl);
                             }
                         }
-                        v = BRS(-beta, -alpha, depth-1, Turn.Min);
+                        v = -BRS(-beta, -alpha, depth-1, Turn.Min);
                         foreach (Player pdl in gameRef.gamePlayers)
                         {
                             if (pdl.GetID() != playerNumber)
@@ -149,7 +149,7 @@ namespace NEAGame
                     {
                         gameRef.UpdateCurrentPlayer(playerNumber);
                         gameRef.gatherResources(this);
-                        v = BRS(-beta, -alpha, depth-1, Turn.Max);
+                        v = -BRS(-beta, -alpha, depth-1, Turn.Max);
                         gameRef.UpdateCurrentPlayer(playerNumber);
                         gameRef.undoGatherResources(this);
                     }

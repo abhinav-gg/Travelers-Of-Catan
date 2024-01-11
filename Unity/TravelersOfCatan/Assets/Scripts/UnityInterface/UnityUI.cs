@@ -115,7 +115,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
         return;
 
-        var bar = Instantiate(PopupPrefab);
+        //var bar = Instantiate(PopupPrefab);
 
 
 
