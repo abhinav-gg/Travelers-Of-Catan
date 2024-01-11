@@ -18,7 +18,7 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         Stack<GameAction> currentMove = new Stack<GameAction>();
-        int MaxDepth = 4; // make readonly
+        int MaxDepth = 2; // make readonly
         TravelersOfCatan gameRef;
         int Settler;
 
@@ -68,7 +68,7 @@ namespace NEAGame
             return score;
         }
 
-        public int BRS(int alpha=int.MinValue, int beta=int.MaxValue, int depth=-1, Turn turn=Turn.Max)
+        public int BRS(int alpha=-1000000, int beta=1000000, int depth=-1, Turn turn=Turn.Max)
         {
             if (depth == -1)
             {
@@ -78,87 +78,82 @@ namespace NEAGame
 
             List<GameAction> AllMoves = new List<GameAction>();
 
-            if (depth <= 0)
+            if (depth == 0)
             {
                 return StaticEval();
             }
-            if (turn == Turn.Max)
+
+            /*GameAction lastMove = currentMove.Peek();
+            if (lastMove.type != typeof(PlayerMove))
             {
-                AllMoves = GenerateMoves(this).ToList();
-            }
-            else if (turn == Turn.Min)
-            {
-                GameAction lastMove = currentMove.Peek();
-                if (lastMove.type != typeof(PlayerMove) && lastMove.playerID != playerNumber)
+                foreach (Player pdl in gameRef.gamePlayers)
                 {
-                    foreach (Player pdl in gameRef.gamePlayers)
+                    if (pdl.GetID() == lastMove.playerID)
                     {
-                        if (pdl.GetID() == lastMove.playerID)
-                        {
-                            AllMoves.AddRange(GenerateMoves(pdl));
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (Player pdl in gameRef.gamePlayers)
-                    {
-                        if (pdl.GetID() == playerNumber)
-                        {
-                            continue;
-                        }
                         AllMoves.AddRange(GenerateMoves(pdl));
                     }
                 }
             }
+            else*/
+            
+            if (turn == Turn.Max)
+            {
+                AllMoves = GenerateMoves(this).ToList();
+                turn = Turn.Min;
+            }
+            else if (turn == Turn.Min)
+            {
+                
+                foreach (Player pdl in gameRef.gamePlayers)
+                {
+                    if (pdl.GetID() == playerNumber)
+                    {
+                        continue;
+                    }
+                    AllMoves.AddRange(GenerateMoves(pdl));
+                }
+                turn = Turn.Max;
+                
+            }
+
+            
             int initAlpha = alpha;
             int initBeta = beta;
-            Console.Write(AllMoves);
+
             foreach (GameAction m in AllMoves)
             {
 
                 gameRef.UpdateCurrentPlayer(m.playerID);
                 currentMove.Push(m);
                 gameRef.DoAction(m);
-                int v = int.MinValue;
-                
-                if (m.type == typeof(PlayerMove))
+                gameRef.actions.Clear();
+                int v = 0;
+                if (turn == Turn.Min)
                 {
-                    
-                    gameRef.actions.Clear();
-                    if (turn == Turn.Max)
+                    // gather resources for all other players
+                    foreach (Player pdl in gameRef.gamePlayers)
                     {
-                        // gather resources for all other players
-                        foreach (Player pdl in gameRef.gamePlayers)
+                        if (pdl.GetID() != playerNumber)
                         {
-                            if (pdl.GetID() != playerNumber)
-                            {
-                                gameRef.gatherResources(pdl);
-                            }
-                        }
-                        v = -BRS(-beta, -alpha, depth-1, Turn.Min);
-                        foreach (Player pdl in gameRef.gamePlayers)
-                        {
-                            if (pdl.GetID() != playerNumber)
-                            {
-                                gameRef.undoGatherResources(pdl);
-                            }
+                            gameRef.gatherResources(pdl);
                         }
                     }
-                    else if (turn == Turn.Min)
+                    v = -BRS(-beta, -alpha, depth-1, turn);
+                    foreach (Player pdl in gameRef.gamePlayers)
                     {
-                        gameRef.UpdateCurrentPlayer(playerNumber);
-                        gameRef.gatherResources(this);
-                        v = -BRS(-beta, -alpha, depth-1, Turn.Max);
-                        gameRef.UpdateCurrentPlayer(playerNumber);
-                        gameRef.undoGatherResources(this);
+                        if (pdl.GetID() != playerNumber)
+                        {
+                            gameRef.undoGatherResources(pdl);
+                        }
                     }
-
-                } 
-                else
+                }
+                else if (turn == Turn.Max)
                 {
-                    v = BRS(initAlpha, initBeta, depth, turn); // only update the position!
-                    // alpha and beta are updated in the recursive call so the original values are preserved for the next iteration
+                    gameRef.UpdateCurrentPlayer(playerNumber);
+                    gameRef.gatherResources(this);
+                    v = -BRS(-beta, -alpha, depth-1, turn);
+                    gameRef.UpdateCurrentPlayer(playerNumber);
+                    gameRef.undoGatherResources(this);
                 }
                 
                 gameRef.UpdateCurrentPlayer(m.playerID);
@@ -171,15 +166,10 @@ namespace NEAGame
                 }
                 if (v > alpha)
                 {
-                    if (depth == MaxDepth && m.type == typeof(PlayerMove))
+                    if (depth == MaxDepth)
                     {
                         selectedMoves = Clone(currentMove);
                         selectedMoves.Push(m);
-                        Settler--;
-                        if (Settler <= 0)
-                        {
-                            return v; // return the value of the move that was just made if it is the last move of the turn to save time
-                        }
                     }
                     alpha = v;
                 }
@@ -189,9 +179,6 @@ namespace NEAGame
 
             return alpha;
 
-
-            // find resources required and use that to find the closest position to go to
-            // The ai can not strategically place walls but it should be able to place roads and settlements somehow...
         }
 
         public IEnumerable<GameAction> GenerateMoves(Player pdl)

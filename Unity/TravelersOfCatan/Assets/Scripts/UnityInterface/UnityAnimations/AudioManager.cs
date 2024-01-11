@@ -10,16 +10,17 @@ using Unity.VisualScripting;
 public class AudioManager : MonoBehaviour
 {
 
+    public static AudioManager i;
+
     // Credit to Brackeys for the tutorial on this script https://www.youtube.com/watch?v=6OT43pvUyfY
 
-
-    public bool mutedSFX = false;
     public Sound[] sounds;
     public Sound[] BackgroundMusic;
 
-    public static AudioManager i;
     // add inspector range to this from 0 to 1
     [Range(0f, 1f)] public float VolumeModifier = 1f;
+    private bool mutedSFX = false;
+    private bool mutedBG = false;
 
     void Awake()
     {
@@ -110,8 +111,17 @@ public class AudioManager : MonoBehaviour
     {
         if (Background)
         {
+            mutedBG = !mutedBG;
             Sound s = BackgroundMusic[0];
-            s.source.Stop();
+            if (mutedBG)
+            {
+                s.source.Stop();
+            }
+            else
+            {
+                s.source.Play();
+            }
+
 
         }
         else

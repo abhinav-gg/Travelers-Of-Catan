@@ -26,10 +26,20 @@ public class GamePauseOverlay : MonoBehaviour
         myCanvas.sortingOrder = 500;
         Slider.onValueChanged.AddListener((float t) => AudioManager.i.ChangeMasterVolume(t));
         Slider.value = AudioManager.i.VolumeModifier;
-        Resume.onClick.AddListener(CloseGUI);
+        Resume.onClick.AddListener(() =>
+        {
+            AudioManager.i.Play("UIClick");
+            CloseGUI();
+
+        });
         MuteBG.onClick.AddListener(() => 
         {
-            AudioManager.i.ToggleMute(Background: true);
+            AudioManager.i.ToggleMute(Background: true); // Mutes background music
+
+        });
+        MuteSFX.onClick.AddListener(() =>
+        {
+            AudioManager.i.ToggleMute(Background: false); // Mutes sound effects
 
         });
     }
@@ -56,7 +66,17 @@ public class GamePauseOverlay : MonoBehaviour
         });
     }
 
+    // add public functions for the SETTINGS and PAUSE menu setups
 
+
+
+
+
+
+    void OnSave()
+    {
+
+    }
 
 
 }

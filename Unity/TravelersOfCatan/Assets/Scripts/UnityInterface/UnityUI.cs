@@ -51,7 +51,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         }
         else if (scene.name == "GameSetup")
         {
-            game = new TravelersOfCatan(Interface, 130, 1, 910f);
+            game = new TravelersOfCatan(Interface, 15, 1, 910f);
 
         }
     }
@@ -74,10 +74,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     public void CommenceGame()
     {
         SceneTransition.i.SendToScene("Game");
-
     }
-
-
 
 
     public void StartGameButton()
@@ -138,6 +135,11 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     void UI.LoadGame(string Save)
     {
         //throw new System.NotImplementedException();
+    }
+
+    public void OnApplicationQuit()
+    {
+        
     }
 
 

@@ -21,6 +21,7 @@ public partial class UnityUI
     public GameObject shoppingPopup;
     public GameObject TradePopup;
     public GameObject PlayerChoicePopup;
+    public GameObject PauseSettings;
     public GameObject CardObj;
     [Space(10)]
 
@@ -121,13 +122,10 @@ public partial class UnityUI
 
     public void PauseButton()
     {
-        //TimerActive = false;
-        SceneTransition.i.PlayAnimation();
-
+        TimerActive = false;
         // load pause menu scene on top of current scene
-
-
-
+        SceneTransition.i.PlayAnimation();
+        Instantiate(PauseSettings); // store this and call public funcs LATER
 
     }
 
@@ -367,11 +365,6 @@ public partial class UnityUI
     {
         Vector3Int Pos = new Vector3Int((int)cellPos.x, (int)cellPos.y, 0);
         return gridLayout.CellToWorld(Pos);
-    }
-
-    public System.Numerics.Vector3 ConvertVector(Vector3 vec)
-    {
-        return new System.Numerics.Vector3(vec.x, vec.y, vec.z);
     }
 
     public static Vector3 ConvertVector(System.Numerics.Vector3 vec)

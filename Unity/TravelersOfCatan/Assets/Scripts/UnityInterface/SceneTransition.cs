@@ -56,8 +56,16 @@ public class SceneTransition : MonoBehaviour
 
     public void SendToScene(string sceneName)
     {
-        StartCoroutine(LoadScene(sceneName));
+        if (sceneName == "Game")
+        {
+            StartCoroutine(LoadGameScene());
+        }
+        else
+        {
+            StartCoroutine(LoadScene(sceneName));
+        }
     }
+
 
     IEnumerator LoadScene(string sceneName)
     {
@@ -69,5 +77,20 @@ public class SceneTransition : MonoBehaviour
             yield return null;
         }
     }
+
+
+    IEnumerator LoadGameScene()
+    {
+        AudioManager.i.Play("GetSetGo");
+        GetComponentInChildren<Animator>().SetTrigger("Exit");
+        yield return new WaitForSeconds(2.5f);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
+
+
 
 }

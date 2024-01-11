@@ -55,6 +55,7 @@ MonoBehaviour:
   shoppingPopup: {fileID: 5544107271328446751, guid: 2a0b4ccbb3543ea4dafb6dfcdf61aff4, type: 3}
   TradePopup: {fileID: 6803633201060136057, guid: 1f12e2c4c90a19e43b061ff10b2a767a, type: 3}
   PlayerChoicePopup: {fileID: 3846791727775510789, guid: 320dfc9be6d10f245ba4229de12b556f, type: 3}
+  PauseSettings: {fileID: 827471002790722675, guid: 95b7a7e9abd6e7d48a27e3166361d320, type: 3}
   CardObj: {fileID: 4227615927329875109, guid: e3083fae053d71c49849adf4ebde58a2, type: 3}
   resources:
   - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
@@ -80,7 +81,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51940d4a79fe84043ad26d423dfc4458, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mutedSFX: 0
   sounds:
   - name: UIClick
     Clip: {fileID: 8300000, guid: 51e9205cbfc5f7440b8f731ecccf0dfc, type: 3}
@@ -102,6 +102,12 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Ding1
     Clip: {fileID: 8300000, guid: cee0ef05d1e443b438eebbc4ee35930c, type: 3}
+    Vol: 1
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: Victory
+    Clip: {fileID: 8300000, guid: 9807a19b9f71ec648b75048cf115c2f6, type: 3}
     Vol: 1
     Pitch: 1
     Loop: 0
