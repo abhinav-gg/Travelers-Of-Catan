@@ -18,7 +18,7 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         Stack<GameAction> currentMove = new Stack<GameAction>();
-        int MaxDepth = 2; // make readonly
+        private readonly int MaxDepth = 2;
         TravelersOfCatan gameRef;
         int Settler;
 
@@ -32,13 +32,6 @@ namespace NEAGame
         {
             isAI = true;
         }
-
-        public void StartBRSThread(int alpha, int beta)
-        {
-            Thread t = new Thread(() => BRS(alpha, beta));
-            t.Start();
-        }
-
 
         public int StaticEval()
         {
@@ -68,7 +61,7 @@ namespace NEAGame
             return score;
         }
 
-        public int BRS(int alpha=-1000000, int beta=1000000, int depth=-1, Turn turn=Turn.Max)
+        public int BRS(int alpha=int.MinValue + 1, int beta=int.MaxValue, int depth=-1, Turn turn=Turn.Max)
         {
             if (depth == -1)
             {
@@ -76,8 +69,8 @@ namespace NEAGame
                 Settler = 5 - gameRef.gamePlayers.Count;
             }
 
-            List<GameAction> AllMoves = new List<GameAction>();
-
+            List<List<GameAction>> AllMoves = new List<List<GameAction>>();
+            
             if (depth == 0)
             {
                 return StaticEval();
@@ -116,17 +109,18 @@ namespace NEAGame
                 
             }
 
-            
-            int initAlpha = alpha;
-            int initBeta = beta;
 
-            foreach (GameAction m in AllMoves)
+            foreach (var m in AllMoves)
             {
 
-                gameRef.UpdateCurrentPlayer(m.playerID);
-                currentMove.Push(m);
-                gameRef.DoAction(m);
+                gameRef.UpdateCurrentPlayer(m[0].playerID);
                 gameRef.actions.Clear();
+                for (int i = 0; i < m.Count; i++)
+                {
+                    currentMove.Push(m[i]);
+                    gameRef.DoAction(m[i]);
+                }
+
                 int v = 0;
                 if (turn == Turn.Min)
                 {
@@ -155,10 +149,14 @@ namespace NEAGame
                     gameRef.UpdateCurrentPlayer(playerNumber);
                     gameRef.undoGatherResources(this);
                 }
-                
-                gameRef.UpdateCurrentPlayer(m.playerID);
-                gameRef.UndoAction(m);
-                currentMove.Pop();
+
+                gameRef.UpdateCurrentPlayer(m[0].playerID);
+                for (int i = m.Count - 1; i > -1; i--)
+                {
+                    
+                    gameRef.UndoAction(m[i]);
+                    currentMove.Pop();
+                }
                 
                 if (v >= beta)
                 {
@@ -168,8 +166,7 @@ namespace NEAGame
                 {
                     if (depth == MaxDepth)
                     {
-                        selectedMoves = Clone(currentMove);
-                        selectedMoves.Push(m);
+                        selectedMoves = new Stack<GameAction>(m);
                     }
                     alpha = v;
                 }
@@ -181,40 +178,64 @@ namespace NEAGame
 
         }
 
-        public IEnumerable<GameAction> GenerateMoves(Player pdl)
+        public IEnumerable<List<GameAction>> GenerateMoves(Player pdl)
         {
-
-            // base case move to the same position
-            gameRef.UpdateCurrentPlayer(pdl.GetID());
+            int playerID = pdl.GetID();
+            gameRef.UpdateCurrentPlayer(playerID);
+            List<Node> allMoves = gameRef.attemptPlayerMove();
+            allMoves.Add(gameRef.board.GetNode(pdl.position));
             if (gameRef.tryPurchaseCity() != null)
             {
-                yield return new PlayerPurchase(pdl.GetID(), pdl.position, "City");
+                foreach (Node end in allMoves)
+                {
+                    yield return new List<GameAction> {
+                        new PlayerPurchase(playerID, pdl.position, "City"),
+                        new PlayerMove(playerID, pdl.position, end.position)
+                    };
+                }
             }
 
             foreach (Node n in gameRef.tryPurchaseRoad())
             {
-                yield return new PlayerPurchase(pdl.GetID(), pdl.position, "Road", n.position);
+                foreach (Node end in allMoves)
+                {
+                    yield return new List<GameAction> {
+                        new PlayerPurchase(playerID, pdl.position, "Road", n.position),
+                        new PlayerMove(playerID, pdl.position, end.position)
+                    };
+                }
             }
-            
 
             if (gameRef.tryPurchaseVillage() != null)
             {
-                yield return new PlayerPurchase(pdl.GetID(), pdl.position, "Village");
+                foreach (Node end in allMoves)
+                {
+                    yield return new List<GameAction> {
+                        new PlayerPurchase(playerID, pdl.position, "Village"),
+                        new PlayerMove(playerID, pdl.position, end.position)
+                    };
+                }
             }
 
 
             foreach (Node n in gameRef.tryPurchaseWall())
             {
-                yield return new PlayerPurchase(pdl.GetID(), pdl.position, "Wall", n.position);
+                foreach (Node end in allMoves)
+                {
+                    yield return new List<GameAction> {
+                        new PlayerPurchase(playerID, pdl.position, "Wall", n.position),
+                        new PlayerMove(playerID, pdl.position, end.position)
+                    };
+                }
             }
 
 
-            foreach (Node end in gameRef.attemptPlayerMove())
+            foreach (Node end in allMoves)
             {
-                yield return new PlayerMove(pdl.GetID(), pdl.position, end.position);
+                yield return new List<GameAction> {
+                        new PlayerMove(playerID, pdl.position, end.position)
+                    };
             }
-            
-            yield return new PlayerMove(pdl.GetID(), pdl.position, pdl.position);
         }
 
         public static Stack<GameAction> Clone(Stack<GameAction> stack)
