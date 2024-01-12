@@ -5,7 +5,7 @@ using TMPro;
 
 
 
-public class TextAnim : MonoBehaviour
+public class TextAnim : MonoBehaviour // rewrite myshelf
 {
     [SerializeField] TextMeshProUGUI _textMeshPro;
 

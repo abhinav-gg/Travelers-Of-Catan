@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 
-public class FileHandler
+public class FileHandler // give credit to person who made this
 {
     private string filepath = "";
     public bool IsMade;
@@ -44,7 +44,7 @@ public class FileHandler
             }
             catch (Exception e)
             {
-                Debug.LogError("Error occured when trying to load data from file: " + filepath + "\n" + e);
+                Debug.LogError($"Error occured when trying to load data {e}");
             }
         }
         return dataToLoad;
@@ -77,6 +77,11 @@ public class FileHandler
         }
     }
 
+    /// <summary>
+    /// Perform XOR encryption/decryption on the data
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public string EncryptDecrypt(string data)
     {
         string key = encryptionCodeWord;

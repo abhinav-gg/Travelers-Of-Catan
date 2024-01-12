@@ -18,9 +18,8 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         Stack<GameAction> currentMove = new Stack<GameAction>();
-        private readonly int MaxDepth = 2;
+        private readonly int MaxDepth = 3;
         TravelersOfCatan gameRef;
-        int Settler;
 
         public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, playerColor: playerColor, origin:home)
         {
@@ -66,7 +65,6 @@ namespace NEAGame
             if (depth == -1)
             {
                 depth = MaxDepth;
-                Settler = 5 - gameRef.gamePlayers.Count;
             }
 
             List<List<GameAction>> AllMoves = new List<List<GameAction>>();
@@ -109,7 +107,9 @@ namespace NEAGame
                 
             }
 
-
+            // sort allmoves by count to optimise alpha beta pruning
+            AllMoves.Sort((x, y) => y.Count.CompareTo(x.Count));
+            
             foreach (var m in AllMoves)
             {
 

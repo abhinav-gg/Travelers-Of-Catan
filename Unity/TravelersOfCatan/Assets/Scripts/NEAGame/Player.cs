@@ -177,15 +177,15 @@ namespace NEAGame
         /// </summary>
         public int GetWealth()
         {
-            float wealth = 0;
+            int wealth = 0;
             foreach (KeyValuePair<Resource, int> resource in resources)
             {
                 wealth += resource.Value;
             }
-            wealth += victoryPoints * 10;
+            wealth += victoryPoints * 5;
             
             // int cast wealth 
-            return (int)wealth;
+            return wealth;
         }
 
         public void upgradeVillage(Node node)

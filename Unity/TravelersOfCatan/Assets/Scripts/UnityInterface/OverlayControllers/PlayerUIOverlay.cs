@@ -33,7 +33,7 @@ public class PlayerUIOverlay : MonoBehaviour
     float moveCD = 0.0f;
     float turnEndCD = 5f;
     bool isTryingToMove = false;
-    bool isTryingBuy = false;
+    //bool isTryingBuy = false; REMOVE SELECT FROM SHOP BUTTON
     Sprite buffer;
 
     void Start()

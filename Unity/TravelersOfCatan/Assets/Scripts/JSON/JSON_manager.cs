@@ -9,6 +9,50 @@ using UnityEngine.UIElements;
 namespace NEAGame
 {
 
+    class JSON_manager
+    {
+
+        string[] SaveFiles = { "Save1", "Save2", "Save3", "Save4" };
+
+        public JSON_manager()
+        {
+
+        }
+
+
+
+
+
+
+        public void SAVEGAME(TravelersOfCatan game, string SAVE)
+        {
+            GameWrapper gameWrapper = new GameWrapper(game);
+            // save the game to a file in unity persistent data path with the name SAVE
+            string json = JSONWrapper<GameWrapper>.Dump(gameWrapper);
+            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
+
+            FileHandler fileHandler = new FileHandler(fullpath, false);
+            fileHandler.Save(json);
+
+        }
+
+        public GameWrapper LOADGAME(string SAVE)
+        {
+            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
+            FileHandler fileHandler = new FileHandler(fullpath, false);
+            string json = fileHandler.Load();
+            GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);
+            Debug.Log(json);
+           
+            return gameWrapper;
+        
+        }
+
+
+    }
+
+
+
 
     public abstract class JSONWrapper<T> where T : JSONWrapper<T>, new()
     {
@@ -27,35 +71,6 @@ namespace NEAGame
 
     }
 
-    class JSON_manager
-    {
-
-        public static void SAVEGAME(TravelersOfCatan game, string SAVE)
-        {
-            GameWrapper gameWrapper = new GameWrapper(game);
-            // save the game to a file in unity persistent data path with the name SAVE
-            string json = JSONWrapper<GameWrapper>.Dump(gameWrapper);
-            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
-
-            FileHandler fileHandler = new FileHandler(fullpath, false);
-            fileHandler.Save(json);
-
-        }
-
-        public static GameWrapper LOADGAME(string SAVE)
-        {
-            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
-            FileHandler fileHandler = new FileHandler(fullpath, false);
-            string json = fileHandler.Load();
-            GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);
-            Debug.Log(json);
-           
-            return gameWrapper;
-        
-        }
-
-
-    }
 
 
     [Serializable]
