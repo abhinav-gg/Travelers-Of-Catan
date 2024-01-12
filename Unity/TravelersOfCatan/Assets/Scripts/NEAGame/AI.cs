@@ -18,7 +18,7 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         Stack<GameAction> currentMove = new Stack<GameAction>();
-        private readonly int MaxDepth = 3;
+        private readonly int MaxDepth = 4;
         TravelersOfCatan gameRef;
 
         public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, playerColor: playerColor, origin:home)
@@ -71,22 +71,9 @@ namespace NEAGame
             
             if (depth == 0)
             {
-                return StaticEval();
+                return (int)Math.Pow(-1, MaxDepth) * StaticEval();
             }
 
-            /*GameAction lastMove = currentMove.Peek();
-            if (lastMove.type != typeof(PlayerMove))
-            {
-                foreach (Player pdl in gameRef.gamePlayers)
-                {
-                    if (pdl.GetID() == lastMove.playerID)
-                    {
-                        AllMoves.AddRange(GenerateMoves(pdl));
-                    }
-                }
-            }
-            else*/
-            
             if (turn == Turn.Max)
             {
                 AllMoves = GenerateMoves(this).ToList();
@@ -114,6 +101,7 @@ namespace NEAGame
             {
 
                 gameRef.UpdateCurrentPlayer(m[0].playerID);
+                gameRef.gatherResources(m[0].playerID);
                 gameRef.actions.Clear();
                 for (int i = 0; i < m.Count; i++)
                 {
@@ -121,34 +109,8 @@ namespace NEAGame
                     gameRef.DoAction(m[i]);
                 }
 
-                int v = 0;
-                if (turn == Turn.Min)
-                {
-                    // gather resources for all other players
-                    foreach (Player pdl in gameRef.gamePlayers)
-                    {
-                        if (pdl.GetID() != playerNumber)
-                        {
-                            gameRef.gatherResources(pdl);
-                        }
-                    }
-                    v = -BRS(-beta, -alpha, depth-1, turn);
-                    foreach (Player pdl in gameRef.gamePlayers)
-                    {
-                        if (pdl.GetID() != playerNumber)
-                        {
-                            gameRef.undoGatherResources(pdl);
-                        }
-                    }
-                }
-                else if (turn == Turn.Max)
-                {
-                    gameRef.UpdateCurrentPlayer(playerNumber);
-                    gameRef.gatherResources(this);
-                    v = -BRS(-beta, -alpha, depth-1, turn);
-                    gameRef.UpdateCurrentPlayer(playerNumber);
-                    gameRef.undoGatherResources(this);
-                }
+                int v = -BRS(-beta, -alpha, depth-1, turn);
+                
 
                 gameRef.UpdateCurrentPlayer(m[0].playerID);
                 for (int i = m.Count - 1; i > -1; i--)
@@ -157,6 +119,7 @@ namespace NEAGame
                     gameRef.UndoAction(m[i]);
                     currentMove.Pop();
                 }
+                gameRef.undoGatherResources(m[0].playerID);
                 
                 if (v >= beta)
                 {
@@ -182,7 +145,8 @@ namespace NEAGame
         {
             int playerID = pdl.GetID();
             gameRef.UpdateCurrentPlayer(playerID);
-            List<Node> allMoves = gameRef.attemptPlayerMove();
+            gameRef.gatherResources(playerID);
+            List <Node> allMoves = gameRef.attemptPlayerMove();
             allMoves.Add(gameRef.board.GetNode(pdl.position));
             if (gameRef.tryPurchaseCity() != null)
             {
@@ -236,6 +200,7 @@ namespace NEAGame
                         new PlayerMove(playerID, pdl.position, end.position)
                     };
             }
+            gameRef.undoGatherResources(playerID);
         }
 
         public static Stack<GameAction> Clone(Stack<GameAction> stack)

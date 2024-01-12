@@ -1055,6 +1055,10 @@ MonoBehaviour:
   PauseBtn: {fileID: 827471003164801394}
   InfoBtn: {fileID: 827471002383721178}
   Display: {fileID: 827471004009699591}
+  Save: {fileID: 827471003860558970}
+  MusicParent: {fileID: 827471002606092243}
+  MusicUnmuted: {fileID: -213356348, guid: 156ec492e516ccb4099add479601d65e, type: 3}
+  MusicMuted: {fileID: 1897002124, guid: 156ec492e516ccb4099add479601d65e, type: 3}
 --- !u!1 &827471002957415540
 GameObject:
   m_ObjectHideFlags: 0

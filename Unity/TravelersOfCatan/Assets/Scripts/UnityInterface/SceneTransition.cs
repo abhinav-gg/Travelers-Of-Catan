@@ -44,15 +44,24 @@ public class SceneTransition : MonoBehaviour
 
     void OnNewScene()
     {
+        StartCoroutine(WaitForNewScene());
+    }
+
+
+    IEnumerator WaitForNewScene()
+    {
+        yield return new WaitForEndOfFrame();
         Canvas myCanvas = GetComponent<Canvas>();
         myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
         myCanvas.planeDistance = 100;
         myCanvas.worldCamera = Camera.main;
         myCanvas.sortingLayerName = "UI";
-        myCanvas.sortingOrder = 2000;
+        myCanvas.sortingOrder = 12000;
         GetComponentInChildren<Animator>().SetTrigger("Enter");
 
+
     }
+
 
     public void SendToScene(string sceneName)
     {

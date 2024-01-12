@@ -37,7 +37,8 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
             SetupGameScene();
             if (LoadFile != "")
             {
-                GameWrapper gw = JSON_manager.LOADGAME(LoadFile);
+                JSON_manager json = new JSON_manager();
+                GameWrapper gw = json.LOADGAME(LoadFile);
                 game = new TravelersOfCatan(Interface, gw);
                 
                 game.StartTurn(gw.timer);

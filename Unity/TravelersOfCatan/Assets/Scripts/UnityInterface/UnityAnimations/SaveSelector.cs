@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SaveSelector : MonoBehaviour
 {
@@ -17,6 +18,19 @@ public class SaveSelector : MonoBehaviour
 
 
     Action callback;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        cancelBtn.GetComponent<Button>().onClick.AddListener(() => {
+            AudioManager.i.Play("UIClick");
+            if (!LeanTween.isTweening(cancelBtn))
+            {
+                LeanTween.scale(cancelBtn, cancelBtn.transform.localScale, 0.1f).setEase(LeanTweenType.easeInCubic).setLoopPingPong(1);
+            }
+            CloseGUI();
+        });
+    }
 
 
     public void CloseGUI()
@@ -37,12 +51,7 @@ public class SaveSelector : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
+    
     // Update is called once per frame
     void Update()
     {

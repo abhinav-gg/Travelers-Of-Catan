@@ -23,6 +23,7 @@ public partial class UnityUI
     public GameObject PlayerChoicePopup;
     public GameObject PauseSettings;
     public GameObject CardObj;
+    public GameObject GameSavePopup;
     [Space(10)]
 
     public Tile[] resources = new Tile[6];
@@ -36,6 +37,7 @@ public partial class UnityUI
     public float Timer = 0.0f;
     public bool TimerActive = false;
     float MaxTime;
+    bool isSaving;
 
     private IEnumerator coroutine;
 
@@ -78,6 +80,7 @@ public partial class UnityUI
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
         // set camera position to player position on board!
+        LeanTween.cancel(Camera.main.gameObject);
         LeanTween.move(Camera.main.gameObject, GetPlayerGameObject(game.GetCurrentPlayer().GetID()).transform.position + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine);
 
     }
@@ -123,11 +126,18 @@ public partial class UnityUI
     public void PauseButton()
     {
         TimerActive = false;
-        // load pause menu scene on top of current scene
+        StartCoroutine(GoToPause());
+        
+    }
+
+    IEnumerator GoToPause()
+    {
         SceneTransition.i.PlayAnimation();
-        Instantiate(PauseSettings); // store this and call public funcs LATER
+        yield return new WaitForSeconds(0.5f);
+        Instantiate(PauseSettings); 
 
     }
+
 
     public void OnPlayerMove()
     {
@@ -148,10 +158,6 @@ public partial class UnityUI
 
     float UI.GetTimer()
     {
-        if (game.GetCurrentPlayer().isPlayerAI())
-        {
-            return MaxTime;
-        } 
         return Timer;
     }
 
@@ -606,6 +612,25 @@ public partial class UnityUI
     {
         EndTurn();
         SceneTransition.i.SendToScene("Victory");
+    }
+
+
+    public void AttemptSave()
+    {
+        if (!isSaving)
+        {
+            isSaving = true;
+            StartCoroutine(SaveGame());
+        }
+    }
+
+
+    IEnumerator SaveGame()
+    {
+        SaveSelector overlay = Instantiate(GameSavePopup).GetComponent<SaveSelector>();
+
+
+        yield return null;
     }
 
 }

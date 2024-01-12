@@ -16,6 +16,13 @@ public class GamePauseOverlay : MonoBehaviour
     public GameObject PauseBtn;
     public GameObject InfoBtn;
     public GameObject Display;
+    public GameObject Save;
+    public GameObject MusicParent;
+    [Space(10)]
+    public Sprite MusicUnmuted;
+    public Sprite MusicMuted;
+
+
 
     void Start()
     {
@@ -23,8 +30,8 @@ public class GamePauseOverlay : MonoBehaviour
         myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
         myCanvas.worldCamera = Camera.main;
         myCanvas.sortingLayerName = "UI";
-        myCanvas.sortingOrder = 500;
-        Slider.onValueChanged.AddListener((float t) => AudioManager.i.ChangeMasterVolume(t));
+        myCanvas.sortingOrder = 10000; // VERY foreground
+        Slider.onValueChanged.AddListener((float v) => volumeChange(v));
         Slider.value = AudioManager.i.VolumeModifier;
         Resume.onClick.AddListener(() =>
         {
@@ -35,13 +42,24 @@ public class GamePauseOverlay : MonoBehaviour
         MuteBG.onClick.AddListener(() => 
         {
             AudioManager.i.ToggleMute(Background: true); // Mutes background music
+            UpdateMusicBtn(true);
 
         });
+      
         MuteSFX.onClick.AddListener(() =>
         {
             AudioManager.i.ToggleMute(Background: false); // Mutes sound effects
+            UpdateMusicBtn(false);
 
         });
+        
+        if (AudioManager.i.isMuted(Background: true))
+        {
+            MuteBG.GetComponent<Image>().sprite = MusicMuted;
+        }
+        Save.GetComponent<Button>().onClick.AddListener(OnSave);
+
+        UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
 
     // Update is called once per frame
@@ -50,12 +68,21 @@ public class GamePauseOverlay : MonoBehaviour
         
     }
 
+
+    void volumeChange(float x)
+    {
+        AudioManager.i.ChangeMasterVolume(x);
+        UpdateMusicBtn(true); UpdateMusicBtn(false);
+    }
+
     void CloseGUI()
     {
         //lean tween everything away
+        LeanTween.scale(Save, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);
+        LeanTween.scale(MusicParent, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);
+        LeanTween.scale(InfoBtn, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);
         LeanTween.scale(Display, new Vector3(), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
         LeanTween.rotateAround(Display, Vector3.forward, 360, 0.5f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
-        LeanTween.scale(InfoBtn, new Vector3(), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
         LeanTween.scale(PauseBtn, new Vector3(), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
         LeanTween.scale(Panel, new Vector3(), 0.75f).setEase(LeanTweenType.easeInCubic).setOnComplete(() =>
         {
@@ -70,12 +97,32 @@ public class GamePauseOverlay : MonoBehaviour
 
 
 
-
+    void UpdateMusicBtn(bool background)
+    {
+        Sprite img = AudioManager.i.isMuted(background) ? MusicMuted : MusicUnmuted;
+        if (Slider.value == 0.0f)
+        {
+            img = MusicMuted;
+        }
+        if (background)
+        {
+            MuteBG.GetComponent<Image>().sprite = img;
+        }
+        else
+        {
+            MuteSFX.GetComponent<Image>().sprite = img; 
+        }
+    }
 
 
     void OnSave()
     {
-
+        AudioManager.i.Play("UIClick");
+        if (!LeanTween.isTweening(Save))
+        {
+            LeanTween.scale(Save, Save.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInCubic).setLoopPingPong(1);
+        }
+        UnityUI.Interface.AttemptSave();
     }
 
 

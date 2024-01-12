@@ -219,19 +219,21 @@ namespace NEAGame
 
         public void StartTurn(float timeleft=-1f)
         {
-            if (timeleft == -1f)
-            {
-                gatherResources(currentPlayer);
-                timeleft = TimePerMove;
-            }     
+            
 
             if (currentPlayer.GetType() == typeof(Player))
             {
+                if (timeleft == -1f)
+                {
+                    gatherResources(currentPlayer.GetID());
+                    timeleft = TimePerMove;
+                }
                 isAICalculation = false;
                 
             }
             else if (currentPlayer.GetType() == typeof(AI))
             {
+                timeleft = TimePerMove;
                 isAICalculation = true;
             }
             UserInterface.BeginTurn(timeleft);
@@ -290,8 +292,11 @@ namespace NEAGame
             return gamePlayers.Any(p => p.getVictoryPoints() >= WinningVictoryPoints);
         }
 
-        public void gatherResources(Player pdl)
+        public void gatherResources(int ID)
         {
+            // select player with ID
+            Player pdl = gamePlayers.Find(x => x.GetID() == ID);
+
             foreach (Vector3 u in board.GetNode(pdl.position).GetHexNeighbours())
             {
                 if (board.GetHexAtPosition(u) != null)
@@ -322,8 +327,11 @@ namespace NEAGame
 
         }
         
-        public void undoGatherResources(Player pdl)
+        public void undoGatherResources(int ID)
         {
+            UserInterface.Assert(isAICalculation);
+            Player pdl = gamePlayers.Find(c => c.GetID() == ID);
+
             foreach (Vector3 u in board.GetNode(pdl.position).GetHexNeighbours())
             {
                 if (board.GetHexAtPosition(u) != null)
@@ -846,9 +854,11 @@ namespace NEAGame
 
                     board.GetNode(purchase.position).status.DowngradeVillage();
                     currentPlayer.undoUpgradeVillage(board.GetNode(currentPlayer.position));
-                    UserInterface.UpdateSettlement(board.GetNode(purchase.position));
-
                     Refund("City");
+
+                    if (!isAICalculation)
+                        UserInterface.UpdateSettlement(board.GetNode(purchase.position));
+
 
                 }
             }

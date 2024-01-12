@@ -121,8 +121,6 @@ public class AudioManager : MonoBehaviour
             {
                 s.source.Play();
             }
-
-
         }
         else
         {
@@ -131,6 +129,18 @@ public class AudioManager : MonoBehaviour
             {
                 StopAll();
             }
+        }
+    }
+
+    public bool isMuted(bool Background)
+    {
+        if (Background)
+        {
+            return mutedBG;
+        }
+        else
+        {
+            return mutedSFX;
         }
     }
 
