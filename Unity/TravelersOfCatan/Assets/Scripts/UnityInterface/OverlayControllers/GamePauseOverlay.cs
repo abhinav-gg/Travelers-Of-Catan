@@ -30,7 +30,7 @@ public class GamePauseOverlay : MonoBehaviour
         myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
         myCanvas.worldCamera = Camera.main;
         myCanvas.sortingLayerName = "UI";
-        myCanvas.sortingOrder = 10000; // VERY foreground
+        myCanvas.sortingOrder = 700; // VERY foreground
         Slider.onValueChanged.AddListener((float v) => volumeChange(v));
         Slider.value = AudioManager.i.VolumeModifier;
         Resume.onClick.AddListener(() =>
@@ -122,7 +122,6 @@ public class GamePauseOverlay : MonoBehaviour
         {
             LeanTween.scale(Save, Save.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInCubic).setLoopPingPong(1);
         }
-        UnityUI.Interface.AttemptSave();
     }
 
 

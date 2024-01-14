@@ -9,78 +9,54 @@ public class TextAnim : MonoBehaviour // rewrite myshelf
 {
     [SerializeField] TextMeshProUGUI _textMeshPro;
 
-    public string[] stringArray;
-
     [SerializeField] bool muted = false;
     [SerializeField] float timeBtwnChars = 0.1f;
-    [SerializeField] float timeBtwnWords = 0.5f;
-    [SerializeField] float timeBtwnSentences = 0.75f;
-    [SerializeField] bool loop = false;
+    [SerializeField] float timeBtwnWords = 0.125f;
+    [SerializeField] float timeBtwnSentences = 0.15f;
 
-    int i = 0;
+    string endText;
 
     public void OnEnable()
     {
-        i = 0;
-        if (_textMeshPro == null)
-        {
-            ResetTool();
-        }
-        EndCheck();
+        StartCoroutine(TextVisible());
     }
 
     public void ResetTool()
     {
         _textMeshPro = GetComponent<TextMeshProUGUI>();
-        stringArray = _textMeshPro.text.Split('\n');
-    }
-
-    public void EndCheck()
-    {
-        if (!loop && i > stringArray.Length - 1)
-            return;
-        else
-        {
-            i %= stringArray.Length;
-            _textMeshPro.text = stringArray[i];
-            StartCoroutine(TextVisible());
-
-        }
-
+        endText = _textMeshPro.text;
     }
 
 
     private IEnumerator TextVisible()
     {
+        yield return 0;
+        ResetTool();
         if (!muted)
             AudioManager.i.Play("Write");
         _textMeshPro.ForceMeshUpdate();
-        int totalVisibleCharacters = _textMeshPro.textInfo.characterCount;
+        int totalVisibleCharacters = endText.Length;
         int counter = 0;
 
         while (true)
         {
-            int visibleCount = counter % (totalVisibleCharacters + 1);
-            _textMeshPro.maxVisibleCharacters = visibleCount;
+            _textMeshPro.maxVisibleCharacters = counter;
 
-            if (visibleCount >= totalVisibleCharacters)
+            if (counter >= totalVisibleCharacters)
             {
-                i += 1;
                 break;
             }
 
-            if (stringArray[i].ToCharArray()[counter] == ' ')
+            if (endText.ToCharArray()[counter] == ' ')
                 yield return new WaitForSeconds(timeBtwnWords);
-            else
+            else if (endText.ToCharArray()[counter] == '.')
+                yield return new WaitForSeconds(timeBtwnSentences);
+            else 
                 yield return new WaitForSeconds(timeBtwnChars);
             counter += 1;
 
 
         }
         AudioManager.i.Stop("Write");
-        yield return new WaitForSeconds(timeBtwnSentences);
-        Invoke("EndCheck", timeBtwnWords);
-
-
     }
 }

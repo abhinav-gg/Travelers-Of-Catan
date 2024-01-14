@@ -132,9 +132,8 @@ namespace NEAGame
             }
 
             turn = game.turn;
-            UserInterface.DisplayBoard(board);
-            UserInterface.DisplayPlayers(gamePlayers);
             currentPlayer = gamePlayers[turn]; // moves are already saved
+            UserInterface.BeginGame(true, game.timer);
 
         }
 
@@ -178,9 +177,7 @@ namespace NEAGame
 
         public void startGame()
         {
-            
 
-            UserInterface.CreatePopup(gamePlayers.Count.ToString() + " players have joined the game");
             board = new Board();
 
             foreach (Player current in gamePlayers)
@@ -204,11 +201,10 @@ namespace NEAGame
 
             }
 
-            UserInterface.DisplayBoard(board);
-            UserInterface.DisplayPlayers(gamePlayers);
             turn = -1;
-            
-            EndTurn();
+            currentPlayer = gamePlayers[0];
+            UserInterface.BeginGame(false, -1f);
+            UserInterface.CreatePopup(gamePlayers.Count.ToString() + " players have joined the game");
 
         }
 
@@ -219,7 +215,6 @@ namespace NEAGame
 
         public void StartTurn(float timeleft=-1f)
         {
-            
 
             if (currentPlayer.GetType() == typeof(Player))
             {
@@ -435,14 +430,12 @@ namespace NEAGame
         {
             if (!CheckCosts("Road"))
             {
-                if (!isAICalculation)
-                    UserInterface.CreatePopup("You can not afford this");
                 return new List<Node>();
             }
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
             bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.GetID(); // player must be standing on their own settlement to build a road
-            
+            bool allSlotsTaken = true;
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours() )
             {
                 if (board.GetNode(vOther) == null) continue; // this is a null node (out of bounds
@@ -453,7 +446,8 @@ namespace NEAGame
                 {
                     continue; // can not build a road on existing connections of any sort
                 }
-                else if ((otherPos.status.GetOccupant() != currentPlayer.GetID()) && (otherPos.status.GetStatus() != "Empty"))
+                allSlotsTaken = false;
+                if ((otherPos.status.GetOccupant() != currentPlayer.GetID()) && (otherPos.status.GetStatus() != "Empty"))
                 {
                     continue; // The enemy controls the settlement at the end of this road
                 }
@@ -467,8 +461,26 @@ namespace NEAGame
                 }
 
             }
+
             if (!isAICalculation)
-                UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseRoad);
+            {
+                
+                if (viableLocations.Count == 0)
+                {
+                    if (allSlotsTaken)
+                    {
+                        UserInterface.CreatePopup("All possible connections have already been made from your current position.");
+                    }
+                    else
+                    {
+                        UserInterface.CreatePopup("One end of the road must be connected to your settlement. You can not purchase a road from your current position.");
+                    }
+                }
+                else
+                {
+                    UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseRoad);
+                }
+            }
             return viableLocations;
         
         }
@@ -484,7 +496,6 @@ namespace NEAGame
             List<Node> viableLocations = new List<Node>();
             Node otherPos;
             bool canconnect = board.GetNode(currentPlayer.position).status.GetOccupant() == currentPlayer.GetID(); // player must be standing on their own settlement to build a road
-
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
                 if (board.GetNode(vOther) == null) continue; // this is a null node (out of bounds
@@ -502,7 +513,16 @@ namespace NEAGame
 
             }
             if (!isAICalculation)
-                UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseWall);
+            {
+                if (viableLocations.Count == 0)
+                {
+                    UserInterface.CreatePopup("All possible connections have already been made from your current position.");
+                }
+                else
+                {
+                    UserInterface.GetUserNodeChoice(viableLocations.ToArray(), purchaseWall);
+                }
+            }
             return viableLocations;
 
         }
@@ -510,8 +530,6 @@ namespace NEAGame
         {
             if (!CheckCosts("Village"))
             {
-                if (!isAICalculation)
-                    UserInterface.CreatePopup("You can not afford this");
                 return null;
             }
             Node otherPos;
@@ -526,7 +544,7 @@ namespace NEAGame
 
             bool DistanceRule = true;
             bool isConnecting = false;
-            
+            bool road = false;
             foreach (Vector3 vOther in board.GetNode(currentPlayer.position).GetNodeNeighbours())
             {
                 if (board.GetNode(vOther) == null) continue; // this is a null node (out of bounds
@@ -537,7 +555,7 @@ namespace NEAGame
                 if (con.GetOccupant() != currentPlayer.GetID() && con.GetStatus() == "Road")
                 {
                     // can not build a settlement if an enemy road connects to this node
-                    
+                    road = true;
                     isConnecting = false;
                     DistanceRule = false;
                     break;
@@ -566,7 +584,12 @@ namespace NEAGame
             else
             {
                 if (!isAICalculation)
-                    UserInterface.CreatePopup($"{DistanceRule} {isConnecting}");
+                {
+                    if (road)
+                        UserInterface.CreatePopup("You may not build a settlement on the end of an enemy road.");
+                    else
+                        UserInterface.CreatePopup("You may not build a settlement next to another settlement unless a road connects them.");
+                }
                 return null;
             }
 
@@ -576,8 +599,6 @@ namespace NEAGame
         {
             if (!CheckCosts("City"))
             {
-                if (!isAICalculation)
-                    UserInterface.CreatePopup("You can not afford this");
                 return null;
             }
             Node current = board.GetNode(currentPlayer.position);
@@ -590,7 +611,7 @@ namespace NEAGame
             else 
             { 
                 if (!isAICalculation)
-                    UserInterface.CreatePopup("Player must be on their village to upgrade");
+                    UserInterface.CreatePopup("Player must be on their village to upgrade to a city.");
                 return null;
             }
         }
@@ -656,7 +677,7 @@ namespace NEAGame
             // sort viable locations by distance descending (AI optimisation)
             viableLocations = viableLocations.OrderByDescending(x => distance[x]).ToList();
 
-            if (viableLocations.Count == 0 && currentPlayer.moves > 0 && !isAICalculation)
+            if (viableLocations.Count == 0 && currentPlayer.moves == 3 && !isAICalculation)
             {
                 UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital();

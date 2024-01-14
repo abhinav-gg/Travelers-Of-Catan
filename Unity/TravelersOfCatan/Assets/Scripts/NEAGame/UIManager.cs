@@ -10,19 +10,15 @@ namespace NEAGame
     {
         float GetTimer();
         void GetUserNodeChoice(Node[] options, Action<Node> method);
-        bool GetUserConfirm();
         void CreatePopup(string message);
-        void DisplayBoard(Board board);
         void HandleWinner(Player winner);
-        void SaveGame();
-        void LoadGame(string Save);
         void BeginTurn(float time);
-        void UpdatePlayer(Stack<Node> path);
+        void BeginGame(bool wasGameLoaded, float Timer);
         void UpdateConnection(Node node1, Node node2, Connection con);
         void UpdateSettlement(Node otherNode);
-        void DisplayPlayers(List<Player> gamePlayers);
-        void Assert(bool test);
+        void UpdatePlayer(Stack<Node> otherNode);
         void ShowResource(Vector3 u, Resource resource, Vector3 optional);
+        void Assert(bool test);
     }
 
     public class TerminalUI { }

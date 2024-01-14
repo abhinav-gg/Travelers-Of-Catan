@@ -65,6 +65,7 @@ namespace NEAGame
             playerName = player.playerName;
             origin = new Vector3(player.origin.x, player.origin.y, player.origin.z);
             moves = player.moves;
+            color = player.color;
             position = new Vector3(player.position.x, player.position.y, player.position.z);
             resources = new Dictionary<Resource, int>();
             foreach (var entry in player.resources._Keys.Zip(player.resources._Values, (k, v) => new { k, v }))

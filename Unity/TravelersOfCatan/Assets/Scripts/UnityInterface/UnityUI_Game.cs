@@ -21,6 +21,7 @@ public partial class UnityUI
     public GameObject shoppingPopup;
     public GameObject TradePopup;
     public GameObject PlayerChoicePopup;
+    public GameObject AlertPopup;
     public GameObject PauseSettings;
     public GameObject CardObj;
     public GameObject GameSavePopup;
@@ -37,7 +38,6 @@ public partial class UnityUI
     public float Timer = 0.0f;
     public bool TimerActive = false;
     float MaxTime;
-    bool isSaving;
 
     private IEnumerator coroutine;
 
@@ -77,6 +77,7 @@ public partial class UnityUI
         overlay.ColorMe.color = textToColor(game.GetCurrentPlayer().color);
         overlay.PlayerScore.text = game.GetCurrentPlayer().getVictoryPoints().ToString();
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
+        Debug.Log(game.GetCurrentPlayer().GetID());
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
         // set camera position to player position on board!
@@ -135,7 +136,6 @@ public partial class UnityUI
         SceneTransition.i.PlayAnimation();
         yield return new WaitForSeconds(0.5f);
         Instantiate(PauseSettings); 
-
     }
 
 
@@ -196,7 +196,28 @@ public partial class UnityUI
         return null;
     }
 
-    void UI.DisplayBoard(Board board)
+    void UI.BeginGame(bool Loaded, float timeleft)
+    {
+        StartCoroutine(WaitThenLoad(Loaded, timeleft));
+    }
+
+    IEnumerator WaitThenLoad(bool Loaded, float timeleft)
+    {
+        yield return new WaitUntil(() => game != null);
+        DisplayBoard();
+        DisplayPlayers();
+        yield return new WaitForEndOfFrame();
+        if (Loaded)
+        {
+            game.StartTurn(timeleft); // starts in the middle of the players turn
+        }
+        else
+        {
+            game.EndTurn(); // starts at the beginning of the players turn
+        }
+    }
+
+    public void DisplayBoard()
     {
         if (!hasInitializedBoard)
         {
@@ -204,7 +225,7 @@ public partial class UnityUI
 
             int resourceID;
             Vector3Int gridPos;
-            foreach (var entry in board.GetResourcesOnBoard())
+            foreach (var entry in game.board.GetResourcesOnBoard())
             {
 
                 resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources
@@ -213,7 +234,7 @@ public partial class UnityUI
 
             }
 
-            foreach (Node n in board.GetAllNodes())
+            foreach (Node n in game.board.GetAllNodes())
             {
                 
                 NodeButton nodeui = Instantiate(NodePrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
@@ -230,9 +251,9 @@ public partial class UnityUI
 
     }
 
-    void UI.DisplayPlayers(List<Player> gamePlayers)
+    public void DisplayPlayers()
     {
-        foreach (Player pl in gamePlayers)
+        foreach (Player pl in game.gamePlayers)
         {
 
             PlayerAnimator playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerAnimator>();
@@ -612,25 +633,6 @@ public partial class UnityUI
     {
         EndTurn();
         SceneTransition.i.SendToScene("Victory");
-    }
-
-
-    public void AttemptSave()
-    {
-        if (!isSaving)
-        {
-            isSaving = true;
-            StartCoroutine(SaveGame());
-        }
-    }
-
-
-    IEnumerator SaveGame()
-    {
-        SaveSelector overlay = Instantiate(GameSavePopup).GetComponent<SaveSelector>();
-
-
-        yield return null;
     }
 
 }

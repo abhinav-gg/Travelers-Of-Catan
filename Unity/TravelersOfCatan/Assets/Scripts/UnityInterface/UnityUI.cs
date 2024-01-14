@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using NEAGame;
+using Unity.VisualScripting;
 
 public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
@@ -13,7 +14,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     [Header("Serialized Game View")] 
     public TravelersOfCatan game;
 
-    private string LoadFile = "";
+    private int selectedSave = -1;
     // Start is called before the first frame update
     void Awake()
     {
@@ -24,7 +25,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     }
 
-    void Start()
+    void OnEnable()
     {
         SceneManager.sceneLoaded += NewScene;
     }   
@@ -35,13 +36,12 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         if (scene.name == "Game")
         {
             SetupGameScene();
-            if (LoadFile != "")
+            if (selectedSave != -1)
             {
-                JSON_manager json = new JSON_manager();
-                GameWrapper gw = json.LOADGAME(LoadFile);
+            JSON_manager json = new JSON_manager(selectedSave);
+                GameWrapper gw = json.LOADGAME();
                 game = new TravelersOfCatan(Interface, gw);
-                
-                game.StartTurn(gw.timer);
+
             }
             else
             {
@@ -56,7 +56,6 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
         }
     }
-
 
     void OnDisable()
     {
@@ -78,17 +77,43 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     }
 
 
-    public void StartGameButton()
-    {
-        SceneTransition.i.SendToScene("GameSetup");
-    }
 
     public void LoadGameButton()
     {
-        LoadFile = "TESTFINDME";
-        SceneManager.LoadScene("Game");
-
+        StartCoroutine(DisplayLoadStates());
     }
+
+
+    IEnumerator DisplayLoadStates()
+    {
+        SceneTransition.i.PlayAnimation();
+        yield return new WaitForSeconds(0.75f);
+        SaveSelector overlay = Instantiate(GameSavePopup).GetComponent<SaveSelector>();
+        overlay.Setup();
+    }
+
+    public void SelectGameToLoad(int i)
+    {
+        selectedSave = i;
+        CommenceGame();
+    }
+
+    public void CreateNewGame(int i)
+    {
+        selectedSave = i;
+        SceneTransition.i.SendToScene("GameSetup");
+    }
+
+
+    public void saveCurrentGame()
+    {
+        int i = selectedSave;
+        JSON_manager saver = new JSON_manager(i);
+        saver.SAVEGAME(game);
+    }
+
+
+
 
     public void GoHome()
     {
@@ -102,41 +127,23 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         // add confirm here
         Application.Quit();
     }
-    bool UI.GetUserConfirm()
+
+
+    public void CreatePopup(string message)
     {
-        return true;
+
+        Debug.Log(message);
+
+
+        PopupController overlay = Instantiate(AlertPopup).GetComponent<PopupController>();
+        overlay.Setup(message);
     }
 
     void UI.CreatePopup(string message)
     {
-        Debug.Log(message);
-
-        return;
-
-        //var bar = Instantiate(PopupPrefab);
-
-
-
-
+        CreatePopup(message);
     }
 
-    //void UI.DisplayPlayers(List<Player> players)
-    //{
-    //    //throw new System.NotImplementedException();
-    //}
-
-
-    
-
-    void UI.SaveGame()
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    void UI.LoadGame(string Save)
-    {
-        //throw new System.NotImplementedException();
-    }
 
     public void OnApplicationQuit()
     {

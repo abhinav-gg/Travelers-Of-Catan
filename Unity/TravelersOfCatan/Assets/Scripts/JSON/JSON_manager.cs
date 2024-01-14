@@ -12,34 +12,38 @@ namespace NEAGame
     class JSON_manager
     {
 
-        string[] SaveFiles = { "Save1", "Save2", "Save3", "Save4" };
-
-        public JSON_manager()
+        public readonly string[] SaveFiles = { "Save1", "Save2", "Save3", "Save4" };
+        int Save;
+        FileHandler fileHandler;
+        public JSON_manager(int Save)
         {
+            this.Save = Save;
+            string fullpath = Application.persistentDataPath + "/" + SaveFiles[Save] + ".json";
+            fileHandler = new FileHandler(fullpath, false);
+        }
 
+        public bool DoesGameExist()
+        {
+            return fileHandler.IsMade;
+        }
+
+        public void ClearSave()
+        {
+            fileHandler.Delete();
         }
 
 
-
-
-
-
-        public void SAVEGAME(TravelersOfCatan game, string SAVE)
+        public void SAVEGAME(TravelersOfCatan game)
         {
             GameWrapper gameWrapper = new GameWrapper(game);
-            // save the game to a file in unity persistent data path with the name SAVE
+            // save the game to a file in unity persistent data path
             string json = JSONWrapper<GameWrapper>.Dump(gameWrapper);
-            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
-
-            FileHandler fileHandler = new FileHandler(fullpath, false);
             fileHandler.Save(json);
-
         }
 
-        public GameWrapper LOADGAME(string SAVE)
+        public GameWrapper LOADGAME()
         {
-            string fullpath = Application.persistentDataPath + "/" + SAVE + ".json";
-            FileHandler fileHandler = new FileHandler(fullpath, false);
+            
             string json = fileHandler.Load();
             GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);
             Debug.Log(json);
@@ -92,8 +96,8 @@ namespace NEAGame
     public class HexagonUnitWrapper : JSONWrapper<HexagonUnitWrapper>
     {
 
-        public List<Vector3> _Keys;
-        public List<ResourceWrapper> _Values;
+        public List<Vector3> _Keys = new List<Vector3>();
+        public List<ResourceWrapper> _Values = new List<ResourceWrapper>();
 
         public HexagonUnitWrapper() { }
         public HexagonUnitWrapper(Dictionary<System.Numerics.Vector3, Resource> board)

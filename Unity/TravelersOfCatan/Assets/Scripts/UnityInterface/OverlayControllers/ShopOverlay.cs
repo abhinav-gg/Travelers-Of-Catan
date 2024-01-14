@@ -12,10 +12,14 @@ public class ShopOverlay : MonoBehaviour
 
     string[] shoppingOrder = new string[] { "Road", "Village", "Wall", "City" };
     public Sprite[] shoopingImages = new Sprite[4];
-
     public GameObject[] texts = new GameObject[5];
 
+    [Space(10)]
+    [Header("Animation objects")]
     public Button purchase;
+    public GameObject LeftBtn;
+    public GameObject RightBtn;
+
     // brick, sheep, ore, wood, wheat
 
     private float Buffer = 0.0f;
@@ -35,7 +39,18 @@ public class ShopOverlay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            OnCarousel(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            OnCarousel(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseGUI();
+        }
     }
 
     private void FixedUpdate()
@@ -67,8 +82,13 @@ public class ShopOverlay : MonoBehaviour
             return;
         }
         Buffer = 1f;
+        AudioManager.i.Play("UIClick");
         if (right)
         {
+            if (!LeanTween.isTweening(RightBtn))
+            {
+                LeanTween.scale(RightBtn, RightBtn.transform.localScale * 1.2f, 0.1f).setEase(LeanTweenType.easeOutCirc).setLoopPingPong(1);
+            }
             currentID++;
             if (currentID > 3)
             {
@@ -77,6 +97,10 @@ public class ShopOverlay : MonoBehaviour
         }
         else
         {
+            if (!LeanTween.isTweening(LeftBtn))
+            {
+                LeanTween.scale(LeftBtn, LeftBtn.transform.localScale * 1.2f, 0.1f).setEase(LeanTweenType.easeOutCirc).setLoopPingPong(1);
+            }
             currentID--;
             if (currentID < 0)
             {
@@ -86,16 +110,13 @@ public class ShopOverlay : MonoBehaviour
 
         Vector3 startpos = purchase.gameObject.transform.position;
         int dir = right ? 1 : -1;
-        LeanTween.moveLocalX(purchase.gameObject, startpos.x + (dir*1000f), 0.5f).setEase(LeanTweenType.easeInCirc)
-                .setOnComplete(() =>
-                {
-                    purchase.gameObject.transform.position = new Vector3(- (dir*2000), 0, 0) + startpos;
-                    purchase.gameObject.GetComponent<Image>().sprite = shoopingImages[currentID];
-                    UpdateDisplayCounts();
-                    LeanTween.move(purchase.gameObject, startpos, 0.5f).setEase(LeanTweenType.easeOutCirc);
-                }).setDelay(0.1f);
-
-
+        LeanTween.moveLocalX(purchase.gameObject, startpos.x + (dir*1000f), 0.5f).setDelay(0.1f).setEase(LeanTweenType.easeInCirc).setOnComplete(() =>
+        {
+            purchase.gameObject.transform.position = new Vector3(- (dir*2000), 0, 0) + startpos;
+            purchase.gameObject.GetComponent<Image>().sprite = shoopingImages[currentID];
+            UpdateDisplayCounts();
+            LeanTween.move(purchase.gameObject, startpos, 0.5f).setEase(LeanTweenType.easeOutCirc);
+        });
 
     }
 

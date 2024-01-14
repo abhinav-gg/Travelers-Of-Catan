@@ -55,6 +55,7 @@ MonoBehaviour:
   shoppingPopup: {fileID: 5544107271328446751, guid: 2a0b4ccbb3543ea4dafb6dfcdf61aff4, type: 3}
   TradePopup: {fileID: 6803633201060136057, guid: 1f12e2c4c90a19e43b061ff10b2a767a, type: 3}
   PlayerChoicePopup: {fileID: 3846791727775510789, guid: 320dfc9be6d10f245ba4229de12b556f, type: 3}
+  AlertPopup: {fileID: 8074647925800015744, guid: a3d2d3fc65a2c444387641fed788c8a3, type: 3}
   PauseSettings: {fileID: 827471002790722675, guid: 95b7a7e9abd6e7d48a27e3166361d320, type: 3}
   CardObj: {fileID: 4227615927329875109, guid: e3083fae053d71c49849adf4ebde58a2, type: 3}
   GameSavePopup: {fileID: 2398641642050095287, guid: 4080eeafe5fc2dd439bf5b98fb86531f, type: 3}

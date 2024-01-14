@@ -76,7 +76,7 @@ public class AudioManager : MonoBehaviour
         {
             return;
         }
-        s.source.PlayOneShot(s.Clip);
+        s.source.Play();
     }
 
     public void Stop(string name)

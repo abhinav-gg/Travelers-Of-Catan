@@ -15,8 +15,18 @@ public class FileHandler // give credit to person who made this
     {
         this.filepath = filepath;
         this.useEncryption = useEncryption;
-        this.IsMade = File.Exists(filepath);
+        IsMade = File.Exists(filepath);
     }
+
+    public void Delete()
+    {
+        if (IsMade)
+        {
+            File.Delete(filepath);
+            IsMade = false;
+        }
+    }
+
 
     public string Load()
     {
