@@ -18,8 +18,8 @@ namespace NEAGame
         public JSON_manager(int Save)
         {
             this.Save = Save;
-            string fullpath = Application.persistentDataPath + "/" + SaveFiles[Save] + ".json";
-            fileHandler = new FileHandler(fullpath, false);
+            string fullpath = Application.persistentDataPath + "/" + SaveFiles[Save];
+            fileHandler = new FileHandler(fullpath);
         }
 
         public bool DoesGameExist()
@@ -45,9 +45,7 @@ namespace NEAGame
         {
             
             string json = fileHandler.Load();
-            GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);
-            Debug.Log(json);
-           
+            GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);          
             return gameWrapper;
         
         }

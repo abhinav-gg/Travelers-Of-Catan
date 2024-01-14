@@ -57,7 +57,7 @@ public class GamePauseOverlay : MonoBehaviour
         {
             MuteBG.GetComponent<Image>().sprite = MusicMuted;
         }
-        Save.GetComponent<Button>().onClick.AddListener(OnSave);
+        Save.GetComponent<Button>().onClick.AddListener(OnExit);
 
         UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
@@ -115,13 +115,16 @@ public class GamePauseOverlay : MonoBehaviour
     }
 
 
-    void OnSave()
+    void OnExit()
     {
         AudioManager.i.Play("UIClick");
         if (!LeanTween.isTweening(Save))
         {
             LeanTween.scale(Save, Save.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInCubic).setLoopPingPong(1);
         }
+        UnityUI.Interface.CloseAllGameUIs();
+        UnityUI.Interface.SaveAndExit();
+        
     }
 
 

@@ -5,7 +5,6 @@ using System.Numerics;
 namespace NEAGame
 {
 
-
     public interface UI
     {
         float GetTimer();
@@ -13,7 +12,7 @@ namespace NEAGame
         void CreatePopup(string message);
         void HandleWinner(Player winner);
         void BeginTurn(float time);
-        void BeginGame(bool wasGameLoaded, float Timer);
+        void BeginGame(float Timer);
         void UpdateConnection(Node node1, Node node2, Connection con);
         void UpdateSettlement(Node otherNode);
         void UpdatePlayer(Stack<Node> otherNode);
@@ -21,7 +20,7 @@ namespace NEAGame
         void Assert(bool test);
     }
 
-    public class TerminalUI { }
+    public class TerminalUI { } // Discontinued when project became entirely Unity event-based
 
 }
 

@@ -175,10 +175,13 @@ public class PlayersSetup : MonoBehaviour
 
     void RemovePlayer()
     {
-
+        AudioManager.i.Play("UIClick");
         if (RemoveCD > 0.0f)
             return;
         RemoveCD = 0.8f;
+
+        LeanTween.scale(Remove.gameObject, Remove.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeOutCirc).setLoopPingPong(1);
+
         players.RemoveAt(players.Count-1);
         updateContinue();
         if (players.Count == 0)
@@ -200,6 +203,7 @@ public class PlayersSetup : MonoBehaviour
     
     public void Continue()
     {
+        UnityUI.Interface.game = new TravelersOfCatan(UnityUI.Interface, 15, 1, 910f);
         foreach (PlayerTemplate p in players) 
         { 
             if (p.ai)
@@ -212,13 +216,6 @@ public class PlayersSetup : MonoBehaviour
             }
         }
         UnityUI.Interface.CommenceGame();
-    }
-
-    public void AlterColor(int choice)
-    {
-        // get string from dropdown menu and choice
-        //string color = colorChoice.options[choice].text;
-        //bgcol.GetComponent<Image>().color = UnityUI.textToColor(color);
     }
 
     [Serializable]

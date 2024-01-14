@@ -4,18 +4,48 @@ using UnityEngine;
 using System;
 using System.IO;
 
-public class FileHandler // give credit to person who made this
+public class FileHandler // Credit to https://www.youtube.com/watch?v=KZft1p8t2lQ for the tutorial on how to do 
 {
     private string filepath = "";
     public bool IsMade;
     private bool useEncryption = false;
-    private readonly string encryptionCodeWord = "aiuaeogmk3GJEK834FEJSAK";
+    private readonly string encryptionCodeWord = "SomeRandomStringKeyToConvertIntoBinaryForXOR->aiuaeogmk3GJEK834FEJSAK->";
+    // practically speaking, this is not very easily crackable, but it's not the most secure either as it uses the same key for every file
 
-    public FileHandler(string filepath, bool useEncryption)
+    public FileHandler(string filepath)
     {
         this.filepath = filepath;
-        this.useEncryption = useEncryption;
-        IsMade = File.Exists(filepath);
+        encryptionCodeWord += filepath; // add the filepath to the encryption key to make it more unique
+        string suffix = FindSuffix();
+        if (suffix == "")
+        {
+            IsMade = false;
+            this.filepath += ".bin";
+            useEncryption = true;
+        }
+        else
+        {
+            IsMade = true;
+            useEncryption = suffix == ".bin";
+            this.filepath += suffix;
+        }
+    }
+
+
+    string FindSuffix()
+    {
+        if (File.Exists(filepath + ".json"))
+        {
+            return ".json";
+        }
+        else if (File.Exists(filepath + ".bin"))
+        {
+            return ".bin";
+        }
+        else
+        {
+            return "";
+        }
     }
 
     public void Delete()
@@ -92,7 +122,7 @@ public class FileHandler // give credit to person who made this
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public string EncryptDecrypt(string data)
+    public string EncryptDecrypt(string data) // Credit to https://stackoverflow.com/questions/2532668/help-me-with-xor-encryption for the XOR encryption
     {
         string key = encryptionCodeWord;
         int dataLen = data.Length;

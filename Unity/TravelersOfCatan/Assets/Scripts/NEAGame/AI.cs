@@ -9,6 +9,10 @@ using System.Diagnostics.Contracts;
 
 namespace NEAGame
 {
+
+    /// <summary>
+    /// Class that inherits from Player and adds AI functionality
+    /// </summary>
     class AI : Player
     {
         public enum Turn
@@ -60,6 +64,14 @@ namespace NEAGame
             return score;
         }
 
+        /// <summary>
+        /// Runs the Best Reply Search algorithm on the current game position to attempt to determine the best move to make.
+        /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="beta"></param>
+        /// <param name="depth"></param>
+        /// <param name="turn"></param>
+        /// <returns></returns>
         public int BRS(int alpha=int.MinValue + 1, int beta=int.MaxValue, int depth=-1, Turn turn=Turn.Max)
         {
             if (depth == -1)

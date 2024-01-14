@@ -63,12 +63,12 @@ public class SaveSelector : MonoBehaviour
             slot.ID = i;
             if (hasData)
             {
-                slot.StatusText.GetComponent<TextMeshProUGUI>().text = "Save Data Found";
+                slot.StatusText.GetComponent<TextMeshProUGUI>().text = "Load Save";
                 slot.SlotText.GetComponent<TextMeshProUGUI>().text = "Save " + (i + 1);
             }
             else
             {
-                slot.StatusText.GetComponent<TextMeshProUGUI>().text = "Create New Game";
+                slot.StatusText.GetComponent<TextMeshProUGUI>().text = "Create New";
                 slot.SlotText.GetComponent<TextMeshProUGUI>().text = "Save " + (i + 1);
                 slot.Reset.SetActive(false);
             }
@@ -81,6 +81,8 @@ public class SaveSelector : MonoBehaviour
     {
         JSON_manager json = new JSON_manager(i);
         json.ClearSave();
+        Setup();
+
     }
 
 

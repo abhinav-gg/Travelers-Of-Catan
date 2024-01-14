@@ -32,9 +32,6 @@ public partial class UnityUI
     public Tilemap tilemap;
 
     public List<NodeButton> nodes = new List<NodeButton>();
-
-    bool hasInitializedBoard = false;
-
     public float Timer = 0.0f;
     public bool TimerActive = false;
     float MaxTime;
@@ -77,7 +74,6 @@ public partial class UnityUI
         overlay.ColorMe.color = textToColor(game.GetCurrentPlayer().color);
         overlay.PlayerScore.text = game.GetCurrentPlayer().getVictoryPoints().ToString();
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
-        Debug.Log(game.GetCurrentPlayer().GetID());
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
 
         // set camera position to player position on board!
@@ -117,9 +113,14 @@ public partial class UnityUI
 
     IEnumerator WaitForTurnToEnd()
     {
+        bool startedCD = false;
         while (Timer > 0.0f)
         {
             yield return null;
+            if (Timer < 5f && !startedCD)
+            {
+                AudioManager.i.Play("Countdown");
+            }
         }
         EndTurn();
     }
@@ -163,6 +164,7 @@ public partial class UnityUI
 
     public void EndTurn()
     {
+        AudioManager.i.Stop("Countdown");
         if (!overlay.isZoomed)
         {
             overlay.ZoomButton();
@@ -172,15 +174,22 @@ public partial class UnityUI
         StopAllPlayerCoroutines();
 
         // Close all GUIS
-        FindAnyObjectByType<InventoryPopup>()?.CloseGUI();
-        FindAnyObjectByType<ShopOverlay>()?.CloseGUI();
-        // FindAnyObjectByType<TradeOverlay>()?.CloseGUI();
-
-
-        Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
+        CloseAllGameUIs();
         Interface.game.EndTurn();
         
         
+    }
+
+    public void CloseAllGameUIs()
+    {
+        FindAnyObjectByType<InventoryPopup>()?.CloseGUI();
+        FindAnyObjectByType<ShopOverlay>()?.CloseGUI();
+        FindAnyObjectByType<TradingInterface>()?.CloseGUI();
+        FindAnyObjectByType<PlayerChoice>()?.CloseGUI();
+        FindAnyObjectByType<PopupController>()?.CloseGUI();
+
+
+        Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
     }
 
     public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
@@ -196,56 +205,48 @@ public partial class UnityUI
         return null;
     }
 
-    void UI.BeginGame(bool Loaded, float timeleft)
+    void UI.BeginGame(float timeleft)
     {
-        StartCoroutine(WaitThenLoad(Loaded, timeleft));
+        StartCoroutine(WaitThenLoad(timeleft));
     }
 
-    IEnumerator WaitThenLoad(bool Loaded, float timeleft)
+    IEnumerator WaitThenLoad(float timeleft)
     {
-        yield return new WaitUntil(() => game != null);
-        DisplayBoard();
-        DisplayPlayers();
+        while (game == null)
+        {
+            yield return null;
+        }
         yield return new WaitForEndOfFrame();
-        if (Loaded)
-        {
-            game.StartTurn(timeleft); // starts in the middle of the players turn
-        }
-        else
-        {
-            game.EndTurn(); // starts at the beginning of the players turn
-        }
+        DisplayPlayers();
+        DisplayBoard();
+        yield return 0;
+        game.StartTurn(timeleft); 
     }
 
     public void DisplayBoard()
     {
-        if (!hasInitializedBoard)
+       
+        int resourceID;
+        Vector3Int gridPos;
+        foreach (var entry in game.board.GetResourcesOnBoard())
         {
-            hasInitializedBoard = true;
 
-            int resourceID;
-            Vector3Int gridPos;
-            foreach (var entry in game.board.GetResourcesOnBoard())
-            {
+            resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources
+            gridPos = CubicToOddRow(entry.Key);
+            tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
 
-                resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources
-                gridPos = CubicToOddRow(entry.Key);
-                tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
+        }
 
-            }
+        foreach (Node n in game.board.GetAllNodes())
+        {
+            
+            NodeButton nodeui = Instantiate(NodePrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
+            nodeui.node = n;
+            nodeui.NodePos = ConvertVector(n.position);
+            nodeui.transform.position = GetNodeGlobalPos(n);
+            nodeui.UpdateSettlement();
 
-            foreach (Node n in game.board.GetAllNodes())
-            {
-                
-                NodeButton nodeui = Instantiate(NodePrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("NodeParent").transform).GetComponent<NodeButton>();
-                nodeui.node = n;
-                nodeui.NodePos = ConvertVector(n.position);
-                nodeui.transform.position = GetNodeGlobalPos(n);
-                nodeui.UpdateSettlement();
-
-                nodes.Add(nodeui);
-
-            }
+            nodes.Add(nodeui);
 
         }
 
@@ -631,7 +632,8 @@ public partial class UnityUI
 
     void UI.HandleWinner(Player winner)
     {
-        EndTurn();
+        AudioManager.i.Play("Countdown"); // in case they won in the last few seconds of the turn
+        CloseAllGameUIs();
         SceneTransition.i.SendToScene("Victory");
     }
 

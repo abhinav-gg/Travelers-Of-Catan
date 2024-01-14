@@ -15,6 +15,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     public TravelersOfCatan game;
 
     private int selectedSave = -1;
+    private bool isLoading = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -22,7 +23,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
             Interface = this;
         
         DontDestroyOnLoad(gameObject);
-
+        game = null;
     }
 
     void OnEnable()
@@ -36,24 +37,19 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         if (scene.name == "Game")
         {
             SetupGameScene();
-            if (selectedSave != -1)
+            if (isLoading)
             {
-            JSON_manager json = new JSON_manager(selectedSave);
-                GameWrapper gw = json.LOADGAME();
-                game = new TravelersOfCatan(Interface, gw);
-
+                StartCoroutine(LoadGame());
             }
             else
             {
                 game.startGame();
             }
 
-            
         }
-        else if (scene.name == "GameSetup")
+        else if (scene.name == "Hub")
         {
-            game = new TravelersOfCatan(Interface, 15, 1, 910f);
-
+            selectedSave = -1;
         }
     }
 
@@ -80,6 +76,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     public void LoadGameButton()
     {
+        game = null;
         StartCoroutine(DisplayLoadStates());
     }
 
@@ -94,25 +91,47 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     public void SelectGameToLoad(int i)
     {
+        isLoading = true;
         selectedSave = i;
         CommenceGame();
     }
 
     public void CreateNewGame(int i)
     {
+        isLoading = false;
         selectedSave = i;
         SceneTransition.i.SendToScene("GameSetup");
     }
 
+    IEnumerator LoadGame()
+    {
+        try
+        {
+            JSON_manager json = new JSON_manager(selectedSave);
+            GameWrapper gw = json.LOADGAME();
+            game = new TravelersOfCatan(Interface, gw);
 
-    public void saveCurrentGame()
+        }
+        catch
+        {
+            Debug.Log("ERROR: Save file corrupted");
+            // save has been corrupted
+        }
+        yield return null;
+    }
+
+    void saveCurrentGame()
     {
         int i = selectedSave;
         JSON_manager saver = new JSON_manager(i);
         saver.SAVEGAME(game);
     }
 
-
+    public void SaveAndExit()
+    {
+        saveCurrentGame();
+        GoHome();
+    }
 
 
     public void GoHome()
@@ -122,9 +141,8 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     }
 
-    void QuitButtonPressed()
+    public void QuitButton()
     {
-        // add confirm here
         Application.Quit();
     }
 
@@ -147,7 +165,10 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
 
     public void OnApplicationQuit()
     {
-        
+        if (game != null && selectedSave != -1)
+        {
+            saveCurrentGame();
+        }
     }
 
 

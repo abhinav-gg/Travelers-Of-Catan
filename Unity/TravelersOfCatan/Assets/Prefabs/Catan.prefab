@@ -109,8 +109,32 @@ MonoBehaviour:
     Loop: 0
     source: {fileID: 0}
   - name: Victory
-    Clip: {fileID: 8300000, guid: 9807a19b9f71ec648b75048cf115c2f6, type: 3}
+    Clip: {fileID: 8300000, guid: e39e536843340354e9b6b52e8ece4411, type: 3}
     Vol: 1
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: Purchase
+    Clip: {fileID: 8300000, guid: 2a7727b2142daf041afd5100d51c4ef1, type: 3}
+    Vol: 0.389
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: Success
+    Clip: {fileID: 8300000, guid: 0b2dc3f8bd139b04d9328ed800a6a70c, type: 3}
+    Vol: 0.389
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: UIEffect
+    Clip: {fileID: 8300000, guid: 92d9128629e9e7a45afd47f4eff2c461, type: 3}
+    Vol: 0.389
+    Pitch: 1
+    Loop: 0
+    source: {fileID: 0}
+  - name: Countdown
+    Clip: {fileID: 8300000, guid: f829e8a42c4ff334cbe95830c24132e8, type: 3}
+    Vol: 0.389
     Pitch: 1
     Loop: 0
     source: {fileID: 0}

@@ -17,18 +17,18 @@ namespace NEAGame
 
         public static readonly IDictionary<string, int> victoryPointConvertor = new Dictionary<string, int>()
         {
-            {"Road", 2},
+            {"Road", 0},
             {"Wall", 1},
-            {"Village", 4 },
-            {"City", 10 }
+            {"Village", 2 },
+            {"City", 3 }
         };
 
         private static readonly Dictionary<string, Dictionary<Resource, int>> purchaseCost = new Dictionary<string, Dictionary<Resource, int>>()
             {
                 {"Road", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 1 }, { new Resource(3), 0 }, { new Resource(4), 1 }, { new Resource(5), 0 } } },
-                {"Wall", new Dictionary<Resource, int>()     { { new Resource(1), 0 }, { new Resource(2), 5 }, { new Resource(3), 0 }, { new Resource(4), 0 }, { new Resource(5), 0 } } },
-                {"Village", new Dictionary<Resource, int>()  { { new Resource(1), 3 }, { new Resource(2), 1 }, { new Resource(3), 3 }, { new Resource(4), 3 }, { new Resource(5), 2 } } },
-                {"City", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 3 }, { new Resource(3), 1 }, { new Resource(4), 0 }, { new Resource(5), 4 } } }
+                {"Wall", new Dictionary<Resource, int>()     { { new Resource(1), 2 }, { new Resource(2), 0 }, { new Resource(3), 0 }, { new Resource(4), 2 }, { new Resource(5), 0 } } },
+                {"Village", new Dictionary<Resource, int>()  { { new Resource(1), 1 }, { new Resource(2), 2 }, { new Resource(3), 0 }, { new Resource(4), 1 }, { new Resource(5), 1 } } },
+                {"City", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 0 }, { new Resource(3), 3 }, { new Resource(4), 1 }, { new Resource(5), 2 } } }
             };
 
         private static readonly Vector3[] StartingCoords = new Vector3[] {
@@ -112,10 +112,7 @@ namespace NEAGame
                             break;
                         }
                     }
-
-
                 }
-
             }
 
             foreach (NodeWrapper n in game.board.nodes._Values)
@@ -133,8 +130,8 @@ namespace NEAGame
 
             turn = game.turn;
             currentPlayer = gamePlayers[turn]; // moves are already saved
-            UserInterface.BeginGame(true, game.timer);
-
+            UserInterface.BeginGame(game.timer);
+            UserInterface.CreatePopup($"Resuming game from player {turn+1}'s turn");
         }
 
 
@@ -201,9 +198,10 @@ namespace NEAGame
 
             }
 
-            turn = -1;
+            turn = 0;
             currentPlayer = gamePlayers[0];
-            UserInterface.BeginGame(false, -1f);
+            currentPlayer.moves = 3;
+            UserInterface.BeginGame(-1f);
             UserInterface.CreatePopup(gamePlayers.Count.ToString() + " players have joined the game");
 
         }
@@ -268,7 +266,7 @@ namespace NEAGame
             StartTurn();
         }
 
-        public void CheckWinner()
+        public void FindWinner()
         {
             foreach (Player p in gamePlayers)
             {
@@ -396,8 +394,14 @@ namespace NEAGame
             }
             if (!isAICalculation)
             {
-                CheckWinner();
-                //UserInterface.CreatePopup("Purchase Successful");
+                if (!HasWinner())
+                {
+                    UserInterface.CreatePopup("Purchase Successful");
+                }
+                else
+                {
+                    FindWinner();
+                }
 
             }
 
