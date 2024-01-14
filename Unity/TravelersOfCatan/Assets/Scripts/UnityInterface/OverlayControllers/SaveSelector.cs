@@ -72,6 +72,8 @@ public class SaveSelector : MonoBehaviour
                 slot.SlotText.GetComponent<TextMeshProUGUI>().text = "Save " + (i + 1);
                 slot.Reset.SetActive(false);
             }
+            slot.Background.GetComponent<Button>().onClick.RemoveAllListeners();
+            slot.Reset.GetComponent<Button>().onClick.RemoveAllListeners();
             slot.Background.GetComponent<Button>().onClick.AddListener(() => BtnClick(slot.ID, hasData));
             slot.Reset.GetComponent<Button>().onClick.AddListener(() => ResetClick(slot.ID));
         }
@@ -82,7 +84,6 @@ public class SaveSelector : MonoBehaviour
         JSON_manager json = new JSON_manager(i);
         json.ClearSave();
         Setup();
-
     }
 
 

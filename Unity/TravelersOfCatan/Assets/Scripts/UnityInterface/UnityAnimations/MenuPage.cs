@@ -13,9 +13,19 @@ public class MenuPage : MonoBehaviour
     void Start()
     {
         //start.onClick.AddListener(UnityUI.Interface.StartGameButton);
-        load.onClick.AddListener(UnityUI.Interface.LoadGameButton);
-        //about.onClick.AddListener(UnityUI.Interface.AboutButton);
-        close.onClick.AddListener(UnityUI.Interface.QuitButton);
+        about.onClick.AddListener(() => {
+            AudioManager.i.Play("UIClick");
+            UnityUI.Interface.AboutButton();
+        });
+        load.onClick.AddListener(() => {
+            AudioManager.i.Play("UIClick");
+            UnityUI.Interface.LoadGameButton();
+        });
+        close.onClick.AddListener(() => {
+            AudioManager.i.Play("UIClick");
+            UnityUI.Interface.QuitButton();
+        });
+
     }
 
     // Update is called once per frame

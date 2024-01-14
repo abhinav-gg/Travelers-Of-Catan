@@ -11,12 +11,6 @@ public class CardCollection : MonoBehaviour
    
     // Start is called before the first frame update
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
     public void SetCard(int resource, Vector3 Dest)
     {
@@ -26,7 +20,7 @@ public class CardCollection : MonoBehaviour
         float duration = Random.Range(0.7f, 1.1f);
         LeanTween.move(gameObject, Dest, duration).setEase(LeanTweenType.easeOutBounce).setDelay(delay).setOnComplete(() =>
         {
-            AudioManager.i.Play("Ding1");
+            AudioManager.i.Play("Ding");
             LeanTween.scale(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeInBounce).setDelay(0.15f).setOnComplete(() =>
             {
                 Destroy(gameObject);

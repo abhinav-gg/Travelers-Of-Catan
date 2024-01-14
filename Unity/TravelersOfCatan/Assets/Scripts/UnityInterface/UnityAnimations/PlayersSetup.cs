@@ -20,6 +20,10 @@ public class PlayersSetup : MonoBehaviour
 
     public Button back;
     public Button cont;
+    public Slider WinVP;
+    public Slider MaxTime;
+    public GameObject WinVPstr;
+    public GameObject MaxTimestr;
 
     Button AddPlayer;
     PlayerNameInp overlay;
@@ -52,7 +56,8 @@ public class PlayersSetup : MonoBehaviour
         {
             colors.Add(playerColors.ToString());
         }
-
+        WinVP.onValueChanged.AddListener((float value) => { WinVPstr.GetComponent<TextMeshProUGUI>().text = value.ToString(); });
+        MaxTime.onValueChanged.AddListener((float value) => { MaxTimestr.GetComponent<TextMeshProUGUI>().text = value.ToString() + "s"; });
 
     }
 
@@ -203,7 +208,7 @@ public class PlayersSetup : MonoBehaviour
     
     public void Continue()
     {
-        UnityUI.Interface.game = new TravelersOfCatan(UnityUI.Interface, 15, 1, 910f);
+        UnityUI.Interface.game = new TravelersOfCatan(UnityUI.Interface, (int)WinVP.value, 1, MaxTime.value);
         foreach (PlayerTemplate p in players) 
         { 
             if (p.ai)

@@ -34,6 +34,7 @@ public class ShopOverlay : MonoBehaviour
         purchase.onClick.AddListener(() => OnPurchase());
         purchase.gameObject.GetComponent<Image>().sprite = shoopingImages[currentID];
         UpdateDisplayCounts();
+        AudioManager.i.Play("Purchase");
     }
 
     // Update is called once per frame

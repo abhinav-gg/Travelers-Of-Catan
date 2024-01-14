@@ -51,6 +51,15 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         {
             selectedSave = -1;
         }
+        else if (scene.name == "About+Rules")
+        {
+            GameObject.FindGameObjectWithTag("HomeButton").GetComponent<Button>().onClick.AddListener(() => {
+                AudioManager.i.Play("UIClick");
+                AudioManager.i.Stop("Write");
+                LeanTween.scale(GameObject.FindGameObjectWithTag("HomeButton"), new Vector3(1.2f, 1.2f, 1.2f), 0.2f).setEase(LeanTweenType.easeInOutSine).setLoopPingPong(1);
+                GoHome();
+            });
+        }
     }
 
     void OnDisable()
@@ -112,9 +121,10 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
             game = new TravelersOfCatan(Interface, gw);
 
         }
-        catch
+        catch (System.Exception e)
         {
             Debug.Log("ERROR: Save file corrupted");
+            Debug.Log(e.Message);
             // save has been corrupted
         }
         yield return null;
@@ -140,6 +150,13 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         SceneTransition.i.SendToScene("Hub");
 
     }
+
+    public void AboutButton()
+    {
+        SceneTransition.i.SendToScene("About+Rules");
+    }
+
+
 
     public void QuitButton()
     {

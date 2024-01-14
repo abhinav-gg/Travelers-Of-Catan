@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 [Serializable]
 public partial class UnityUI
 {
-    [Header("UI overlay prefabs")]
+    [Header("UI overlay prefabs and constants")]
     public GameObject NodePrefab;
     public GameObject ConnectionPrefab;
     public GameObject PlayerPrefab;
@@ -25,21 +25,21 @@ public partial class UnityUI
     public GameObject PauseSettings;
     public GameObject CardObj;
     public GameObject GameSavePopup;
+    public Tile[] resources = new Tile[6];
     [Space(10)]
 
-    public Tile[] resources = new Tile[6];
     public GridLayout gridLayout;
     public Tilemap tilemap;
+    public List<NodeButton> nodes;
 
-    public List<NodeButton> nodes = new List<NodeButton>();
+    [Space(10)]
     public float Timer = 0.0f;
     public bool TimerActive = false;
-    float MaxTime;
 
-    private IEnumerator coroutine;
 
     PlayerUIOverlay overlay;
     NodeButton SelectedNode;
+    IEnumerator coroutine;
 
 
     void Update()
@@ -50,12 +50,12 @@ public partial class UnityUI
             Timer = Mathf.Clamp(Timer - Time.deltaTime, 0, int.MaxValue);
         }
     }
-    //JSON_manager.SAVEGAME(game, "TESTFINDME");
+    
 
     void UI.BeginTurn(float time)
     {
+        AudioManager.i.Play("Success");
         Timer = time;
-        MaxTime = time;
         TimerActive = true;
         overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
         if (game.GetCurrentPlayer().isPlayerAI())
@@ -108,7 +108,7 @@ public partial class UnityUI
     {
         gridLayout = FindObjectOfType<GridLayout>();
         tilemap = FindObjectOfType<Tilemap>();
-
+        nodes = new List<NodeButton>();
     }
 
     IEnumerator WaitForTurnToEnd()
@@ -120,6 +120,7 @@ public partial class UnityUI
             if (Timer < 5f && !startedCD)
             {
                 AudioManager.i.Play("Countdown");
+                startedCD = true;
             }
         }
         EndTurn();
@@ -280,6 +281,7 @@ public partial class UnityUI
             Vector3 pos = GetNodeGlobalPos(otherNode);
             LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
             LeanTween.move(Camera.main.gameObject, pos + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
+            AudioManager.i.Play("Ding");
             yield return new WaitForSeconds(0.55f);
         }
         yield return null;
@@ -632,7 +634,8 @@ public partial class UnityUI
 
     void UI.HandleWinner(Player winner)
     {
-        AudioManager.i.Play("Countdown"); // in case they won in the last few seconds of the turn
+        AudioManager.i.Stop("Countdown"); // in case they won in the last few seconds of the turn
+        AudioManager.i.Play("Victory");
         CloseAllGameUIs();
         SceneTransition.i.SendToScene("Victory");
     }

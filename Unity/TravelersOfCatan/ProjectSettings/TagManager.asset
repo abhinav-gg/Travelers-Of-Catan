@@ -9,6 +9,7 @@ TagManager:
   - PlayerParent
   - Board
   - CardCollection
+  - HomeButton
   layers:
   - Default
   - TransparentFX
