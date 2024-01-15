@@ -116,7 +116,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Purchase
     Clip: {fileID: 8300000, guid: 2a7727b2142daf041afd5100d51c4ef1, type: 3}
-    Vol: 0.389
+    Vol: 0.055
     Pitch: 1
     Loop: 0
     source: {fileID: 0}

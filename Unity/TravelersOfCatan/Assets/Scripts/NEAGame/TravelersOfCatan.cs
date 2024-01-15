@@ -130,8 +130,15 @@ namespace NEAGame
 
             turn = game.turn;
             currentPlayer = gamePlayers[turn]; // moves are already saved
-            UserInterface.BeginGame(game.timer);
-            UserInterface.CreatePopup($"Resuming game from player {turn+1}'s turn");
+            if (HasWinner())
+            {
+                FindWinner();
+            }
+            else
+            {
+                UserInterface.BeginGame(game.timer);
+                UserInterface.CreatePopup($"Resuming game from player {turn+1}'s turn");
+            }
         }
 
 
@@ -272,8 +279,6 @@ namespace NEAGame
             {
                 if (p.getVictoryPoints() >= WinningVictoryPoints)
                 {
-
-                    UserInterface.CreatePopup("Player " + p.playerName + " has won the game");
                     UserInterface.HandleWinner(p);
                     return;
                 }

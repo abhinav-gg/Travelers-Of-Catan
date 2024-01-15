@@ -281,7 +281,7 @@ public partial class UnityUI
             Vector3 pos = GetNodeGlobalPos(otherNode);
             LeanTween.move(GetPlayerGameObject(Interface.game.GetCurrentPlayer().GetID()).gameObject, pos, 0.5f).setEase(LeanTweenType.easeInOutElastic);
             LeanTween.move(Camera.main.gameObject, pos + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
-            AudioManager.i.Play("Ding");
+            AudioManager.i.Play("UIEffect");
             yield return new WaitForSeconds(0.55f);
         }
         yield return null;

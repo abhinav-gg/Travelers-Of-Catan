@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using NEAGame;
 using Unity.VisualScripting;
+using System.Linq;
 
 public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
@@ -59,6 +60,18 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
                 LeanTween.scale(GameObject.FindGameObjectWithTag("HomeButton"), new Vector3(1.2f, 1.2f, 1.2f), 0.2f).setEase(LeanTweenType.easeInOutSine).setLoopPingPong(1);
                 GoHome();
             });
+        }
+        else if (scene.name == "Victory")
+        {
+            AudioManager.i.Stop("Write");
+            GameObject.FindGameObjectWithTag("HomeButton").GetComponent<Button>().onClick.AddListener(() => {
+                AudioManager.i.Play("UIClick");
+                AudioManager.i.Stop("Write");
+                LeanTween.scale(GameObject.FindGameObjectWithTag("HomeButton"), new Vector3(1.2f, 1.2f, 1.2f), 0.2f).setEase(LeanTweenType.easeInOutSine).setLoopPingPong(1);
+                GoHome();
+            });
+            string[] namesInVictoryOrder = game.gamePlayers.OrderBy(p => p.getVictoryPoints()).Select(p => p.playerName).ToArray();
+            FindObjectOfType<VictoryManager>().Setup(namesInVictoryOrder);
         }
     }
 
@@ -123,9 +136,9 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         }
         catch (System.Exception e)
         {
-            Debug.Log("ERROR: Save file corrupted");
-            Debug.Log(e.Message);
             // save has been corrupted
+            LoadGameButton();
+            CreatePopup("Save has been corrupted");
         }
         yield return null;
     }
