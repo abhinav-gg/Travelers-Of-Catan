@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-
-
+using UnityEngine.UIElements;
 
 namespace NEAGame
 {
@@ -220,20 +219,18 @@ namespace NEAGame
 
         public void StartTurn(float timeleft=-1f)
         {
-
+            if (timeleft == -1f)
+            {
+                gatherResources(currentPlayer.GetID());
+                timeleft = TimePerMove;
+            }
             if (currentPlayer.GetType() == typeof(Player))
             {
-                if (timeleft == -1f)
-                {
-                    gatherResources(currentPlayer.GetID());
-                    timeleft = TimePerMove;
-                }
-                isAICalculation = false;
-                
+                isAICalculation = false;   
             }
             else if (currentPlayer.GetType() == typeof(AI))
             {
-                timeleft = TimePerMove;
+                timeleft = TimePerMove; // AI has the default time limit because when the new game is loaded, the AI calculation is restarted.
                 isAICalculation = true;
             }
             UserInterface.BeginTurn(timeleft);
@@ -399,13 +396,13 @@ namespace NEAGame
             }
             if (!isAICalculation)
             {
-                if (!HasWinner())
-                {
-                    UserInterface.CreatePopup("Purchase Successful");
-                }
-                else
+                if (HasWinner())
                 {
                     FindWinner();
+                }
+                else if (!currentPlayer.isPlayerAI())
+                {
+                    UserInterface.CreatePopup("Purchase Successful");
                 }
 
             }
@@ -627,10 +624,10 @@ namespace NEAGame
         public void purchaseRoad(Node other)
         {
             board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Road", occupant: currentPlayer.GetID()));
-            ChargePlayer("Road");
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Road", other.position));
+            ChargePlayer("Road");
             if (!isAICalculation)
             {
                 UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
@@ -644,10 +641,10 @@ namespace NEAGame
                 return; // issue caused by the AI 
             }
             board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Wall", occupant: currentPlayer.GetID()));
-            ChargePlayer("Wall");
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Wall", other.position));
+            ChargePlayer("Wall");
             if (!isAICalculation)
                 UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
 
@@ -655,18 +652,18 @@ namespace NEAGame
         public void purchaseVillage(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.GetID());
-            ChargePlayer("Village");
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Village"));
+            ChargePlayer("Village");
             if (!isAICalculation)
                 UserInterface.UpdateSettlement(otherPos);
         }
         public void purchaseCity(Node otherPos)
         {
             board.GetNode(currentPlayer.position).status.UpgradeVillage();
-            ChargePlayer("City");
             currentPlayer.upgradeVillage(board.GetNode(currentPlayer.position));
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "City"));
+            ChargePlayer("City");
             if (!isAICalculation)
                 UserInterface.UpdateSettlement(otherPos);
         }
@@ -818,7 +815,7 @@ namespace NEAGame
             {
                 PlayerMove move = (PlayerMove)a;
                 
-                UserInterface.Assert(currentPlayer.position == move.newpos);
+                //UserInterface.Assert(currentPlayer.position == move.newpos);
 
 
                 if (!isAICalculation)

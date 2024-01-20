@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="NEAGame.AI">
+    <Position X="31" Y="18.25" Width="6.5" />
+    <NestedTypes>
+      <Enum Name="NEAGame.AI.Turn" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\NEAGame\AI.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAgAAAAAAAAAAACAAEABAAAAAgAAAAAAAABA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\AI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Board">
+    <Position X="29.5" Y="6.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAEAAAAAAAAAEAAAAUAAIAAAABAAIAQ=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Settlement">
+    <Position X="39.25" Y="23.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Building">
+    <Position X="40.25" Y="25.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAEAAAAAAAEAAAAAAAACAAAAAAAAAI=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Resource">
+    <Position X="35.25" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAgAAAABAACAEgAAAAAAAAAAAAIAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Connection">
+    <Position X="37.5" Y="25.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAAAAEQAAAAAAAAAAAACAAAAI=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Connection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Node">
+    <Position X="30.5" Y="10.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAAAAAAAAEAAAAIABAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Node.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.Player">
+    <Position X="25.5" Y="17.25" Width="5" />
+    <NestedTypes>
+      <Enum Name="NEAGame.Player.PlayerColors" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\NEAGame\Player.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>HAAIAAQIBSgAACAEAAMgoAQhQAAIAAKAIJAACAAAAAg=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.TravelersOfCatan">
+    <Position X="19.5" Y="13.5" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>EAMAAJBAA4CSIHNAACIFEAAhEEAogACJIgwAAAAAmAA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\TravelersOfCatan.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="UserInterface" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NEAGame.GameAction">
+    <Position X="22.5" Y="5.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\TravelersOfCatan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.PlayerMove">
+    <Position X="20" Y="3" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\TravelersOfCatan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.PlayerPurchase">
+    <Position X="24.75" Y="3" Width="6.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\TravelersOfCatan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileHandler" Collapsed="true">
+    <Position X="51.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgKAAAAgAAEAAAEAAAIAAAAEAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\FileHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.JSON_manager" Collapsed="true">
+    <Position X="53.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAABAAAAAAAAAAAAAAAAOAAAAABAAAAAAAAAE=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.JSONWrapper&lt;T&gt;" Collapsed="true">
+    <Position X="54.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.ResourceWrapper" Collapsed="true">
+    <Position X="61" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.HexagonUnitWrapper" Collapsed="true">
+    <Position X="43" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.SettlementWrapper" Collapsed="true">
+    <Position X="49.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.AdjMatrixWrapper" Collapsed="true">
+    <Position X="56.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.AdjMatrixBottomWrapper" Collapsed="true">
+    <Position X="63.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.PlayerWrapper" Collapsed="true">
+    <Position X="45.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAIAAAAACAAAAEAIAAgQAAAAACAABAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.InventoryWrapper" Collapsed="true">
+    <Position X="52" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.AllNodesWrapper" Collapsed="true">
+    <Position X="58.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.NodeWrapper" Collapsed="true">
+    <Position X="65.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.BoardWrapper" Collapsed="true">
+    <Position X="47.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.GameWrapper" Collapsed="true">
+    <Position X="54.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAEAAAIIAAAAAAAAAAAAAABAAIAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityUI">
+    <Position X="7" Y="13.5" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AUScC5gAjgACHDAi4iBVCVBAwIGEQAQNRZZAggE0eck=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="NEAGame.UI">
+    <Position X="12.5" Y="13.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAABEAAAAEAAAAAAAAAAQAAAAAAAAAAAFEAIBA=</HashCode>
+      <FileName>Assets\Scripts\NEAGame\UIManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

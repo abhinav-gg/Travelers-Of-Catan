@@ -14,7 +14,6 @@ public class GamePauseOverlay : MonoBehaviour
     [Space(10)]
     public GameObject Panel;
     public GameObject PauseBtn;
-    public GameObject InfoBtn;
     public GameObject Display;
     public GameObject Save;
     public GameObject MusicParent;
@@ -62,12 +61,10 @@ public class GamePauseOverlay : MonoBehaviour
         UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void RemoveSaveButton()
     {
-        
+        Save.SetActive(false);
     }
-
 
     void volumeChange(float x)
     {
@@ -80,7 +77,6 @@ public class GamePauseOverlay : MonoBehaviour
         //lean tween everything away
         LeanTween.scale(Save, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);
         LeanTween.scale(MusicParent, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);
-        LeanTween.scale(InfoBtn, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);
         LeanTween.scale(Display, new Vector3(), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
         LeanTween.rotateAround(Display, Vector3.forward, 360, 0.5f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
         LeanTween.scale(PauseBtn, new Vector3(), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
@@ -92,10 +88,6 @@ public class GamePauseOverlay : MonoBehaviour
 
         });
     }
-
-    // add public functions for the SETTINGS and PAUSE menu setups
-
-
 
     void UpdateMusicBtn(bool background)
     {

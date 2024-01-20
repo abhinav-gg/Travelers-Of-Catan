@@ -9,6 +9,7 @@ public class MenuPage : MonoBehaviour
     public Button about;
     public Button load;
     public Button close;
+    public Button settings;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +25,11 @@ public class MenuPage : MonoBehaviour
         close.onClick.AddListener(() => {
             AudioManager.i.Play("UIClick");
             UnityUI.Interface.QuitButton();
+        });
+        settings.onClick.AddListener(() =>
+        {
+            AudioManager.i.Play("UIClick");
+            UnityUI.Interface.HomeScreenSettingsButton();
         });
 
     }

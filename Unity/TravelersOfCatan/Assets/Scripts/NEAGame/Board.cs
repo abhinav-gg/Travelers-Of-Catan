@@ -319,11 +319,5 @@ namespace NEAGame
             temp.CreateRandomResource();
             return temp;
         }
-
-
     }
-
-
-
-
 }

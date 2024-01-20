@@ -421,12 +421,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _textMeshPro: {fileID: 0}
-  stringArray: []
   muted: 0
   timeBtwnChars: 0.15
   timeBtwnWords: 0.5
   timeBtwnSentences: 0.75
-  loop: 0
 --- !u!1 &2262680487681710292
 GameObject:
   m_ObjectHideFlags: 0

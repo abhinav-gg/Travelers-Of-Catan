@@ -99,7 +99,4 @@ public class SceneTransition : MonoBehaviour
             yield return null;
         }
     }
-
-
-
 }

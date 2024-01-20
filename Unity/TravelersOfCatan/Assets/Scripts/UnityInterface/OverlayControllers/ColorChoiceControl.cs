@@ -46,7 +46,7 @@ public class ColorChoiceControl : MonoBehaviour
             return;
         isClosing = true;
         FindObjectOfType<PlayersSetup>().NewColorSave(current);
-        AudioManager.i.Play("Click");
+        AudioManager.i.Play("UIClick");
         // lean tween everything away
         LeanTween.moveLocalY(ColParent, -1000f, 0.5f).setEase(LeanTweenType.easeOutSine).setDelay(0.1f);
         LeanTween.rotateAround(CloseBtn , Vector3.forward, 360, 0.5f).setEase(LeanTweenType.easeShake).setDelay(0.0f);

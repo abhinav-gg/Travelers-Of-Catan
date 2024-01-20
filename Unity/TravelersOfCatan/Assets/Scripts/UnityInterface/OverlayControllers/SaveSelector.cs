@@ -81,6 +81,7 @@ public class SaveSelector : MonoBehaviour
 
     void ResetClick(int i)
     {
+        AudioManager.i.Play("UIClick");
         JSON_manager json = new JSON_manager(i);
         json.ClearSave();
         Setup();
@@ -90,6 +91,7 @@ public class SaveSelector : MonoBehaviour
 
     void BtnClick(int i, bool hasData)
     {
+        AudioManager.i.Play("UIClick");
         if (hasData)
         {
             UnityUI.Interface.SelectGameToLoad(i);

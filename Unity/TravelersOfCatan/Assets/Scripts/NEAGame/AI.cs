@@ -220,8 +220,5 @@ namespace NEAGame
             Contract.Requires(stack != null);
             return new Stack<GameAction>(new Stack<GameAction>(stack));
         }
-
     }
-
-
 }

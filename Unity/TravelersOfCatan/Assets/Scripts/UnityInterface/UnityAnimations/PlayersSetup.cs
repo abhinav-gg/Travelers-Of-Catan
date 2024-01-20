@@ -52,7 +52,7 @@ public class PlayersSetup : MonoBehaviour
         Remove.onClick.AddListener(RemovePlayer);
         SetupPlayerAdder();
 
-        foreach (PlayerColors playerColors in Enum.GetValues(typeof(PlayerColors)))
+        foreach (Player.PlayerColors playerColors in Enum.GetValues(typeof(Player.PlayerColors)))
         {
             colors.Add(playerColors.ToString());
         }
@@ -116,6 +116,7 @@ public class PlayersSetup : MonoBehaviour
 
     void ColorChangeButton(int index)
     {
+        AudioManager.i.Play("UIClick");
         if (gettingColor)
             return;
         gettingColor = true;
@@ -144,6 +145,7 @@ public class PlayersSetup : MonoBehaviour
 
     void SaveNewPlayer()
     {
+        AudioManager.i.Play("UIClick");
         if (submittedName) return;
         submittedName = true;
         string name = overlay.inputField.text;
@@ -208,6 +210,7 @@ public class PlayersSetup : MonoBehaviour
     
     public void Continue()
     {
+        AudioManager.i.Play("UIClick");
         UnityUI.Interface.game = new TravelersOfCatan(UnityUI.Interface, (int)WinVP.value, 1, MaxTime.value);
         foreach (PlayerTemplate p in players) 
         { 

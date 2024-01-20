@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using NEAGame;
-using Unity.VisualScripting;
-using System.Linq;
+ using System.Linq;
 
 public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
@@ -70,7 +69,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
                 LeanTween.scale(GameObject.FindGameObjectWithTag("HomeButton"), new Vector3(1.2f, 1.2f, 1.2f), 0.2f).setEase(LeanTweenType.easeInOutSine).setLoopPingPong(1);
                 GoHome();
             });
-            string[] namesInVictoryOrder = game.gamePlayers.OrderBy(p => p.getVictoryPoints()).Select(p => p.playerName).ToArray();
+            string[] namesInVictoryOrder = game.gamePlayers.OrderByDescending(p => p.getVictoryPoints()).Select(p => p.playerName).ToArray();
             FindObjectOfType<VictoryManager>().Setup(namesInVictoryOrder);
         }
     }
@@ -94,7 +93,11 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         SceneTransition.i.SendToScene("Game");
     }
 
-
+    public void HomeScreenSettingsButton()
+    {
+        GamePauseOverlay overlay = Instantiate(PauseSettings).GetComponent<GamePauseOverlay>();
+        overlay.RemoveSaveButton();
+    }
 
     public void LoadGameButton()
     {

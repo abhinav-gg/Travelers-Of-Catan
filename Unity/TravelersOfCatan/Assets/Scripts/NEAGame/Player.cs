@@ -8,23 +8,24 @@ using System.Collections;
 
 namespace NEAGame
 {
-    [System.Serializable]
-
-    public enum PlayerColors
-    {
-        blue,
-        cyan,
-        green,
-        grey,
-        magenta,
-        red,
-        white,
-        yellow
-    }
-    // Unity static color options
+    
 
     public class Player
     {
+        // Unity static color options
+        [System.Serializable]
+        public enum PlayerColors
+        {
+            blue,
+            cyan,
+            green,
+            grey,
+            magenta,
+            red,
+            white,
+            yellow
+        }
+
         private int victoryPoints;
         private Dictionary<Resource, int> resources = new Dictionary<Resource, int>() {
             { new Resource(1), 0 },

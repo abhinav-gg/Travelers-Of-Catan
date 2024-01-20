@@ -75,6 +75,7 @@ public class AudioManager : MonoBehaviour
         if (s == null)
         {
             Debug.Log(name + "not found");
+            return;
         }
         else if (mutedSFX)
         {
