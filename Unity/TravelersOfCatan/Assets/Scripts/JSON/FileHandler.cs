@@ -4,13 +4,17 @@ using UnityEngine;
 using System;
 using System.IO;
 
-public class FileHandler // Credit to https://www.youtube.com/watch?v=KZft1p8t2lQ for the tutorial on how to do 
+/// <summary>
+/// Class to handle the saving and loading of files from Unity's persistent data path
+/// <Br/>Credit to https://www.youtube.com/watch?v=KZft1p8t2lQ for the tutorial on how to do 
+/// </summary>
+public class FileHandler 
 {
     private string filepath = "";
     public bool IsMade;
     private bool useEncryption = false;
+    // practically speaking, this is not easily crackable, but it's not perfect as the same key is used for all files
     private readonly string encryptionCodeWord = "SomeRandomStringKeyToConvertIntoBinaryForXOR->aiuaeogmk3GJEK834FEJSAK->";
-    // practically speaking, this is not very easily crackable, but it's not the most secure either as it uses the same key for every file
 
     public FileHandler(string filepath)
     {

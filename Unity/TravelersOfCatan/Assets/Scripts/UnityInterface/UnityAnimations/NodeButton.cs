@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using NEAGame;
 
+/// <summary>
+/// Class that is attached to the node buttons in the game scene
+/// </summary>
 public class NodeButton : MonoBehaviour
 {
     public Vector3 NodePos;

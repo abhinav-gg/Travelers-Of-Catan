@@ -9,6 +9,9 @@ using System.Diagnostics;
 
 namespace NEAGame
 {
+    /// <summary>
+    /// Class to represent the game board
+    /// </summary>
     [System.Serializable]
     public class Board // A graph of nodes
     {

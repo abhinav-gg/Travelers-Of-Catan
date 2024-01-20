@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Controls button inputs on the menu page
+/// </summary>
 public class MenuPage : MonoBehaviour
 {
     

@@ -12,6 +12,7 @@ namespace NEAGame
 
     /// <summary>
     /// Class that inherits from Player and adds AI functionality
+    /// Skill A: Complex OOP - Inheritance
     /// </summary>
     class AI : Player
     {
@@ -63,15 +64,13 @@ namespace NEAGame
 
             return score;
         }
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// Runs the Best Reply Search algorithm on the current game position to attempt to determine the best move to make.
+        /// <br/>Skill A: Recursive Algorithm
+        /// <br/>Skill A: Tree traversal
         /// </summary>
-        /// <param name="alpha"></param>
-        /// <param name="beta"></param>
-        /// <param name="depth"></param>
-        /// <param name="turn"></param>
-        /// <returns></returns>
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public int BRS(int alpha=int.MinValue + 1, int beta=int.MaxValue, int depth=-1, Turn turn=Turn.Max)
         {
             if (depth == -1)
@@ -153,6 +152,9 @@ namespace NEAGame
 
         }
 
+        /// <summary>
+        /// Method to generate possible good moves on the passed player's turn
+        /// </summary>
         public IEnumerable<List<GameAction>> GenerateMoves(Player pdl)
         {
             int playerID = pdl.GetID();

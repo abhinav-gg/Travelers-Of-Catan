@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Unity.VisualScripting;
 using NEAGame;
-using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Second half of the UnityUI class, containing the game-specific methods
+/// </summary>
 [Serializable]
 public partial class UnityUI
 {

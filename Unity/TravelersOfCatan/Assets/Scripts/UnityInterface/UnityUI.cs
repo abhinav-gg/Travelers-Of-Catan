@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 using NEAGame;
  using System.Linq;
 
+/// <summary>
+/// Class to interface between the game and the Unity UI
+/// </summary>
 public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
 {
 
@@ -133,7 +136,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         try
         {
             JSON_manager json = new JSON_manager(selectedSave);
-            GameWrapper gw = json.LOADGAME();
+            GameWrapper gw = json.LoadGame();
             game = new TravelersOfCatan(Interface, gw);
 
         }
@@ -150,7 +153,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
     {
         int i = selectedSave;
         JSON_manager saver = new JSON_manager(i);
-        saver.SAVEGAME(game);
+        saver.SaveGame(game);
     }
 
     public void SaveAndExit()

@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class to control the player name input GUI
+/// </summary>
 public class PlayerNameInp : MonoBehaviour
 {
 

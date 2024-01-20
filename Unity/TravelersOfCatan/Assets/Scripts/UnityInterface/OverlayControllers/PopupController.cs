@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class to control a popup message
+/// </summary>
 public class PopupController : MonoBehaviour
 {
     // Start is called before the first frame update

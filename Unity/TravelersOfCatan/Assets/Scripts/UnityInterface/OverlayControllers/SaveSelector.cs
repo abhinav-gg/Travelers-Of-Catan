@@ -7,6 +7,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class to control the save selector GUI
+/// </summary>
 public class SaveSelector : MonoBehaviour
 {
 

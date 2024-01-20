@@ -7,12 +7,15 @@ using UnityEngine.Audio;
 using System.Threading;
 using Unity.VisualScripting;
 
+/// <summary>
+/// Controls the audio for the game
+/// Credit to Brackeys for the tutorial on this script: <seealso href="https://www.youtube.com/watch?v=6OT43pvUyfY"/>
+/// </summary>
 public class AudioManager : MonoBehaviour
 {
 
-    public static AudioManager i;
 
-    // Credit to Brackeys for the tutorial on this script https://www.youtube.com/watch?v=6OT43pvUyfY
+    public static AudioManager i;
 
     public Sound[] sounds;
     public Sound[] BackgroundMusic;

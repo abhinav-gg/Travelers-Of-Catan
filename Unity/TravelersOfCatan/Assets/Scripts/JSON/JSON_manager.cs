@@ -8,7 +8,9 @@ using UnityEngine.UIElements;
 
 namespace NEAGame
 {
-
+    /// <summary>
+    /// Class to control the saving and loading of the game
+    /// </summary>
     class JSON_manager
     {
 
@@ -33,7 +35,7 @@ namespace NEAGame
         }
 
 
-        public void SAVEGAME(TravelersOfCatan game)
+        public void SaveGame(TravelersOfCatan game)
         {
             GameWrapper gameWrapper = new GameWrapper(game);
             // save the game to a file in unity persistent data path
@@ -41,7 +43,7 @@ namespace NEAGame
             fileHandler.Save(json);
         }
 
-        public GameWrapper LOADGAME()
+        public GameWrapper LoadGame()
         {
             
             string json = fileHandler.Load();

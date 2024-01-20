@@ -736,6 +736,12 @@ namespace NEAGame
 
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Method to calculate the shortest path to all nodes from the passed start position
+        /// Skill A: Graph Traversal
+        /// </summary>
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public void Dijkstra(Board board, Vector3 start)
         {
 
@@ -952,7 +958,9 @@ namespace NEAGame
 
     }
 
-
+    /// <summary>
+    /// Class <c>NEAGame.GameAction</c> that represents an action that a player can take.
+    /// </summary>
     public abstract class GameAction
     {
         public int playerID; 
@@ -961,6 +969,9 @@ namespace NEAGame
 
     }
 
+    /// <summary>
+    /// Class <c>NEAGame.PlayerMove</c> that represents a player moving from one node to another.
+    /// </summary>
     public class PlayerMove : GameAction
     {
         public Vector3 newpos;
@@ -981,6 +992,9 @@ namespace NEAGame
 
     }
 
+    /// <summary>
+    /// Class <c>NEAGame.PlayerPurchase</c> that represents a player purchasing a building or road.
+    /// </summary>
     public class PlayerPurchase : GameAction
     {
         public Vector3 otherpos;
