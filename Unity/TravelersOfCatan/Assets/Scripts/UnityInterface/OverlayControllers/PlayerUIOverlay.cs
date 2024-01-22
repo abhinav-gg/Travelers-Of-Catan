@@ -224,7 +224,7 @@ public class PlayerUIOverlay : MonoBehaviour
         }
         AudioManager.i.Play("UIClick");
         LeanTween.scale(InventoryInput.gameObject, InventoryInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
-        StartCoroutine(UnityUI.Interface.OpenInventory());
+        UnityUI.Interface.OpenInventory();
     }
 
     public void OnTrade()

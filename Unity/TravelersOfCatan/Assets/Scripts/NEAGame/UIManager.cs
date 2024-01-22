@@ -5,6 +5,9 @@ using System.Numerics;
 namespace NEAGame
 {
 
+    /// <summary>
+    /// Interface to represent the UI
+    /// </summary>
     public interface UI
     {
         float GetTimer();
@@ -19,8 +22,10 @@ namespace NEAGame
         void ShowResource(Vector3 u, Resource resource, Vector3 optional);
         void Assert(bool test);
     }
-
-    public class TerminalUI { } // Discontinued when project became entirely Unity event-based
+    /// <summary> 
+    /// Discontinued when project became entirely Unity event-based
+    /// </summary>
+    public class TerminalUI { } 
 
 }
 

@@ -242,12 +242,19 @@ namespace NEAGame
             currentPlayer = gamePlayers[turn];
             isAICalculation = false;
             Stack<GameAction> selectedMoves = ((AI)currentPlayer).selectedMoves;
+            Stack<GameAction> firstUndo = ((AI)currentPlayer).currentMove;
             // reverse order of stack
             Stack<GameAction> temp = new Stack<GameAction>();
             while (selectedMoves.Count > 0)
             {
                 temp.Push(selectedMoves.Pop());
             }
+
+            while (firstUndo.Count > 0)
+            {
+                UndoAction(firstUndo.Pop());
+            }
+
             while (temp.Count > 0)
             {
                 DoAction(temp.Pop());

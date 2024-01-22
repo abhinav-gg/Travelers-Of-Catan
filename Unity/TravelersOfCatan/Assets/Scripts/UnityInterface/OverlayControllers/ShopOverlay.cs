@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using NEAGame;
 
+/// <summary>
+/// Class to control the shop overlay
+/// </summary>
 public class ShopOverlay : MonoBehaviour
 {
     // Start is called before the first frame update

@@ -1,8 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using NEAGame;
 using UnityEngine;
 
+
+/// <summary>
+/// Class attached to the player game objects to animate them
+/// </summary>
 public class PlayerAnimator : MonoBehaviour
 {
 

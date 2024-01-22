@@ -4,6 +4,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+/// <summary>
+/// Class to control a card for the collection and trading of resources
+/// <br/> Used for animation only
+/// </summary>
 public class CardCollection : MonoBehaviour
 {
 

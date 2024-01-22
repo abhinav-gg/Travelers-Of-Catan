@@ -343,6 +343,10 @@ public partial class UnityUI
         return null;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Skill A: Use of Complex Mathematical Model
+    // Used to represent and convert hexagonal grid of nodes between cubic coordinates and odd row coordinates.
+
     public Vector3 GetConnectionGlobalPos(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
     {
         HashSet<System.Numerics.Vector3> starthexes = new HashSet<System.Numerics.Vector3>();
@@ -410,6 +414,8 @@ public partial class UnityUI
         int row = (int)vec.X;
         return new Vector3Int(col, row, 0);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static Color textToColor(string color)
     {
@@ -528,14 +534,13 @@ public partial class UnityUI
     /// Inventory handler
     /// </summary>
 
-    public IEnumerator OpenInventory()
+    public void OpenInventory()
     {
         StopAllPlayerCoroutines();
         InventoryPopup inv = Instantiate(inventoryPopup).GetComponent<InventoryPopup>();
         foreach (KeyValuePair<Resource, int> entry in Interface.game.GetCurrentPlayer().getResources())
         {
             inv.Display(entry.Key.ToString(), entry.Value);
-            yield return new WaitForSeconds(0.1f);
         }
 
     } 

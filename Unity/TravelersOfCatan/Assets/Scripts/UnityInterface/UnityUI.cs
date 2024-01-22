@@ -9,9 +9,12 @@ using NEAGame;
 /// <summary>
 /// Class to interface between the game and the Unity UI
 /// </summary>
-public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity interface
+public partial class UnityUI : MonoBehaviour, UI
 {
 
+    /// <summary>
+    /// Singleton instance of the UnityUI class so that it can be accessed from other UI scripts
+    /// </summary>
     public static UnityUI Interface { get; private set; }
 
     [Header("Serialized Game View")] 
@@ -142,6 +145,7 @@ public partial class UnityUI : MonoBehaviour, UI // This is the tip of the Unity
         }
         catch (System.Exception e)
         {
+            Debug.Log(e);
             // save has been corrupted
             LoadGameButton();
             CreatePopup("Save has been corrupted");

@@ -1,14 +1,14 @@
 using System;
-using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using NEAGame;
 using TMPro;
-using System.Reflection;
-using System.Dynamic;
 
+/// <summary>
+/// Class used to control the player setup scene
+/// </summary>
 public class PlayersSetup : MonoBehaviour
 {
     public Button Remove;
@@ -226,7 +226,10 @@ public class PlayersSetup : MonoBehaviour
         UnityUI.Interface.CommenceGame();
     }
 
-    [Serializable]
+    /// <summary>
+    /// Class used to store temporary player data while the game is being setup
+    /// <br/> This is used to create a <c>Player</c> object when the game is started
+    /// </summary>
     class PlayerTemplate
     {
         public string name;

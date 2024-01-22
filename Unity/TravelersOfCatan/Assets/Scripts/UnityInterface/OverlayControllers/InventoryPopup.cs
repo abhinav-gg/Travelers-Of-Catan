@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Class to control the inventory overlay
+/// </summary>
 public class InventoryPopup : MonoBehaviour
 {
     public GameObject Background;
@@ -62,25 +63,25 @@ public class InventoryPopup : MonoBehaviour
                 break;
             case ("Sheep"):
                 Sheep.gameObject.transform.localScale = new Vector3(0, 0, 0);
-                LeanTween.scale(Sheep.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.1f);
+                LeanTween.scale(Sheep.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.15f);
 
                 Sheep.text = FormatInt(count);
                 break;
             case ("Ore"):
                 Ore.gameObject.transform.localScale = new Vector3(0, 0, 0);
-                LeanTween.scale(Ore.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.1f);
+                LeanTween.scale(Ore.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.2f);
 
                 Ore.text = FormatInt(count);
                 break;
             case ("Wood"):
                 Wood.gameObject.transform.localScale = new Vector3(0, 0, 0);
-                LeanTween.scale(Wood.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.1f);
+                LeanTween.scale(Wood.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.25f);
 
                 Wood.text = FormatInt(count);
                 break;
             case ("Wheat"):
                 Wheat.gameObject.transform.localScale = new Vector3(0, 0, 0);
-                LeanTween.scale(Wheat.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.1f);
+                LeanTween.scale(Wheat.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.3f);
 
                 Wheat.text = FormatInt(count);
                 break;

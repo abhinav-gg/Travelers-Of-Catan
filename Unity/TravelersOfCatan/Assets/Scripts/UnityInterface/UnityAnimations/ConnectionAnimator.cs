@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using NEAGame;
-using System;
 
+/// <summary>
+/// Class attached to the connection gameobject to rotate and position it
+/// </summary>
 public class ConnectionAnimator : MonoBehaviour
 {
 

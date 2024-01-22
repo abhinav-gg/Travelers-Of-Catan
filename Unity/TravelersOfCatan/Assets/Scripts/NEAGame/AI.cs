@@ -22,7 +22,7 @@ namespace NEAGame
             Min
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
-        Stack<GameAction> currentMove = new Stack<GameAction>();
+        public Stack<GameAction> currentMove = new Stack<GameAction>();
         private readonly int MaxDepth = 4;
         TravelersOfCatan gameRef;
 
@@ -151,10 +151,12 @@ namespace NEAGame
             return alpha;
 
         }
-
+        ///////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// Method to generate possible good moves on the passed player's turn
+        /// <br/>Skill A: Dynamic generation of class objects
         /// </summary>
+        ///////////////////////////////////////////////////////////////////////////////////////////
         public IEnumerable<List<GameAction>> GenerateMoves(Player pdl)
         {
             int playerID = pdl.GetID();

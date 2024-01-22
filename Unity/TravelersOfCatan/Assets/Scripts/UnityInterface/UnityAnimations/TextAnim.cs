@@ -1,14 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-
-
-public class TextAnim : MonoBehaviour // rewrite myshelf
+/// <summary>
+/// Class to animate text in the UI
+/// <br/> Source: <seealso href="ZZZZZZ"/>
+/// </summary>
+public class TextAnim : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI _textMeshPro;
-
     [SerializeField] bool muted = false;
     [SerializeField] float timeBtwnChars = 0.1f;
     [SerializeField] float timeBtwnWords = 0.125f;

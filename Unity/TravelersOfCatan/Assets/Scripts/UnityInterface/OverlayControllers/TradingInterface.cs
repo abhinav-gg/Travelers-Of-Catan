@@ -1,10 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NEAGame;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Class to control the trading overlay between two players
+/// </summary>
 public class TradingInterface : MonoBehaviour
 {
     public Button accept;
@@ -29,12 +31,15 @@ public class TradingInterface : MonoBehaviour
     [Header("Animation")]
     public GameObject PanelText;
     
+    //Dictionaries used to store the current trades and the max gain/loss for each resource so player's can't trade more than they have
     Dictionary<int, int> MaxGain = new Dictionary<int, int>();
     Dictionary<int, int> MaxLoss = new Dictionary<int, int>();
     Dictionary<int, int> CurrentTrades = new Dictionary<int, int>();
+    
     int currentResource = 0;
     int overallVal = 0;
     Player other;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,14 +62,6 @@ public class TradingInterface : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    //void Setup(int otherPlayer)
-
     public void CloseGUI()
     {
         // tween everything out of existance
@@ -80,7 +77,6 @@ public class TradingInterface : MonoBehaviour
         LeanTween.moveLocalX(right.gameObject, 600f, 0.5f).setEase(LeanTweenType.easeOutBack);
         LeanTween.alphaCanvas(PanelText.GetComponent<CanvasGroup>(), 0f, 0.5f).setEase(LeanTweenType.easeOutBack).setDelay(1f).setOnComplete(() => Destroy(gameObject));
     }
-
 
     public void Setup(Player current, Player other)
     {
@@ -106,7 +102,6 @@ public class TradingInterface : MonoBehaviour
         left.interactable = false;
 
     }
-
 
     void UpdateGUI()
     {
