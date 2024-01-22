@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 4227615927329875109}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -118, y: -4, z: 0}
-  m_LocalScale: {x: 3.3533506, y: 3.3533506, z: 3.3533506}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 610727525
   m_SortingLayer: 1
   m_SortingOrder: 1878
-  m_Sprite: {fileID: 21300000, guid: 8d353af14087b33458e3bbfe24d9c7e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 351cef4cbfd8c094ca4432e3bbf55c1f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -99,9 +99,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cards:
   - {fileID: 0}
-  - {fileID: 21300000, guid: bf5bbfa19634a904f9d16c4e55059830, type: 3}
-  - {fileID: 21300000, guid: 8e5b27ba7d11e9945a619c354fbcd02f, type: 3}
-  - {fileID: 21300000, guid: 8d353af14087b33458e3bbfe24d9c7e0, type: 3}
-  - {fileID: 21300000, guid: cb38ae8fb44d4db46b6c350c82650041, type: 3}
-  - {fileID: 21300000, guid: 33a9df28abd2b87419e0c40a94285df7, type: 3}
-  destination: {fileID: 0}
+  - {fileID: 21300000, guid: 01da5666ae65a1845a7ebbdbcace7bde, type: 3}
+  - {fileID: 21300000, guid: 44e2a48a596cf714fb366d4ecf103605, type: 3}
+  - {fileID: 21300000, guid: 351cef4cbfd8c094ca4432e3bbf55c1f, type: 3}
+  - {fileID: 21300000, guid: 47e5395408c7734469ca477417194f7b, type: 3}
+  - {fileID: 21300000, guid: 3222e90ae76065546be1eeda0bde8020, type: 3}

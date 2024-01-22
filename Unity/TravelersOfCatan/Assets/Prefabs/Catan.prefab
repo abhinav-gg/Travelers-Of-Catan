@@ -60,12 +60,12 @@ MonoBehaviour:
   CardObj: {fileID: 4227615927329875109, guid: e3083fae053d71c49849adf4ebde58a2, type: 3}
   GameSavePopup: {fileID: 2398641642050095287, guid: 4080eeafe5fc2dd439bf5b98fb86531f, type: 3}
   resources:
-  - {fileID: 11400000, guid: 40e09790922ae3b4f8c8cd62a634ffc9, type: 2}
-  - {fileID: 11400000, guid: 95f2ad4aff2d2f040bb4877644c3d001, type: 2}
-  - {fileID: 11400000, guid: 8d3fb1b1f7e333e44b1d122388d17a28, type: 2}
-  - {fileID: 11400000, guid: 2369ff1a4ad7eeb459ad10f202442628, type: 2}
-  - {fileID: 11400000, guid: d9cdd21a55462d24cbed8f4e1d3c6624, type: 2}
-  - {fileID: 11400000, guid: 1ddbf1124b0b7ec44a6bea28343bf847, type: 2}
+  - {fileID: 11400000, guid: 05a3cb89505aec4448c9d399e3860b52, type: 2}
+  - {fileID: 11400000, guid: 39ee92823685f9245b9c118348cfabf6, type: 2}
+  - {fileID: 11400000, guid: fcc4e5f275383df4ab6d58c20afd6111, type: 2}
+  - {fileID: 11400000, guid: e7a885bb42d76cd45aa4d58d9d738e34, type: 2}
+  - {fileID: 11400000, guid: 40b2e2488f64dd64db47d2447c6d29b3, type: 2}
+  - {fileID: 11400000, guid: 9cbdd14a51a8b084aaa61f79cb52772f, type: 2}
   gridLayout: {fileID: 0}
   tilemap: {fileID: 0}
   nodes: []

@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf5bbfa19634a904f9d16c4e55059830, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 01da5666ae65a1845a7ebbdbcace7bde, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2314,11 +2314,11 @@ MonoBehaviour:
   left: {fileID: 6803633199618405224}
   right: {fileID: 6803633199828246745}
   Cards:
-  - {fileID: 21300000, guid: bf5bbfa19634a904f9d16c4e55059830, type: 3}
-  - {fileID: 21300000, guid: 8e5b27ba7d11e9945a619c354fbcd02f, type: 3}
-  - {fileID: 21300000, guid: 8d353af14087b33458e3bbfe24d9c7e0, type: 3}
-  - {fileID: 21300000, guid: cb38ae8fb44d4db46b6c350c82650041, type: 3}
-  - {fileID: 21300000, guid: 33a9df28abd2b87419e0c40a94285df7, type: 3}
+  - {fileID: 21300000, guid: 01da5666ae65a1845a7ebbdbcace7bde, type: 3}
+  - {fileID: 21300000, guid: 44e2a48a596cf714fb366d4ecf103605, type: 3}
+  - {fileID: 21300000, guid: 351cef4cbfd8c094ca4432e3bbf55c1f, type: 3}
+  - {fileID: 21300000, guid: 47e5395408c7734469ca477417194f7b, type: 3}
+  - {fileID: 21300000, guid: 3222e90ae76065546be1eeda0bde8020, type: 3}
   PName1: {fileID: 6803633199491106670}
   PName2: {fileID: 6803633200492818632}
   PCol1: {fileID: 6803633200526657526}

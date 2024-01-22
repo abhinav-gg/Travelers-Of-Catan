@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8e5b27ba7d11e9945a619c354fbcd02f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 44e2a48a596cf714fb366d4ecf103605, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf5bbfa19634a904f9d16c4e55059830, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 01da5666ae65a1845a7ebbdbcace7bde, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 33a9df28abd2b87419e0c40a94285df7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3222e90ae76065546be1eeda0bde8020, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1245,7 +1245,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cb38ae8fb44d4db46b6c350c82650041, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 47e5395408c7734469ca477417194f7b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1322,7 +1322,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8d353af14087b33458e3bbfe24d9c7e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 351cef4cbfd8c094ca4432e3bbf55c1f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1838,10 +1838,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shoopingImages:
-  - {fileID: 21300000, guid: 4bd3109702e62ef49b7195d1a17890f4, type: 3}
-  - {fileID: 21300000, guid: 3c9e442a301e8154f8daf7c8e897b762, type: 3}
-  - {fileID: 21300000, guid: 1f16c457809988540a118b923ee4a5a0, type: 3}
-  - {fileID: 21300000, guid: b81440fb6c0f1b5419b4b0ca05c50bbb, type: 3}
+  - {fileID: 21300000, guid: 94e484b0fd70d2342a149d9fa752cd0b, type: 3}
+  - {fileID: 21300000, guid: 28c6d9f8e57837844b54914f1d0dad31, type: 3}
+  - {fileID: 21300000, guid: 581d5448964f77a4786abc5eee1fca37, type: 3}
+  - {fileID: 21300000, guid: 9f8c5709c349dd245825b4b35eeeb8ca, type: 3}
   texts:
   - {fileID: 5544107269538975940}
   - {fileID: 5544107269490224089}
