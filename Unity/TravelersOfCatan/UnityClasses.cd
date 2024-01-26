@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="ColorChoiceControl">
+    <Position X="18" Y="1.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAACDAAICACAAAAQQAAgAAIAAAAAAAAAQAAAAQ=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\ColorChoiceControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GamePauseOverlay" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAACCAAIAiACAAAQAAAAAQAAABBAAIEAgABEA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\GamePauseOverlay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InventoryPopup" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAIAAAACARAAACAAABAQAAAAAAAAAgAAAhAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\InventoryPopup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerChoice" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QEQAAAAACCAAICACAAAAAEAAAAAAAAAAAAAAAIAAAAI=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\PlayerChoice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerNameInp" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAQAAABEDCAAAAACAAAAAAAAABAAABAAAAAYQREAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\PlayerNameInp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerUIOverlay">
+    <Position X="12.75" Y="12.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>EEcCUQAQgCAgAIAGAIAABAAgNoIAAQAAAAhAAAAAEYE=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\PlayerUIOverlay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PopupController" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAACCAAQAICAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\PopupController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SaveSelector">
+    <Position X="0.75" Y="19.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAhABAAACCAAACECAAAAAAAAAAAAAAAAAAABAQAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\SaveSelector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShopOverlay">
+    <Position X="14.75" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gBQAAJAEAiAIAAACgAAAAAAAAAAAAAAABAQAABAAQAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\ShopOverlay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TradingInterface">
+    <Position X="0.5" Y="10.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AARAQAGACDBASAAHAMBQBAAIAAAIADAACACACAQAgAQ=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\OverlayControllers\TradingInterface.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneTransition">
+    <Position X="11.5" Y="7.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>JAQAAAAAACAAAAAEAAAACgAAAQAgAAAAIAIAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\SceneTransition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AudioManager">
+    <Position X="4.25" Y="10.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAIAAGAAAAIABAAAIEQAAAoAAAAAAABEA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\AudioManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sound">
+    <Position X="0.5" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAIAAAAAAAAAAAAkAAAAAABAIAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\AudioManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardCollection">
+    <Position X="7.75" Y="7.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\CardCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConnectionAnimator" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAIAABAAAAAAAAAAQAAAABAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\ConnectionAnimator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuPage" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAKAAAAAAAAABAAAAAACAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\MenuPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NodeButton" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQACAAAAAgAEAAAAIAACAACAQAAAgAAEAAAAAIAAEA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\NodeButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerAnimator" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAADAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAQA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\PlayerAnimator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerSlot">
+    <Position X="8.25" Y="12.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAgIAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\PlayerSlot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayersSetup">
+    <Position X="18.25" Y="12.25" Width="3" />
+    <NestedTypes>
+      <Class Name="PlayersSetup.PlayerTemplate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\UnityInterface\UnityAnimations\PlayersSetup.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QwQAGAkAACAACAAEABBBNFAAACAQgGCAIAwAAEIAIQA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\PlayersSetup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerTradeSlot">
+    <Position X="8.25" Y="14.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\PlayerTradeSlot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SaveSlot">
+    <Position X="8.25" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAhAACAAAAAAAAAACAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\SaveSlot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextAnim">
+    <Position X="4.25" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAgAAEAAAAAAAAAAAAAAEBAAACAAAAIAgAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\TextAnim.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VictoryManager">
+    <Position X="11.5" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAACCAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UnityInterface\UnityAnimations\VictoryManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
