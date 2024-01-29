@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="FileHandler" Collapsed="true">
+    <Position X="9.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgKAAAAgAAEAAAEAAAIAAAAEAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\FileHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.JSON_manager" Collapsed="true">
+    <Position X="9.5" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAQAAAAAAAAAAAAAAOAAAAABAAAAAAAAAE=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.JSONWrapper&lt;T&gt;" Collapsed="true">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.ResourceWrapper" Collapsed="true">
+    <Position X="18.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.HexagonUnitWrapper" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.SettlementWrapper" Collapsed="true">
+    <Position X="7.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.AdjMatrixWrapper" Collapsed="true">
+    <Position X="14" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.AdjMatrixBottomWrapper" Collapsed="true">
+    <Position X="20.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.PlayerWrapper" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAIAAAAACAAAAEAIAAgQAAAAACAABAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.InventoryWrapper" Collapsed="true">
+    <Position X="9.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.AllNodesWrapper" Collapsed="true">
+    <Position X="16.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.NodeWrapper" Collapsed="true">
+    <Position X="23" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.BoardWrapper" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NEAGame.GameWrapper" Collapsed="true">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAEAAAIIAAAAAAAAAAAAAABAAIAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
