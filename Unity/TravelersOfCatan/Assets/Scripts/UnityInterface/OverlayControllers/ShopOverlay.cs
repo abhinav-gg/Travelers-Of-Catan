@@ -41,17 +41,24 @@ public class ShopOverlay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (purchase.interactable)
         {
-            OnCarousel(false);
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                OnCarousel(false);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                OnCarousel(true);
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            OnCarousel(true);
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             CloseGUI();
+        }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            OnPurchase();
         }
     }
 
@@ -78,12 +85,12 @@ public class ShopOverlay : MonoBehaviour
 
     public void OnCarousel(bool right)
     {
-        purchase.interactable = false;
         if (Buffer > 0)
         {
             return;
         }
-        Buffer = 1f;
+        Buffer = 1.2f;
+        purchase.interactable = false;
         AudioManager.i.Play("UIClick");
         if (right)
         {

@@ -72,7 +72,7 @@ public class GamePauseOverlay : MonoBehaviour
         UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
 
-    void CloseGUI()
+    public void CloseGUI()
     {
         //lean tween everything away
         LeanTween.scale(Save, new Vector3(), 0.5f).setEase(LeanTweenType.easeInCubic);

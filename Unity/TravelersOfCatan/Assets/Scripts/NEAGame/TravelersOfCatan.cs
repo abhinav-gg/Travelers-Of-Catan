@@ -87,12 +87,24 @@ namespace NEAGame
             foreach (PlayerWrapper pl in game.allPlayers)
             {
                 if (pl.isAI)
-                    gamePlayers.Add(new AI(pl));
+                    gamePlayers.Add(new AI(pl, this));
                 else
                     gamePlayers.Add(new Player(pl));
             }
 
             board = new Board(game.board);
+            foreach (NodeWrapper n in game.board.nodes._Values)
+            {
+                Node node = new Node(n);
+                foreach (Player pdl in gamePlayers)
+                {
+                    if (node.status.GetOccupant() == pdl.GetID())
+                    {
+                        pdl.addBuilding(node);
+                        break;
+                    }
+                }
+            }
             for (int i = 0; i < game.board.connections._Keys.Count; i++)
             {
                 Vector3 pos1 = new Vector3(game.board.connections._Keys[i].x, game.board.connections._Keys[i].y, game.board.connections._Keys[i].z);
@@ -114,19 +126,6 @@ namespace NEAGame
                 }
             }
 
-            foreach (NodeWrapper n in game.board.nodes._Values)
-            {
-                Node node = new Node(n);
-                foreach (Player pdl in gamePlayers)
-                {
-                    if (node.status.GetOccupant() == pdl.GetID())
-                    {
-                        pdl.addBuilding(node);
-                        break;
-                    }
-                }
-            }
-
             turn = game.turn;
             currentPlayer = gamePlayers[turn]; // moves are already saved
             if (HasWinner())
@@ -144,7 +143,7 @@ namespace NEAGame
         public void AddPlayer(string Name, string color="teal")
         {
             int i = gamePlayers.Count;
-            gamePlayers.Add(new Player(playerNumber: i + 1,playerName: Name, playerColor: color, origin: StartingCoords[i]));
+            gamePlayers.Add(new Player(playerNumber: i + 1,playerName: Name, color: color, origin: StartingCoords[i]));
         }
 
         public void AddAI(string Name, string color)
@@ -196,10 +195,6 @@ namespace NEAGame
                 {
 
                     current.addResource(new Resource(i), StartingResourceCount);
-                    if (current.playerName == "test")
-                    {
-                        current.addResource(new Resource(i), 1000);
-                    }
                 }
 
             }
@@ -240,7 +235,6 @@ namespace NEAGame
         public void DisplayAIMoves()
         {
             currentPlayer = gamePlayers[turn];
-            isAICalculation = false;
             Stack<GameAction> selectedMoves = ((AI)currentPlayer).selectedMoves;
             Stack<GameAction> firstUndo = ((AI)currentPlayer).currentMove;
             // reverse order of stack
@@ -252,9 +246,13 @@ namespace NEAGame
 
             while (firstUndo.Count > 0)
             {
-                UndoAction(firstUndo.Pop());
+                GameAction actToUndo = firstUndo.Pop();
+                UpdateCurrentPlayer(actToUndo.playerID);
+                UndoAction(actToUndo);
             }
 
+            UpdateCurrentPlayer(gamePlayers[turn].GetID()); // sets turn back to current player!
+            isAICalculation = false;
             while (temp.Count > 0)
             {
                 DoAction(temp.Pop());
@@ -633,6 +631,7 @@ namespace NEAGame
             board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Road", occupant: currentPlayer.GetID()));
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
+            currentPlayer.addVictoryPoints(victoryPointConvertor["Road"]);
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Road", other.position));
             ChargePlayer("Road");
             if (!isAICalculation)
@@ -650,6 +649,7 @@ namespace NEAGame
             board.UpdateConnection(currentPlayer.position, other.position, new Connection(status: "Wall", occupant: currentPlayer.GetID()));
             Connection con = board.GetConnection(currentPlayer.position, other.position);
             currentPlayer.addConnection(con);
+            currentPlayer.addVictoryPoints(victoryPointConvertor["Wall"]);
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Wall", other.position));
             ChargePlayer("Wall");
             if (!isAICalculation)
@@ -660,6 +660,7 @@ namespace NEAGame
         {
             board.GetNode(currentPlayer.position).status = new Building("Village", currentPlayer.GetID());
             currentPlayer.addBuilding(board.GetNode(currentPlayer.position));
+            currentPlayer.addVictoryPoints(victoryPointConvertor["Village"]);
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "Village"));
             ChargePlayer("Village");
             if (!isAICalculation)
@@ -669,6 +670,8 @@ namespace NEAGame
         {
             board.GetNode(currentPlayer.position).status.UpgradeVillage();
             currentPlayer.upgradeVillage(board.GetNode(currentPlayer.position));
+            currentPlayer.addVictoryPoints(victoryPointConvertor["City"]);
+
             actions.Push(new PlayerPurchase(currentPlayer.GetID(), currentPlayer.position, "City"));
             ChargePlayer("City");
             if (!isAICalculation)
@@ -722,8 +725,6 @@ namespace NEAGame
                 currentPlayer.moves -= distance[otherpos];
             }
             currentPlayer.position = otherpos.position;
-            if (currentPlayer.playerName == "test") { currentPlayer.moves = 3; } // for testing purposes
-
 
         }
 
@@ -863,6 +864,7 @@ namespace NEAGame
                     UserInterface.Assert(con.GetOccupant() == currentPlayer.GetID());
 
                     currentPlayer.removeConnection(con);
+                    currentPlayer.addVictoryPoints(-victoryPointConvertor[con.GetStatus()]);
                     board.UpdateConnection(purchase.position, purchase.otherpos, new Connection());
                     Refund(purchase.status);
                     
@@ -878,6 +880,7 @@ namespace NEAGame
                     UserInterface.Assert(board.GetNode(purchase.position).status.GetOccupant() == currentPlayer.GetID());
 
                     currentPlayer.removeBuilding(board.GetNode(currentPlayer.position));
+                    currentPlayer.addVictoryPoints(-victoryPointConvertor["Village"]);
                     board.GetNode(purchase.position).status = new Building();
                     Refund("Village");
 
@@ -894,6 +897,7 @@ namespace NEAGame
 
                     board.GetNode(purchase.position).status.DowngradeVillage();
                     currentPlayer.undoUpgradeVillage(board.GetNode(currentPlayer.position));
+                    currentPlayer.addVictoryPoints(-victoryPointConvertor["City"]);
                     Refund("City");
 
                     if (!isAICalculation)

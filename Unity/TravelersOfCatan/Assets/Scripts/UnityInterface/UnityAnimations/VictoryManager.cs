@@ -8,18 +8,7 @@ public class VictoryManager : MonoBehaviour
 
     public GameObject MainText;
     public GameObject[] VictoryImages;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+  
     public void Setup(string[] names)
     {
         string endText = "";

@@ -38,7 +38,7 @@ public class SceneTransition : MonoBehaviour
     IEnumerator AnimationSameScene()
     {
         GetComponentInChildren<Animator>().SetTrigger("Exit");
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.25f);
         GetComponentInChildren<Animator>().SetTrigger("Enter");
     }
 
@@ -92,7 +92,7 @@ public class SceneTransition : MonoBehaviour
     {
         AudioManager.i.Play("GetSetGo");
         GetComponentInChildren<Animator>().SetTrigger("Exit");
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(1.5f);
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
         while (!asyncLoad.isDone)
         {

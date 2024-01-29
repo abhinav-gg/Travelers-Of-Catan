@@ -734,7 +734,7 @@ GameObject:
   - component: {fileID: 1215330824}
   - component: {fileID: 1215330823}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1102,7 +1102,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 2
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -1169,14 +1169,14 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: a2766d8468cdaa44e8c2816eb6600e40, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: ed47a07dc2d9fb5469f877c49d4c2ed7, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 309a91e576b3a8742963709c7cae78bf, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: 5e5556d258576e54ebcb46a6cf80af42, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: e70ec6b818b57bf4d89ceb787627e18f, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 309a91e576b3a8742963709c7cae78bf, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: e55640c6d94822a4f81bc741ca9ae9ee, type: 3}
   m_TileMatrixArray:
@@ -1328,7 +1328,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1427964174
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1404,7 +1404,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1595881419
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1601,7 +1601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1655105756
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1677,7 +1677,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1822024633
 RectTransform:
   m_ObjectHideFlags: 0

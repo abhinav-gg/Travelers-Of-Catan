@@ -49,12 +49,12 @@ namespace NEAGame
         public string color;
         protected bool isAI = false; // gets changed by child AI class
 
-        public Player(int playerNumber, string playerName, Vector3 origin, string playerColor)
+        public Player(int playerNumber, string playerName, Vector3 origin, string color)
         {
             this.playerNumber = playerNumber;
             this.playerName = playerName;
             this.origin = origin;
-            this.color = playerColor;
+            this.color = color;
             victoryPoints = 0;
             position = origin;
         }
@@ -71,8 +71,9 @@ namespace NEAGame
             resources = new Dictionary<Resource, int>();
             foreach (var entry in player.resources._Keys.Zip(player.resources._Values, (k, v) => new { k, v }))
             {
-                this.resources.Add(new Resource(entry.k), entry.v);
+                resources.Add(new Resource(entry.k), entry.v);
             }
+            victoryPoints = player.victoryPoints;
         }
 
 
@@ -81,7 +82,7 @@ namespace NEAGame
             return isAI;
         }
 
-        private void addVictoryPoints(int points) // required for future features
+        public void addVictoryPoints(int points)
         {
             victoryPoints += points;
         }
@@ -94,15 +95,13 @@ namespace NEAGame
         public void addBuilding(Node building)
         {
             buildings.Add(building);
-            addVictoryPoints(TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
-
+            
         }
         public void removeBuilding(Node building)
         {
             if (buildings.Contains(building))
             {
                 buildings.Remove(building);
-                addVictoryPoints(-TravelersOfCatan.victoryPointConvertor[building.status.GetStatus()]);
             }
             else
             {
@@ -123,7 +122,6 @@ namespace NEAGame
         public void addConnection(Connection connection)
         {
             connections.Add(connection);
-            addVictoryPoints(TravelersOfCatan.victoryPointConvertor[connection.GetStatus()]);
         }
 
         public void removeConnection(Connection con)
@@ -131,7 +129,6 @@ namespace NEAGame
             if (connections.Contains(con))
             {
                 connections.Remove(con);
-                addVictoryPoints(-TravelersOfCatan.victoryPointConvertor[con.GetStatus()]);
             }
             else
             {

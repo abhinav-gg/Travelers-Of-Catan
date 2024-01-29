@@ -41,6 +41,7 @@ public class PopupController : MonoBehaviour
     {
         // do some tweening
         AudioManager.i.Play("UIClick");
+        AudioManager.i.Stop("Write");
         LeanTween.scale(Header, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeInElastic);
         LeanTween.scale(CancelBtn, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeInElastic);
         LeanTween.rotateAround(TextBG, Vector3.forward, 360f, 0.5f).setEase(LeanTweenType.easeInElastic);

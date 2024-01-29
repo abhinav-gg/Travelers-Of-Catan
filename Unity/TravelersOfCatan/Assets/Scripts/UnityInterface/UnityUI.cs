@@ -1,10 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using NEAGame;
- using System.Linq;
+using System.Linq;
 
 /// <summary>
 /// Class to interface between the game and the Unity UI
@@ -22,6 +21,7 @@ public partial class UnityUI : MonoBehaviour, UI
 
     private int selectedSave = -1;
     private bool isLoading = false;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -77,6 +77,7 @@ public partial class UnityUI : MonoBehaviour, UI
             });
             string[] namesInVictoryOrder = game.gamePlayers.OrderByDescending(p => p.getVictoryPoints()).Select(p => p.playerName).ToArray();
             FindObjectOfType<VictoryManager>().Setup(namesInVictoryOrder);
+            saveCurrentGame();
         }
     }
 

@@ -69,9 +69,9 @@ public partial class UnityUI
         {
             overlay.ShopInput.onClick.AddListener(OpenShop);
             overlay.UndoInput.onClick.AddListener(game.UndoPlayerAction);
-            overlay.PauseInput.onClick.AddListener(PauseButton);
             StartCoroutine(WaitForTurnToEnd());
         }
+        overlay.PauseInput.onClick.AddListener(PauseButton);
         overlay.ColorMe.color = textToColor(game.GetCurrentPlayer().color);
         overlay.PlayerScore.text = game.GetCurrentPlayer().getVictoryPoints().ToString();
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
@@ -97,9 +97,10 @@ public partial class UnityUI
             }
             yield return null;
         }
-        t.Interrupt();
+        FindAnyObjectByType<GamePauseOverlay>()?.CloseGUI(); // fixes a sepcific bug where the player can get the AI two turns by exiting while the ai is making its moves
+        t.Abort();
         game.DisplayAIMoves(); 
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2f);
         EndTurn();
 
     }
@@ -190,11 +191,11 @@ public partial class UnityUI
         FindAnyObjectByType<PlayerChoice>()?.CloseGUI();
         FindAnyObjectByType<PopupController>()?.CloseGUI();
 
-
-        Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
+        if (FindAnyObjectByType<PlayerUIOverlay>())
+            Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
     }
 
-    public ConnectionAnimator FindConnectionGameObject(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
+    public ConnectionAnimator FindConnectionGameObject(Node v1, Node v2)
     {
         Vector3 searchingpos = GetConnectionGlobalPos(v1, v2);
         foreach (ConnectionAnimator con in FindObjectsOfType<ConnectionAnimator>())
@@ -295,12 +296,12 @@ public partial class UnityUI
     {
         var x = current.position;
         var y = otherNode.position;
-        ConnectionAnimator conui = FindConnectionGameObject(x, y);
+        ConnectionAnimator conui = FindConnectionGameObject(current, otherNode);
         if (conui == null)
         {
             conui = Instantiate(ConnectionPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("ConnectionParent").transform).GetComponent<ConnectionAnimator>();
             conui.UpdateConnection(ConvertVector(x), ConvertVector(y));
-            conui.transform.position = GetConnectionGlobalPos(x, y);
+            conui.transform.position = GetConnectionGlobalPos(current, otherNode);
         }
         conui.connection = con;
         conui.UpdateDisplay();
@@ -347,7 +348,7 @@ public partial class UnityUI
     // Skill A: Use of Complex Mathematical Model
     // Used to represent and convert hexagonal grid of nodes between cubic coordinates and odd row coordinates.
 
-    public Vector3 GetConnectionGlobalPos(System.Numerics.Vector3 v1, System.Numerics.Vector3 v2)
+    public Vector3 GetConnectionGlobalPos(Node v1, Node v2)
     {
         HashSet<System.Numerics.Vector3> starthexes = new HashSet<System.Numerics.Vector3>();
         HashSet<System.Numerics.Vector3> endhexes = new HashSet<System.Numerics.Vector3>();
@@ -355,11 +356,11 @@ public partial class UnityUI
         float totalY = 0f;
         float Z = 0f;
 
-        foreach (var vec in Interface.game.board.GetNode(v1).GetHexNeighbours())
+        foreach (var vec in v1.GetHexNeighbours())
         {
             starthexes.Add(vec);
         }
-        foreach (var vec in Interface.game.board.GetNode(v2).GetHexNeighbours())
+        foreach (var vec in v2.GetHexNeighbours())
         {
             endhexes.Add(vec);
         }

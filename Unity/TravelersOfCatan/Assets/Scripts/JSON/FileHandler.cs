@@ -13,7 +13,7 @@ public class FileHandler
     private string filepath = "";
     public bool IsMade;
     private bool useEncryption = false;
-    // practically speaking, this is not easily crackable, but it's not perfect as the same key is used for all files
+    // practically speaking, this is not easily crackable, but it's not perfect as the same key is repeated
     private readonly string encryptionCodeWord = "SomeRandomStringKeyToConvertIntoBinaryForXOR->aiuaeogmk3GJEK834FEJSAK->";
 
     public FileHandler(string filepath)

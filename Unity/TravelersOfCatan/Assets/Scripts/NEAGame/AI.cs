@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Collections;
 using System.Diagnostics.Contracts;
 
 namespace NEAGame
@@ -26,15 +23,16 @@ namespace NEAGame
         private readonly int MaxDepth = 4;
         TravelersOfCatan gameRef;
 
-        public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, playerColor: playerColor, origin:home)
+        public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, color: playerColor, origin:home)
         {
             isAI = true;
             gameRef = reference;
         }
 
-        public AI(PlayerWrapper player) : base(player)
+        public AI(PlayerWrapper player, TravelersOfCatan reference) : base(player)
         {
             isAI = true;
+            gameRef = reference;
         }
 
         public int StaticEval()
