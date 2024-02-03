@@ -25,6 +25,7 @@ public class ShopOverlay : MonoBehaviour
 
     private float Buffer = 0.0f;
 
+    // Start is called before the first frame update
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();
@@ -62,18 +63,22 @@ public class ShopOverlay : MonoBehaviour
         }
     }
 
+    // FixedUpdate is called once per frame
     private void FixedUpdate()
     {
         Buffer = Mathf.Max(0, Buffer-Time.deltaTime);
 
     }
 
+    // Attempt to purchase the item
     void OnPurchase()
     {
         UnityUI.Interface.AttemptPurchase(shoppingOrder[currentID]);
         CloseGUI();
     }
 
+
+    // Close the GUI
     public void CloseGUI()
     {
 
@@ -82,7 +87,7 @@ public class ShopOverlay : MonoBehaviour
         
     }
 
-
+    // Moves to the next item in the carousel
     public void OnCarousel(bool right)
     {
         if (Buffer > 0)
@@ -129,6 +134,7 @@ public class ShopOverlay : MonoBehaviour
 
     }
 
+    // Update the display counts
     void UpdateDisplayCounts()
     {
         bool canBuy = true;

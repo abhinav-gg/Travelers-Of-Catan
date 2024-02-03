@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using NEAGame;
 using TMPro;
 
+// Class that controls the player choice overlay
 public class PlayerChoice : MonoBehaviour
 {
     public GameObject ParentObj;
@@ -13,15 +14,14 @@ public class PlayerChoice : MonoBehaviour
 
     List<Player> options;
     bool found = false;
-    // Start is called before the first frame update
-
+    
+    // Close the GUI
     public void CloseGUI()
     {
-
         Destroy(gameObject);
     }
 
-
+    // Start is called before the first frame update
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();
@@ -38,13 +38,14 @@ public class PlayerChoice : MonoBehaviour
         
     }
 
-
+    // Setup the GUI with the list of players
     public void Setup(List<Player> players)
     {
         options = players;
         StartCoroutine(AddPlayers());
     }
 
+    // Add players to the GUI
     IEnumerator AddPlayers()
     {
         foreach (Player p in options)
@@ -58,6 +59,7 @@ public class PlayerChoice : MonoBehaviour
 
     }
 
+    // Called when a player is selected
     void Selected(Player pl)
     {
         AudioManager.i.Play("UIClick");

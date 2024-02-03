@@ -5,17 +5,15 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// Class to control a card for the collection and trading of resources
-/// <br/> Used for animation only
+/// Animates a card on the screen for the collection and trading of resources
 /// </summary>
 public class CardCollection : MonoBehaviour
 {
 
     public List<Sprite> cards = new List<Sprite>();
    
-    // Start is called before the first frame update
 
-
+    // Method to set the card to a specific resource and move it to a location on screen as an animation for collection and trading
     public void SetCard(int resource, Vector3 Dest)
     {
         GetComponent<SpriteRenderer>().sprite = cards[resource];

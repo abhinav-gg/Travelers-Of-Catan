@@ -23,12 +23,14 @@ namespace NEAGame
         private readonly int MaxDepth = 4;
         TravelersOfCatan gameRef;
 
+        // Constructor for AI that creates a new player
         public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, color: playerColor, origin:home)
         {
             isAI = true;
             gameRef = reference;
         }
 
+        // Constructor for AI that loads a player from a save file
         public AI(PlayerWrapper player, TravelersOfCatan reference) : base(player)
         {
             isAI = true;
@@ -62,6 +64,7 @@ namespace NEAGame
 
             return score;
         }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// Runs the Best Reply Search algorithm on the current game position to attempt to determine the best move to make.

@@ -28,6 +28,7 @@ public class PlayerNameInp : MonoBehaviour
     public GameObject doneBox;
     int NameMaxLength = 10;
 
+    // Start is called before the first frame update
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();
@@ -58,6 +59,7 @@ public class PlayerNameInp : MonoBehaviour
 
     }
 
+    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
@@ -70,7 +72,7 @@ public class PlayerNameInp : MonoBehaviour
         }
     }
 
-
+    // Method to close the GUI
     public void CloseGUI()
     {
 
@@ -83,6 +85,7 @@ public class PlayerNameInp : MonoBehaviour
         LeanTween.rotateAround(doneBox, Vector3.forward, 360, 1f).setEase(LeanTweenType.easeInSine).setDelay(0.25f);
     }
 
+    // Method to sanitize the player name
     public void TextChange()
     {
         // Func called from Unity Input Field UI element

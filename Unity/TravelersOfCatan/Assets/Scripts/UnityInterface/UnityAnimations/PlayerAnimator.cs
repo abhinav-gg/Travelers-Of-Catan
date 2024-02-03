@@ -14,6 +14,8 @@ public class PlayerAnimator : MonoBehaviour
     public GameObject indicator;
 
     Vector3 indpos;
+
+    // Start is called before the first frame update
     void Start()
     {
         // get local pos of indicator
@@ -30,7 +32,7 @@ public class PlayerAnimator : MonoBehaviour
         }
         else if (!isCurrentPlayer)
         {
-              // stop bobbing the indicator
+            // stop bobbing the indicator
             LeanTween.cancel(indicator);
             indicator.transform.localPosition = indpos;
         }

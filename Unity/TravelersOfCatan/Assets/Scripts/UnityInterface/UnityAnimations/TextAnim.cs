@@ -27,7 +27,7 @@ public class TextAnim : MonoBehaviour
         endText = _textMeshPro.text;
     }
 
-
+    // Method to animate text
     private IEnumerator TextVisible()
     {
         yield return 0;

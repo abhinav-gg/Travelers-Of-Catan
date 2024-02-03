@@ -12,9 +12,7 @@ public class ConnectionAnimator : MonoBehaviour
     public GameObject Road;
     public GameObject Wall;
 
-    // Start is called before the first frame update
-
-
+    // Use this for initialization
     public void UpdateConnection(Vector3 n1, Vector3 n2)
     {
 
@@ -40,7 +38,7 @@ public class ConnectionAnimator : MonoBehaviour
 
     }
 
-
+    // Method to update the display of the connection
     public void UpdateDisplay()
     {
         switch (connection.GetStatus())

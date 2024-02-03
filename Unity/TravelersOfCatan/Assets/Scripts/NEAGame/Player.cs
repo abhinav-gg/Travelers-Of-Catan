@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 
 namespace NEAGame
 {
     
-
+    /// <summary>
+    /// Class that represents a player in the game
+    /// </summary>
     public class Player
     {
         // Unity static color options
@@ -49,6 +48,7 @@ namespace NEAGame
         public string color;
         protected bool isAI = false; // gets changed by child AI class
 
+        // constructor for player
         public Player(int playerNumber, string playerName, Vector3 origin, string color)
         {
             this.playerNumber = playerNumber;

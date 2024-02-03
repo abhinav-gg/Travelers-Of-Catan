@@ -13,6 +13,10 @@ namespace NEAGame
         public readonly string[] SaveFiles = { "Save1", "Save2", "Save3", "Save4" };
         int Save;
         FileHandler fileHandler;
+
+        /// <summary>
+        /// Constructor for the JSON manager that takes in the save file number
+        /// </summary>
         public JSON_manager(int Save)
         {
             this.Save = Save;
@@ -20,11 +24,17 @@ namespace NEAGame
             fileHandler = new FileHandler(fullpath);
         }
 
+        /// <summary>
+        /// Checking if the save file exists
+        /// </summary>
         public bool DoesGameExist()
         {
             return fileHandler.IsMade;
         }
 
+        /// <summary>
+        /// Clearing the save file
+        /// </summary>
         public void ClearSave()
         {
             fileHandler.Delete();
@@ -41,6 +51,10 @@ namespace NEAGame
             fileHandler.Save(json);
         }
 
+
+        /// <summary>
+        /// Loading the game from a file
+        /// </summary>
         public GameWrapper LoadGame()
         {
             
@@ -54,8 +68,9 @@ namespace NEAGame
     }
 
 
-
-
+    /// <summary>
+    /// Wrapper class for the game and its elements in order to serialize them to JSON
+    /// </summary>
     public abstract class JSONWrapper<T> where T : JSONWrapper<T>, new()
     {
 

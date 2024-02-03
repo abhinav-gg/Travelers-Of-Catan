@@ -1,11 +1,5 @@
-using System.Collections;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Audio;
-using System.Threading;
-using Unity.VisualScripting;
 
 /// <summary>
 /// Controls the audio for the game
@@ -19,12 +13,11 @@ public class AudioManager : MonoBehaviour
 
     public Sound[] sounds;
     public Sound[] BackgroundMusic;
-
-    // add inspector range to this from 0 to 1
     [Range(0f, 1f)] public float VolumeModifier = 1f;
     private bool mutedSFX = false;
     private bool mutedBG = false;
 
+    // Awake is called before Start
     void Awake()
     {
 
@@ -60,18 +53,20 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // Start is called before the first frame update
     private void Start()
     {
         Sound s = BackgroundMusic[0];
         s.source.Play();
     }
 
+    // Update is called once per frame
     void Update()
     {
         AudioListener.volume = VolumeModifier;
     }
 
-
+    // Plays the sound with the given name
     public void Play(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
@@ -87,6 +82,7 @@ public class AudioManager : MonoBehaviour
         s.source.Play();
     }
 
+    // Stops the sound with the given name
     public void Stop(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
@@ -97,6 +93,7 @@ public class AudioManager : MonoBehaviour
         s.source.Stop();
     }
 
+    // Stops all sounds
     public void StopAll()
     {
         foreach (Sound s in sounds)
@@ -109,12 +106,14 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // Adjusts the game volume
     public void ChangeMasterVolume(float vol)
     {
         VolumeModifier = vol;
         
     }
 
+    // Toggles the mute for SFX or background music depending on the bool parameter
     public void ToggleMute(bool Background)
     {
         if (Background)
@@ -140,6 +139,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // Returns whether the game is muted or not
     public bool isMuted(bool Background)
     {
         if (Background)
@@ -155,6 +155,7 @@ public class AudioManager : MonoBehaviour
 
 }
 
+// Class that holds the information for a sound
 [System.Serializable]
 public class Sound
 {

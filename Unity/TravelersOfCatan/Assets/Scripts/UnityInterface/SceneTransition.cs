@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// Class to control the scene transition animation
 public class SceneTransition : MonoBehaviour
 {
     public static SceneTransition i { get; private set; }
@@ -47,7 +47,7 @@ public class SceneTransition : MonoBehaviour
         StartCoroutine(WaitForNewScene());
     }
 
-
+    // Wait for the new scene to load before setting the canvas to the new scene
     IEnumerator WaitForNewScene()
     {
         yield return new WaitForEndOfFrame();
@@ -62,7 +62,7 @@ public class SceneTransition : MonoBehaviour
 
     }
 
-
+    // Send the player to the scene with the given name
     public void SendToScene(string sceneName)
     {
         if (sceneName == "Game")

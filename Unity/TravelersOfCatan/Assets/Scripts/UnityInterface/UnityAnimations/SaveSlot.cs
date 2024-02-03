@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+// Class to control a save slot in the save menu
 public class SaveSlot : MonoBehaviour
 {
 
