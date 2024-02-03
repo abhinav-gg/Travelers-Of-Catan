@@ -42,17 +42,16 @@ public partial class UnityUI
     NodeButton SelectedNode;
     IEnumerator coroutine;
 
-
+    // Update is called once per frame
     void Update()
     {
         if (TimerActive)
         {
-            
             Timer = Mathf.Clamp(Timer - Time.deltaTime, 0, int.MaxValue);
-        }
+        } // updates the in game timer if it is active
     }
     
-
+    // interface method to begin the new user's turn
     void UI.BeginTurn(float time)
     {
         AudioManager.i.Play("Success");
@@ -76,16 +75,16 @@ public partial class UnityUI
         overlay.PlayerScore.text = game.GetCurrentPlayer().getVictoryPoints().ToString();
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
+        // setup the player's main overlay
 
         // set camera position to player position on board!
         LeanTween.cancel(Camera.main.gameObject);
         LeanTween.move(Camera.main.gameObject, GetPlayerGameObject(game.GetCurrentPlayer().GetID()).transform.position + new Vector3(0f, 0f, -10f), 0.3f).setEase(LeanTweenType.easeInSine);
-
     }
 
+    // method to begin the AI's turn
     IEnumerator BeginAI()
     {
-
         // call the AI BRS in a thread and wait for it to finish
         Thread t = new Thread(() => ((AI)game.GetCurrentPlayer()).BRS());
         t.Start();
@@ -102,10 +101,9 @@ public partial class UnityUI
         game.DisplayAIMoves(); 
         yield return new WaitForSeconds(2f);
         EndTurn();
-
     }
 
-
+    // method to setup the game scene
     void SetupGameScene()
     {
         gridLayout = FindObjectOfType<GridLayout>();
@@ -113,6 +111,7 @@ public partial class UnityUI
         nodes = new List<NodeButton>();
     }
 
+    // async method to count down until the player is out of time for their turn
     IEnumerator WaitForTurnToEnd()
     {
         bool startedCD = false;
@@ -128,13 +127,14 @@ public partial class UnityUI
         EndTurn();
     }
 
+    // onclick method to pause the game
     public void PauseButton()
     {
         TimerActive = false;
         StartCoroutine(GoToPause());
-        
     }
 
+    // method to load the pause overlay
     IEnumerator GoToPause()
     {
         SceneTransition.i.PlayAnimation();
@@ -142,15 +142,14 @@ public partial class UnityUI
         Instantiate(PauseSettings); 
     }
 
-
+    // function called when the player wishes to move 
     public void OnPlayerMove()
     {
-        
         StopAllPlayerCoroutines();
-        //anim.MoveButtonPlay();
         game.attemptPlayerMove();
     }
 
+    // method to get the time in a nice string format
     public string GetTime()
     {
         // take float time of seconds and convert to string of minutes and seconds
@@ -160,11 +159,13 @@ public partial class UnityUI
         return niceTime;
     }
 
+    // interface method to get the time in seconds
     float UI.GetTimer()
     {
         return Timer;
     }
 
+    // method for ending the player's turn
     public void EndTurn()
     {
         AudioManager.i.Stop("Countdown");
@@ -179,10 +180,9 @@ public partial class UnityUI
         // Close all GUIS
         CloseAllGameUIs();
         Interface.game.EndTurn();
-        
-        
     }
 
+    // method to close all game UIs
     public void CloseAllGameUIs()
     {
         FindAnyObjectByType<InventoryPopup>()?.CloseGUI();
@@ -195,6 +195,7 @@ public partial class UnityUI
             Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
     }
 
+    // method to find the connection gameobject between two nodes
     public ConnectionAnimator FindConnectionGameObject(Node v1, Node v2)
     {
         Vector3 searchingpos = GetConnectionGlobalPos(v1, v2);
@@ -208,11 +209,13 @@ public partial class UnityUI
         return null;
     }
 
+    // interface method to begin the game
     void UI.BeginGame(float timeleft)
     {
         StartCoroutine(WaitThenLoad(timeleft));
     }
 
+    // method to wait for the game to load before starting the first player's turn
     IEnumerator WaitThenLoad(float timeleft)
     {
         while (game == null)
@@ -226,6 +229,7 @@ public partial class UnityUI
         game.StartTurn(timeleft); 
     }
 
+    // method to initialise the game board on the screen
     public void DisplayBoard()
     {
        
@@ -250,16 +254,14 @@ public partial class UnityUI
             nodeui.UpdateSettlement();
 
             nodes.Add(nodeui);
-
         }
-
     }
 
+    // method to initialise the players on the screen
     public void DisplayPlayers()
     {
         foreach (Player pl in game.gamePlayers)
         {
-
             PlayerAnimator playUI = Instantiate(PlayerPrefab, new Vector3(), Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParent").transform).GetComponent<PlayerAnimator>();
             playUI.player = pl;
             playUI.gameObject.name = pl.playerName;
@@ -269,12 +271,12 @@ public partial class UnityUI
         }
     }
 
+    // interface method to animate the player along a path of nodes
     void UI.UpdatePlayer(Stack<Node> path)
     {
         StartCoroutine(MovePlayerAlongPath(path));
     }
-
-    public IEnumerator MovePlayerAlongPath(Stack<Node> path)
+    IEnumerator MovePlayerAlongPath(Stack<Node> path)
     {
         overlay.FinishMove();
         while (path.Count > 0)
@@ -287,11 +289,9 @@ public partial class UnityUI
             yield return new WaitForSeconds(0.55f);
         }
         yield return null;
-
     }
 
-
-
+    // interface method to update the connection between two nodes
     void UI.UpdateConnection(Node otherNode, Node current, Connection con)
     {
         var x = current.position;
@@ -307,7 +307,8 @@ public partial class UnityUI
         conui.UpdateDisplay();
         
     }
-    // check references...
+
+    // method to get the color of the specified player
     public Color GetPlayerColor(int playerID)
     {
         foreach (Player pdl in game.gamePlayers)
@@ -321,6 +322,7 @@ public partial class UnityUI
         return Color.clear;
     }
 
+    // interface method to update the settlement on a node
     void UI.UpdateSettlement(Node otherNode)
     {
         var x = otherNode.position;
@@ -328,6 +330,7 @@ public partial class UnityUI
         nodeui.UpdateSettlement();
     }
 
+    // method to get the player gameobject for the specified player
     public PlayerAnimator GetPlayerGameObject(int playerID = -1)
     {
         if (playerID == -1)
@@ -348,6 +351,7 @@ public partial class UnityUI
     // Skill A: Use of Complex Mathematical Model
     // Used to represent and convert hexagonal grid of nodes between cubic coordinates and odd row coordinates.
 
+    // get the global position of a connection between two nodes
     public Vector3 GetConnectionGlobalPos(Node v1, Node v2)
     {
         HashSet<System.Numerics.Vector3> starthexes = new HashSet<System.Numerics.Vector3>();
@@ -371,13 +375,11 @@ public partial class UnityUI
             totalX += center.x;
             totalY += center.y;
             Z = center.z;
-
         }
-
         return new Vector3(totalX / 2, totalY / 2, Z);
-
     }
 
+    // get the global position of a node
     public Vector3 GetNodeGlobalPos(Node node)
     {
         Vector3 center;
@@ -397,18 +399,20 @@ public partial class UnityUI
         return new Vector3(avgX, avgY, Z);
     }
 
+    // Get the global position of a hexagonal grid cell
     public Vector3 GetHexGlobalPos(Vector3 cellPos)
     {
         Vector3Int Pos = new Vector3Int((int)cellPos.x, (int)cellPos.y, 0);
         return gridLayout.CellToWorld(Pos);
     }
 
+    // convert a System.Numerics.Vector3 to a Unity Vector3
     public static Vector3 ConvertVector(System.Numerics.Vector3 vec)
     {
         return new Vector3(vec.X, vec.Y, vec.Z);
     }
 
-
+    // convert the cubic coordinates of the hexagonal grid used in game calculations to odd row coordinates used in Unity
     public static Vector3Int CubicToOddRow(System.Numerics.Vector3 vec)
     {
         int col = (int)(vec.Z + ((vec.X - ((int)vec.X & 1)) / 2));
@@ -418,6 +422,7 @@ public partial class UnityUI
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // convert a string to a color
     public static Color textToColor(string color)
     {
         switch (color)
@@ -443,6 +448,7 @@ public partial class UnityUI
         }
     }
 
+    // method to get the node gameobject at the specified position
     public NodeButton FindNodeGameObject(Vector3 pos)
     {
         foreach (NodeButton n in nodes)
@@ -456,28 +462,11 @@ public partial class UnityUI
         return null;
     }
 
-
-    void UI.GetUserNodeChoice(Node[] options, Action<Node> callback)
-    {
-
-        // Add LeanTween Animation to the selected nodes here!
-
-        SelectedNode = null;
-        foreach (Node choice in options)
-        {
-            NodeButton node = FindNodeGameObject(ConvertVector(choice.position));
-            node.EnableButton();
-        }
-        coroutine = WaitForNodeChoice(callback);
-        StartCoroutine(coroutine);
-    }
-
+    // interface method to show a resource being given to the player
     void UI.ShowResource(System.Numerics.Vector3 u, NEAGame.Resource resource, System.Numerics.Vector3 endDest)
     {
-
         StartCoroutine(AnimateResource(u, resource, endDest));
     }
-
     IEnumerator AnimateResource(System.Numerics.Vector3 u, NEAGame.Resource resource, System.Numerics.Vector3 Dest)
     {
         Vector3 spawnpos;
@@ -497,9 +486,21 @@ public partial class UnityUI
         card.SetCard(resource.GetHashCode(), destination);
     }
 
+    // interface method to get the user's choice of node
+    void UI.GetUserNodeChoice(Node[] options, Action<Node> callback)
+    {
+        SelectedNode = null;
+        foreach (Node choice in options)
+        {
+            NodeButton node = FindNodeGameObject(ConvertVector(choice.position));
+            node.EnableButton();
+        }
+        coroutine = WaitForNodeChoice(callback);
+        StartCoroutine(coroutine);
+    }
+    // method to wait for the user to choose a node
     IEnumerator WaitForNodeChoice(Action<Node> callback) // pass in function for moving vs buying
     {
-
         while (SelectedNode is null)
         {
             yield return new WaitForSeconds(0.01f);
@@ -507,7 +508,7 @@ public partial class UnityUI
         callback(SelectedNode.node);
         SelectedNode = null;
     }
-
+    // method to handle the user clicking on a node option
     public void OnNodeClick(NodeButton node)
     {
         SelectedNode = node;
@@ -517,6 +518,7 @@ public partial class UnityUI
         }
     }
 
+    // method to stop all player coroutines
     public void StopAllPlayerCoroutines()
     {
         foreach (NodeButton n in nodes)
@@ -531,10 +533,7 @@ public partial class UnityUI
 
     }
 
-    /// <summary>
-    /// Inventory handler
-    /// </summary>
-
+    // method to display the inventory of the current player
     public void OpenInventory()
     {
         StopAllPlayerCoroutines();
@@ -546,7 +545,7 @@ public partial class UnityUI
 
     } 
     
-    
+    // method to open the player selection overlay for trading
     public IEnumerator OpenTrade()
     {
         StopAllPlayerCoroutines();
@@ -565,13 +564,14 @@ public partial class UnityUI
         yield return null;
     }
 
-
+    // method called when the player selects a partner to trade with
     public void SelectPartner(Player pl)
     {
         
         StartCoroutine(DisplayTrade(pl));
     }
 
+    // function to display the trade overlay between players
     IEnumerator DisplayTrade(Player pl)
     {
         SceneTransition.i.PlayAnimation();
@@ -581,8 +581,7 @@ public partial class UnityUI
         yield return null;
     }
 
-
-
+    // function to register a trade between players
     public IEnumerator RegisterTrade(Dictionary<int, int> trades, Player other)
     {
         yield return new WaitForSeconds(1.25f);
@@ -596,19 +595,20 @@ public partial class UnityUI
 
 
 
-    /// <summary>
-    /// Shopping handler
-    /// </summary
-
+    // method to handle the shop event
     public void OpenShop()
     {
         StopAllPlayerCoroutines();
-
         StartCoroutine(DisplayShop());
+    }
+    IEnumerator DisplayShop()
+    {
+        ShopOverlay sv = Instantiate(shoppingPopup).GetComponent<ShopOverlay>();
+        yield return new WaitForSeconds(0.1f);
 
     }
 
-
+    // method to attempt a purchase from the shop
     public void AttemptPurchase(string name)
     {
         switch (name)
@@ -631,14 +631,7 @@ public partial class UnityUI
         }
     }
 
-    IEnumerator DisplayShop()
-    {
-        ShopOverlay sv = Instantiate(shoppingPopup).GetComponent<ShopOverlay>();
-        yield return new WaitForSeconds(0.1f);
-
-    }
-
-
+    // interface method to handle the end of the game
     void UI.HandleWinner(Player winner)
     {
         AudioManager.i.Stop("Countdown"); // in case they won in the last few seconds of the turn

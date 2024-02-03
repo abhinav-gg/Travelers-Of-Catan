@@ -26,13 +26,7 @@ public class NodeButton : MonoBehaviour
         btn.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
+    // method to enable the current node button
     public void EnableButton()
     {
         btn.gameObject.SetActive(true);
@@ -41,23 +35,24 @@ public class NodeButton : MonoBehaviour
         btn.interactable = true;
     }
 
+    // method to disable the current node button
     public void DisableButton()
     {
         btn.interactable = false;
         btn.gameObject.SetActive(false);
     }
 
-
-
+    // method to handle the click event on the node button
     public void OnClick()
     {
         UnityUI.Interface.OnNodeClick(this);
     }
 
-
+    // method to update the settlement beneath the node button
     public void UpdateSettlement()
     {
 
+        var sc = img.transform.localScale;
         img.enabled = true;
         flag.SetActive(true);
         if (node.status.GetStatus() == "Village")
@@ -72,13 +67,13 @@ public class NodeButton : MonoBehaviour
         }
         else
         {
-            flag.SetActive(false);
-            img.enabled = false;
+            LeanTween.scale(img.gameObject, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeInOutElastic).setOnComplete(() =>
+            {
+                flag.SetActive(false);
+                img.enabled = false;
+            });
         }
-        var sc = img.transform.localScale;
         img.transform.localScale = new Vector3(0, 0, 0);
         LeanTween.scale(img.gameObject, sc, 0.75f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.5f);
     }
-
-
 }

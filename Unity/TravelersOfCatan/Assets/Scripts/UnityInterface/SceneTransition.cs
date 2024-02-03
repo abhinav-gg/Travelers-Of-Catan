@@ -7,6 +7,7 @@ public class SceneTransition : MonoBehaviour
 {
     public static SceneTransition i { get; private set; }
     public Animator animator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,17 +25,13 @@ public class SceneTransition : MonoBehaviour
         SceneManager.sceneLoaded += (scene, mode) => OnNewScene();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    // public method to play the scene transition animation
     public void PlayAnimation()
     {
         StartCoroutine(AnimationSameScene());
     }
 
+    // Coroutine to play the scene transition animation
     IEnumerator AnimationSameScene()
     {
         GetComponentInChildren<Animator>().SetTrigger("Exit");
@@ -42,6 +39,7 @@ public class SceneTransition : MonoBehaviour
         GetComponentInChildren<Animator>().SetTrigger("Enter");
     }
 
+    // Method to set the canvas to the new scene
     void OnNewScene()
     {
         StartCoroutine(WaitForNewScene());
@@ -75,7 +73,7 @@ public class SceneTransition : MonoBehaviour
         }
     }
 
-
+    // Coroutine to load the scene with the given name
     IEnumerator LoadScene(string sceneName)
     {
         GetComponentInChildren<Animator>().SetTrigger("Exit");
@@ -87,7 +85,7 @@ public class SceneTransition : MonoBehaviour
         }
     }
 
-
+    // Coroutine to load the game scene
     IEnumerator LoadGameScene()
     {
         AudioManager.i.Play("GetSetGo");

@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.IO;
 
 /// <summary>
 /// Class to handle the saving and loading of files from Unity's persistent data path
-/// <Br/>Credit to https://www.youtube.com/watch?v=KZft1p8t2lQ for the tutorial on how to do 
+/// <Br/>Credit to https://www.youtube.com/watch?v=KZft1p8t2lQ for the tutorial on implementing this concept 
 /// </summary>
 public class FileHandler 
 {
@@ -35,7 +33,7 @@ public class FileHandler
         }
     }
 
-
+    // method to find the suffix of the save file
     string FindSuffix()
     {
         if (File.Exists(filepath + ".json"))
@@ -52,6 +50,7 @@ public class FileHandler
         }
     }
 
+    // method to delete the file
     public void Delete()
     {
         if (IsMade)
@@ -61,7 +60,7 @@ public class FileHandler
         }
     }
 
-
+    // function to return the data from the file
     public string Load()
     {
 
@@ -94,9 +93,9 @@ public class FileHandler
         return dataToLoad;
     }
 
+    // method to save the data to the file
     public void Save(string data)
     {
-
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filepath));
@@ -121,12 +120,9 @@ public class FileHandler
         }
     }
 
-    /// <summary>
-    /// Perform XOR encryption/decryption on the data
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public string EncryptDecrypt(string data) // Credit to https://stackoverflow.com/questions/2532668/help-me-with-xor-encryption for the XOR encryption
+    // Perform XOR encryption/decryption on the data
+    // Credit to https://stackoverflow.com/questions/2532668/help-me-with-xor-encryption for the XOR encryption
+    public string EncryptDecrypt(string data) 
     {
         string key = encryptionCodeWord;
         int dataLen = data.Length;

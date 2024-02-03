@@ -34,11 +34,8 @@ namespace NEAGame
             { new Resource(5), 0 }
         };
 
-        /// <summary>
-        private List<Node> buildings = new List<Node>(); //
-        private List<Connection> connections = new List<Connection>(); //
-        /// Unused for now however may be useful for future features
-        /// </summary>
+        private List<Node> buildings = new List<Node>(); 
+        private List<Connection> connections = new List<Connection>();
 
         protected int playerNumber; // useful as a UID for the player allowing the same name in testing
         public readonly string playerName;
@@ -59,7 +56,7 @@ namespace NEAGame
             position = origin;
         }
 
-
+        // constructor for player that loads from a save file
         public Player(PlayerWrapper player)
         {
             playerNumber = player.playerNumber;
@@ -77,26 +74,31 @@ namespace NEAGame
         }
 
 
+        // checks if the player is an AI
         public bool isPlayerAI()
         {
             return isAI;
         }
 
+        // adds victory points to the player
         public void addVictoryPoints(int points)
         {
             victoryPoints += points;
         }
 
+        // gets the player's ID
         public int GetID()
         {
             return playerNumber;
         }
 
+        // adds a building to the player's list of buildings
         public void addBuilding(Node building)
         {
             buildings.Add(building);
-            
         }
+
+        // removes a building from the player's list of buildings
         public void removeBuilding(Node building)
         {
             if (buildings.Contains(building))
@@ -109,21 +111,25 @@ namespace NEAGame
             }
         }
 
+        // gets the player's list of buildings
         public List<Node> GetBuildings()
         {
             return buildings;
         }
 
+        // gets the player's original position
         public Vector3 GetCapital()
         {
             return origin;
         }
 
+        // adds a connection to the player's list of connections
         public void addConnection(Connection connection)
         {
             connections.Add(connection);
         }
 
+        // removes a connection from the player's list of connections
         public void removeConnection(Connection con)
         {
             if (connections.Contains(con))
@@ -136,40 +142,42 @@ namespace NEAGame
             }
         }
 
+        // gets the player's list of connections
         public int getVictoryPoints()
         {
             return victoryPoints;
         }
 
+        // get the number of moves the player has left
         public int getMovesLeft()
         {
             return moves;
         }
+
+        // adds a resource to the player's list of resources
         public void addResource(Resource resource, int amount = 1)
         {
             resources[resource] += amount;
         }
 
-
+        // removes a resource from the player's list of resources
         public void removeResource(Resource resource, int amount = 1)
         {
             resources[resource] -= amount;
         }
 
+        // gets the player's inventory
         public Dictionary<Resource, int> getResources()
         {
             return resources;
         }
 
+        // overrides the ToString method to return the player's name
         public override string ToString()
         {
             return playerName;
         }
 
-        public void Trade()
-        {
-
-        }
 
         /// <summary>
         /// Used to calculate the wealth of a player for the AI static state evaluation function
@@ -187,11 +195,13 @@ namespace NEAGame
             return wealth;
         }
 
+        // upgrades a village to a city
         public void upgradeVillage(Node node)
         {
             addVictoryPoints(TravelersOfCatan.victoryPointConvertor["City"]);
         }
 
+        // undoes the upgrade of a village to a city
         public void undoUpgradeVillage(Node node)
         {
             addVictoryPoints(-TravelersOfCatan.victoryPointConvertor["City"]);

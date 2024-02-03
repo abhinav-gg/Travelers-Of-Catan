@@ -14,9 +14,7 @@ namespace NEAGame
         int Save;
         FileHandler fileHandler;
 
-        /// <summary>
-        /// Constructor for the JSON manager that takes in the save file number
-        /// </summary>
+        // Constructor for the JSON manager that takes in the save file number
         public JSON_manager(int Save)
         {
             this.Save = Save;
@@ -24,25 +22,19 @@ namespace NEAGame
             fileHandler = new FileHandler(fullpath);
         }
 
-        /// <summary>
-        /// Checking if the save file exists
-        /// </summary>
+        // Checking if the save file exists
         public bool DoesGameExist()
         {
             return fileHandler.IsMade;
         }
 
-        /// <summary>
-        /// Clearing the save file
-        /// </summary>
+        // Clearing the save file
         public void ClearSave()
         {
             fileHandler.Delete();
         }
 
-        /// <summary>
-        /// Saving the game to a file
-        /// </summary>
+        // Saving the game to a file
         public void SaveGame(TravelersOfCatan game)
         {
             GameWrapper gameWrapper = new GameWrapper(game);
@@ -51,20 +43,14 @@ namespace NEAGame
             fileHandler.Save(json);
         }
 
-
-        /// <summary>
-        /// Loading the game from a file
-        /// </summary>
+        // Loading the game from a file
         public GameWrapper LoadGame()
         {
             
             string json = fileHandler.Load();
             GameWrapper gameWrapper = JSONWrapper<GameWrapper>.Load(json);          
             return gameWrapper;
-        
         }
-
-
     }
 
 
@@ -73,22 +59,22 @@ namespace NEAGame
     /// </summary>
     public abstract class JSONWrapper<T> where T : JSONWrapper<T>, new()
     {
-
+        // Method to serialize the game to JSON 
         public static string Dump(T t)
         {
             return JsonUtility.ToJson(t);
         }
-
+        // Method to deserialize the game from JSON
         public static T Load(string jsonString)
         {
             T t = new T();
             JsonUtility.FromJsonOverwrite(jsonString, t);
             return t;
         }
-
     }
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Classes that contain public references 
 
     [Serializable]
     public class ResourceWrapper : JSONWrapper<ResourceWrapper>
@@ -101,8 +87,6 @@ namespace NEAGame
         {
             id = resource.GetHashCode();
         }
-
-
     }
 
     [Serializable]
@@ -121,7 +105,6 @@ namespace NEAGame
                 _Values.Add(new ResourceWrapper(entry.Value));
             }
         }
-
     }
 
     [Serializable]
@@ -143,7 +126,6 @@ namespace NEAGame
             status = node.GetStatus();
             occupantID = node.GetOccupant();
         }
-
     }
 
 
@@ -164,7 +146,6 @@ namespace NEAGame
                 _Values.Add(new AdjMatrixBottomWrapper(entry.Value));
             }
         }
-
     }
 
     [Serializable]
@@ -186,7 +167,6 @@ namespace NEAGame
                 }
             }
         }
-
     }
 
     [Serializable]
@@ -202,7 +182,6 @@ namespace NEAGame
         public Vector3 origin;
         public InventoryWrapper resources;
 
-
         public PlayerWrapper() { }
         public PlayerWrapper(Player player)
         {
@@ -216,8 +195,6 @@ namespace NEAGame
             origin = UnityUI.ConvertVector(player.origin);
             resources = new InventoryWrapper(player.getResources());
         }
-        // player can find their own buildings and connections if needed using the board
-
     }
 
     [Serializable]
@@ -312,5 +289,7 @@ namespace NEAGame
         }
 
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

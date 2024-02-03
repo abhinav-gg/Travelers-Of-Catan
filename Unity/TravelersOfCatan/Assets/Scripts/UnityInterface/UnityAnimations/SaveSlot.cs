@@ -26,6 +26,6 @@ public class SaveSlot : MonoBehaviour
         init = StatusText.transform.localScale;
         StatusText.transform.localScale = new Vector3();
         LeanTween.scale(StatusText, init, 0.35f).setEase(LeanTweenType.easeOutBack).setDelay(0.1f);
+        // animate the save slot into view
     }
-
 }

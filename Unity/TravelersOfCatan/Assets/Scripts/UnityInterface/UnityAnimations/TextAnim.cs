@@ -4,43 +4,44 @@ using TMPro;
 
 /// <summary>
 /// Class to animate text in the UI
-/// <br/> Source: <seealso href="ZZZZZZ"/>
 /// </summary>
 public class TextAnim : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI _textMeshPro;
-    [SerializeField] bool muted = false;
-    [SerializeField] float timeBtwnChars = 0.1f;
-    [SerializeField] float timeBtwnWords = 0.125f;
-    [SerializeField] float timeBtwnSentences = 0.15f;
+    public TextMeshProUGUI textObj;
+    public bool muted = false;
+    public float timeBtwnChars = 0.1f;
+    public float timeBtwnWords = 0.125f;
+    public float timeBtwnSentences = 0.15f;
 
     string endText;
 
+    // OnEnable is called whenever the object is enabled
     public void OnEnable()
     {
         StartCoroutine(TextVisible());
     }
 
+    // Method to reset the text object
     public void ResetTool()
     {
-        _textMeshPro = GetComponent<TextMeshProUGUI>();
-        endText = _textMeshPro.text;
+        textObj = GetComponent<TextMeshProUGUI>();
+        endText = textObj.text;
     }
 
-    // Method to animate text
+    // Method to add a letter-by-letter animation to the text object
     private IEnumerator TextVisible()
     {
         yield return 0;
         ResetTool();
         if (!muted)
             AudioManager.i.Play("Write");
-        _textMeshPro.ForceMeshUpdate();
+        textObj.ForceMeshUpdate();
         int totalVisibleCharacters = endText.Length;
         int counter = 0;
 
         while (true)
         {
-            _textMeshPro.maxVisibleCharacters = counter;
+            textObj.maxVisibleCharacters = counter;
 
             if (counter >= totalVisibleCharacters)
             {
@@ -54,7 +55,6 @@ public class TextAnim : MonoBehaviour
             else 
                 yield return new WaitForSeconds(timeBtwnChars);
             counter += 1;
-
 
         }
         AudioManager.i.Stop("Write");

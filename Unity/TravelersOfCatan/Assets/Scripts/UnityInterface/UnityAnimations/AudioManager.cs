@@ -7,10 +7,8 @@ using UnityEngine;
 /// </summary>
 public class AudioManager : MonoBehaviour
 {
-
-
+    // Singleton instance of the AudioManager class so that it can be accessed from other scripts
     public static AudioManager i;
-
     public Sound[] sounds;
     public Sound[] BackgroundMusic;
     [Range(0f, 1f)] public float VolumeModifier = 1f;

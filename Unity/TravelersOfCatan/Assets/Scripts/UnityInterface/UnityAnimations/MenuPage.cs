@@ -13,10 +13,10 @@ public class MenuPage : MonoBehaviour
     public Button load;
     public Button close;
     public Button settings;
+
     // Start is called before the first frame update
     void Start()
     {
-        //start.onClick.AddListener(UnityUI.Interface.StartGameButton);
         about.onClick.AddListener(() => {
             AudioManager.i.Play("UIClick");
             UnityUI.Interface.AboutButton();
@@ -34,12 +34,6 @@ public class MenuPage : MonoBehaviour
             AudioManager.i.Play("UIClick");
             UnityUI.Interface.HomeScreenSettingsButton();
         });
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // add listeners and sound effects to the buttons on the menu page
     }
 }

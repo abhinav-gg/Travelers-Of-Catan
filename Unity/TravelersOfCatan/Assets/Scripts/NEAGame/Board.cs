@@ -13,7 +13,7 @@ namespace NEAGame
     /// Class to represent the game board
     /// </summary>
     [System.Serializable]
-    public class Board // A graph of nodes
+    public class Board // A graph of nodes and connections that makes up the main game board.
     {
 
         Dictionary<Vector3, Resource> board = new Dictionary<Vector3, Resource>();
@@ -25,7 +25,6 @@ namespace NEAGame
 
         public Board()
         {
-
             int i = 0;
             for (int x = -2; x < 3; x++)
             {
@@ -61,19 +60,16 @@ namespace NEAGame
                     {
                         if ((x + y + z == 1) || (x + y + z == 2))
                         {
-
                             Node n = new Node(x, y, z);
                             nodes.Add(new Vector3(x, y, z), n);
-                            i++;
+                            i++; // create a node at each position on the board
                         }
                     }
                 }
             }
-
-            
-
         }
 
+        // constructor to create a board from the loaded serialized data
         public Board (BoardWrapper board) : this()
         {
             int i = 0;
@@ -82,7 +78,6 @@ namespace NEAGame
                 Resource n = new Resource(res);
                 this.board[new Vector3(board.board._Keys[i].x, board.board._Keys[i].y, board.board._Keys[i].z)] = n;
                 i++;
-                
             }
             
             i = 0;
@@ -92,21 +87,18 @@ namespace NEAGame
                 nodes[new Vector3(board.nodes._Keys[i].x, board.nodes._Keys[i].y, board.nodes._Keys[i].z)] = n;
                 i++;
             }
-
-            
         }
 
-
-
+        // method to get the resource at a given position or return null if it doesn't exist
         public Resource GetHexAtPosition(Vector3 pos)
         {
-            // lookup the resource at a given position or return null if it doesn't exist
             if (board.ContainsKey(pos))
                 return board[pos];
             else
                 return null;
         }
 
+        // method to get the node at a given position or return null if it doesn't exist
         public Node GetNode(Vector3 pos)
         {
 
@@ -116,18 +108,19 @@ namespace NEAGame
                 return null;
         }
 
+        // method to get an array of all the nodes on the board
         public Node[] GetAllNodes()
         {
             return nodes.Values.ToArray();
         }
 
-
+        // method to get key value pairs of all the resources on the board with their positions
         public Dictionary<Vector3, Resource> GetResourcesOnBoard()
         {
             return board;
         }
 
-
+        // method to get the connection between two nodes
         public Connection GetConnection(Vector3 v1, Vector3 v2)
         {
             try
@@ -140,7 +133,8 @@ namespace NEAGame
             }
         }
 
-        public void UpdateConnection(Vector3 v1, Vector3 v2, Connection con) // weakest function in entire project
+        // method to update an existing connection between two nodes or create a new one if it doesn't exist
+        public void UpdateConnection(Vector3 v1, Vector3 v2, Connection con)
         {
 
             if (connections.ContainsKey(v1))
@@ -177,6 +171,7 @@ namespace NEAGame
             }
         }
 
+        // method to serialize the board object directly to a JSON serializable BoardWrapper object
         public BoardWrapper SoftSerialize()
         {
             BoardWrapper b = new BoardWrapper();
@@ -202,9 +197,12 @@ namespace NEAGame
         protected int occupantID { get; set; }
     }
 
+    /// <summary>
+    /// class to represent a building on the board
+    /// </summary>
     public class Building : Settlement
     {
-
+        
         public Building(string i = "Empty", int o = -1)
         {
             statuses = new string[] { "Empty", "Village", "City" };

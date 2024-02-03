@@ -9,7 +9,6 @@ public class PlayerAnimator : MonoBehaviour
 {
 
     public Player player;
-    // Start is called before the first frame update
     public bool isCurrentPlayer = false;
     public GameObject indicator;
 
@@ -18,7 +17,6 @@ public class PlayerAnimator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // get local pos of indicator
         indpos = indicator.transform.localPosition;
     }
 

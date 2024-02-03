@@ -1,14 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 
+/// <summary>
+/// 
+/// </summary>
 public class PlayerUIOverlay : MonoBehaviour
 {
-
-
     public Button MoveInput;
     public Button ShopInput;
     public Button InventoryInput;
@@ -22,9 +22,8 @@ public class PlayerUIOverlay : MonoBehaviour
     public TextMeshProUGUI PlayerScore;
     public TextMeshProUGUI PlayerMoves;
     public Image ColorMe;
-    public bool isAI = false;
-
     public Sprite CancelImage;
+    public bool isAI = false;
 
     
     public bool isZoomed = true;
@@ -33,9 +32,9 @@ public class PlayerUIOverlay : MonoBehaviour
     float moveCD = 0.0f;
     float turnEndCD = 5f;
     bool isTryingToMove = false;
-    //bool isTryingBuy = false; REMOVE SELECT FROM SHOP BUTTON
     Sprite buffer;
 
+    // Start is called before the first frame update
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();
@@ -69,7 +68,7 @@ public class PlayerUIOverlay : MonoBehaviour
     }
 
 
-
+    // called by the AI to set the UI to AI mode. this disables all buttons except for zooming and pausing
     public void SetAI()
     {
         isAI = true;
@@ -79,10 +78,9 @@ public class PlayerUIOverlay : MonoBehaviour
         Destroy(ShopInput.gameObject);
         Destroy(UndoInput.gameObject);
         Destroy(TradeInput.gameObject);
-
     }
 
-
+    // method to handle a click on the move button
     public void MoveButton()
     {
         
@@ -108,12 +106,11 @@ public class PlayerUIOverlay : MonoBehaviour
         }
         else
         {
-
             FinishMove();
         }
     }
 
-
+    // method to handle a click on the end turn button
     public void EndTurnButton()
     {
         if (turnEndCD > 0.0f)
@@ -135,7 +132,7 @@ public class PlayerUIOverlay : MonoBehaviour
     }
 
 
-
+    // method to handle finishing or cancelling a move
     public void FinishMove()
     {
         if (!isAI)
@@ -151,9 +148,8 @@ public class PlayerUIOverlay : MonoBehaviour
             PlayerMoves.gameObject.SetActive(true);
         }
     }
-    
 
-
+    // method to alter the state of all game buttons (used to disable all buttons when a player is moving etc.)
     public void AlterAllGameButton( bool state, bool changeZoom = false ) // only called by player movement and shopping
     {
         MoveInput.gameObject.SetActive(state);
@@ -164,20 +160,18 @@ public class PlayerUIOverlay : MonoBehaviour
         UndoInput.gameObject.SetActive(state);
         if (changeZoom)
         {
-            // Zooming is normally allowed when moving, but not when trading
             ZoomInput.gameObject.SetActive(state);
         }
     }
 
+    // method to handle the zoom button click
     public void ZoomButton()
     {
         AudioManager.i.Play("UIClick");
-        // make button smaller and larger
         if (!LeanTween.isTweening(ZoomInput.gameObject))
         {
             LeanTween.scale(ZoomInput.gameObject, ZoomInput.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInOutElastic).setDelay(0.0f).setLoopPingPong(1);
         }
-        
         
         if (zoomCD > 0.0f)
         {
@@ -196,9 +190,9 @@ public class PlayerUIOverlay : MonoBehaviour
         {
             StartCoroutine(ZoomLerp(outDist));
         }
-
     }
 
+    // method to smoothly lerp the camera zoom
     IEnumerator ZoomLerp(float endDist)
     {
         float totalTime = 0.5f;
@@ -210,11 +204,9 @@ public class PlayerUIOverlay : MonoBehaviour
             Camera.main.orthographicSize = Mathf.Lerp(startDist, endDist, t);
             yield return 0;
         }
-
-
-        // make this more rigid
     }
 
+    // method to handle the inventory button click
     public void OnInventory()
     {
         SceneTransition.i.PlayAnimation();
@@ -227,6 +219,7 @@ public class PlayerUIOverlay : MonoBehaviour
         UnityUI.Interface.OpenInventory();
     }
 
+    // method to handle the trade button click
     public void OnTrade()
     {
         if (FindObjectOfType<TradingInterface>() != null) // might need to be changed to a bool
@@ -240,9 +233,5 @@ public class PlayerUIOverlay : MonoBehaviour
         }
 
         StartCoroutine(UnityUI.Interface.OpenTrade());
-        
     }
-
-
-
 }

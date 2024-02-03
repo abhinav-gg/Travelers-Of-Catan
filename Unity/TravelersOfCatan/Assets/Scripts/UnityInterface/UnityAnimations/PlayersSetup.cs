@@ -61,6 +61,7 @@ public class PlayersSetup : MonoBehaviour
 
     }
 
+    // Method to setup the player adder buttons
     void SetupPlayerAdder()
     {
         if (players.Count == 4)
@@ -76,6 +77,7 @@ public class PlayersSetup : MonoBehaviour
         isGetting = false;
     }
 
+    // Method to add a new player to the game
     public void PlayerAddButton()
     {
         if (isGetting)
@@ -97,11 +99,13 @@ public class PlayersSetup : MonoBehaviour
         submittedName = false;
     }
 
+    // Method to check if a color is already taken by another player
     bool checkIfColorIsTaken(string color)
     {
         return players.Any(p => p.color == color);
     }
 
+    // Method to get the first available color for a new player
     string FirstAvailableColor()
     {
         foreach (string color in colors)
@@ -114,6 +118,7 @@ public class PlayersSetup : MonoBehaviour
         return "clear"; // never happens as there are always more colors than players
     }
 
+    // Method to open the color change overlay allowing a player to change their color
     void ColorChangeButton(int index)
     {
         AudioManager.i.Play("UIClick");
@@ -129,6 +134,7 @@ public class PlayersSetup : MonoBehaviour
 
     }
 
+    // Method to save the new color for a player
     public void NewColorSave(string choice)
     {
         gettingColor = false;
@@ -136,13 +142,13 @@ public class PlayersSetup : MonoBehaviour
         playerAdders[playerChangingColor].Color.GetComponent<Image>().color = UnityUI.textToColor(choice);
     }
 
-
-
+    // Method to update the continue button to be interactable if there are enough players
     void updateContinue()
     {
         cont.interactable = players.Count > 1;
     }
 
+    // Method to save a new player to the game and close the input overlay
     void SaveNewPlayer()
     {
         AudioManager.i.Play("UIClick");
@@ -169,17 +175,19 @@ public class PlayersSetup : MonoBehaviour
         });    
     }
 
-
+    // Onclick method on the back button to go back to the home screen
     private void Back()
     {
         UnityUI.Interface.GoHome();
     }
 
+    // Update is called once per frame
     void Update()
     {
         RemoveCD -= Time.deltaTime;
     }
 
+    // Method to remove a player from the game
     void RemovePlayer()
     {
         AudioManager.i.Play("UIClick");
@@ -208,6 +216,7 @@ public class PlayersSetup : MonoBehaviour
         isGetting = false;
     }
     
+    // Onclick method on the continue button to start the game
     public void Continue()
     {
         AudioManager.i.Play("UIClick");

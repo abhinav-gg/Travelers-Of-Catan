@@ -12,7 +12,6 @@ public class CardCollection : MonoBehaviour
 
     public List<Sprite> cards = new List<Sprite>();
    
-
     // Method to set the card to a specific resource and move it to a location on screen as an animation for collection and trading
     public void SetCard(int resource, Vector3 Dest)
     {
@@ -28,9 +27,5 @@ public class CardCollection : MonoBehaviour
                 Destroy(gameObject);
             });
         });
-
-
     }
-
-
 }

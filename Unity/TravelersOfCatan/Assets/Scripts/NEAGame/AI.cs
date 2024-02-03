@@ -37,6 +37,7 @@ namespace NEAGame
             gameRef = reference;
         }
 
+        // Method to get the static evaluation of the current game position based on player's wealth and victory points
         public int StaticEval()
         {
             int score = 0;
@@ -58,10 +59,8 @@ namespace NEAGame
                         score -= 1000;
                     }
                     score -= pdl.GetWealth();
-                }
-                
+                }   
             }
-
             return score;
         }
 
@@ -122,6 +121,7 @@ namespace NEAGame
                 }
 
                 int v = -BRS(-beta, -alpha, depth-1, turn);
+                // recursively calls the BRS algorithm to move to the next depth
                 
 
                 gameRef.UpdateCurrentPlayer(m[0].playerID);
@@ -131,6 +131,7 @@ namespace NEAGame
                     gameRef.UndoAction(m[i]);
                     currentMove.Pop();
                 }
+                // undoes the action to return to the previous game state
                 gameRef.undoGatherResources(m[0].playerID);
                 
                 if (v >= beta)
@@ -149,7 +150,7 @@ namespace NEAGame
 
             }
 
-            return alpha;
+            return alpha; // returns the evaluation of the position
 
         }
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -218,12 +219,6 @@ namespace NEAGame
                     };
             }
             gameRef.undoGatherResources(playerID);
-        }
-
-        public static Stack<GameAction> Clone(Stack<GameAction> stack)
-        {
-            Contract.Requires(stack != null);
-            return new Stack<GameAction>(new Stack<GameAction>(stack));
         }
     }
 }

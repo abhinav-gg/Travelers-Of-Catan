@@ -154,6 +154,7 @@ namespace NEAGame
 
         }
 
+        // AI function to update the current player during the AI calculation
         public void UpdateCurrentPlayer(int id)
         {
             foreach (Player pdl in gamePlayers)
@@ -163,20 +164,16 @@ namespace NEAGame
                     currentPlayer = pdl;
                 }
             }
-            currentPlayer.moves = 3;
-            UserInterface.Assert(isAICalculation);
-            
+            currentPlayer.moves = 3;            
         }
 
-
+        // get the cost of a structure
         public static Dictionary<Resource, int> GetCostOfUpgrade(string entityName)
         {
-
             return purchaseCost[entityName];
-
         }
 
-
+        // function to start a new created game
         public void startGame()
         {
 
@@ -212,6 +209,7 @@ namespace NEAGame
             return currentPlayer;
         }
 
+        // function to start the current player's turn + gather resources. also called to start a loaded game
         public void StartTurn(float timeleft=-1f)
         {
             if (timeleft == -1f)
@@ -219,7 +217,7 @@ namespace NEAGame
                 gatherResources(currentPlayer.GetID());
                 timeleft = TimePerMove;
             }
-            if (currentPlayer.GetType() == typeof(Player))
+            if (currentPlayer.GetType() == typeof(Player)) // selection based on the class type of the current player
             {
                 isAICalculation = false;   
             }
@@ -229,9 +227,13 @@ namespace NEAGame
                 isAICalculation = true;
             }
             UserInterface.BeginTurn(timeleft);
-
         }
 
+        //////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Display's the AI's chosen moves after calculation
+        /// <br/> Skill A: Use of Stack operations
+        /// </summary>
         public void DisplayAIMoves()
         {
             currentPlayer = gamePlayers[turn];
@@ -259,6 +261,7 @@ namespace NEAGame
             }
             
         }
+        //////////////////////////////////////////////////////////////////////////////////////
 
 
         public void EndTurn()
