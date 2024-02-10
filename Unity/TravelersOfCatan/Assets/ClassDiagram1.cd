@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Class Name="FileHandler" Collapsed="true">
-    <Position X="9.75" Y="10.25" Width="1.5" />
+  <Class Name="FileHandler">
+    <Position X="5.75" Y="9" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAgKAAAAgAAEAAAEAAAIAAAAEAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Assets\Scripts\JSON\FileHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="NEAGame.JSON_manager" Collapsed="true">
-    <Position X="9.5" Y="12.5" Width="1.5" />
+  <Class Name="NEAGame.JSON_manager">
+    <Position X="9.5" Y="9" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAQAAAAAAAAAAAAAAOAAAAABAAAAAAAAAE=</HashCode>
       <FileName>Assets\Scripts\JSON\JSON_manager.cs</FileName>

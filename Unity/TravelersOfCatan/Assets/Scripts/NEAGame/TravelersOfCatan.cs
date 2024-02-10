@@ -278,7 +278,7 @@ namespace NEAGame
             StartTurn();
         }
 
-        public void FindWinner()
+        protected void FindWinner()
         {
             foreach (Player p in gamePlayers)
             {
