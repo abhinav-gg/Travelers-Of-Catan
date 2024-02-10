@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class to control a popup message
+/// <c>PopupController</c> is the class that manages the overlay to display a message to the user.
 /// </summary>
 public class PopupController : MonoBehaviour
 {

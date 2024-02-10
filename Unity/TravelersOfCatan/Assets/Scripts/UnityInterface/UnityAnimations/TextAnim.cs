@@ -3,7 +3,7 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// Class to animate text in the UI
+/// <c>TextAnim</c> is the class that handles the letter-by-letter animation of text objects.
 /// </summary>
 public class TextAnim : MonoBehaviour
 {

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using NEAGame;
 
 /// <summary>
-/// Class that is attached to the node buttons in the game scene
+/// <c>NodeButton</c> is the class that controls the node buttons on the game board. This also controls the settlement display on the nodes.
 /// </summary>
 public class NodeButton : MonoBehaviour
 {

@@ -7,10 +7,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using NEAGame;
 
-/// <summary>
-/// Second half of the UnityUI class, containing the game-specific methods
-/// </summary>
-[Serializable]
+// Second half of the UnityUI partial class, containing the game-specific methods and variables.
+
+[Serializable] // This is serializable so it can be viewed in the Unity inspector
 public partial class UnityUI
 {
     [Header("UI overlay prefabs and constants")]
@@ -349,9 +348,8 @@ public partial class UnityUI
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Skill A: Use of Complex Mathematical Model
-    // Used to represent and convert hexagonal grid of nodes between cubic coordinates and odd row coordinates.
-
-    // get the global position of a connection between two nodes
+    // Used to represent and convert hexagonal grid of nodes and connection between cubic coordinates, odd row coordinates and global positions
+    
     public Vector3 GetConnectionGlobalPos(Node v1, Node v2)
     {
         HashSet<System.Numerics.Vector3> starthexes = new HashSet<System.Numerics.Vector3>();
@@ -396,6 +394,7 @@ public partial class UnityUI
         }
         float avgX = totalX / 3;
         float avgY = totalY / 3;
+        // to get the center of the node, we average the x and y of the 3 hexes around it
         return new Vector3(avgX, avgY, Z);
     }
 
@@ -419,7 +418,7 @@ public partial class UnityUI
         int row = (int)vec.X;
         return new Vector3Int(col, row, 0);
     }
-
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // convert a string to a color
@@ -595,7 +594,7 @@ public partial class UnityUI
 
 
 
-    // method to handle the shop event
+    // methods to handle the shop event
     public void OpenShop()
     {
         StopAllPlayerCoroutines();

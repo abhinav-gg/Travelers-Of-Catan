@@ -5,7 +5,7 @@ using UnityEngine;
 namespace NEAGame
 {
     /// <summary>
-    /// Class to control the saving and loading of the game
+    /// The <c>JSON_manager</c> class is used to manage the serialization and deserialization of the game to and from JSON.
     /// </summary>
     class JSON_manager
     {
@@ -55,7 +55,7 @@ namespace NEAGame
 
 
     /// <summary>
-    /// Wrapper class for the game and its elements in order to serialize them to JSON
+    /// <c>JSONWrapper</c> is an abstract class that defines the methods to serialize and deserialize an object to and from JSON.
     /// </summary>
     public abstract class JSONWrapper<T> where T : JSONWrapper<T>, new()
     {
@@ -64,6 +64,7 @@ namespace NEAGame
         {
             return JsonUtility.ToJson(t);
         }
+
         // Method to deserialize the game from JSON
         public static T Load(string jsonString)
         {
@@ -73,9 +74,10 @@ namespace NEAGame
         }
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Classes that contain public references 
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class Wrappers
+    
+    
     [Serializable]
     public class ResourceWrapper : JSONWrapper<ResourceWrapper>
     {
@@ -278,7 +280,7 @@ namespace NEAGame
         {
             winVictoryPoints = game.WinningVictoryPoints;
             timePerMove = game.TimePerMove;
-            timer = game.UserInterface.GetTimer();
+            timer = game.GetGameTime();
             turn = game.gamePlayers.IndexOf(game.GetCurrentPlayer());
             foreach (Player player in game.gamePlayers)
             {

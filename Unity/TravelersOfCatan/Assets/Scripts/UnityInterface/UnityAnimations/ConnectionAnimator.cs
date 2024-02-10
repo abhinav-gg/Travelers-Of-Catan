@@ -2,7 +2,7 @@ using UnityEngine;
 using NEAGame;
 
 /// <summary>
-/// Class attached to the connection gameobject to rotate and position it
+/// <c>ConnectionAnimator</c> is a class attached to the connection game object to control the connection between nodes.
 /// </summary>
 public class ConnectionAnimator : MonoBehaviour
 {

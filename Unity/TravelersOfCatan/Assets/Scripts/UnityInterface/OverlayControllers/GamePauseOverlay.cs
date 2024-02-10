@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// <c>GamePauseOverlay</c> is a class that manages the pause and settings overlays.
+/// </summary>
 public class GamePauseOverlay : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -21,10 +22,10 @@ public class GamePauseOverlay : MonoBehaviour
     public Sprite MusicUnmuted;
     public Sprite MusicMuted;
 
-
-
+    // Start is called before the first frame update
     void Start()
     {
+        AudioManager.i.StopAll();
         Canvas myCanvas = GetComponent<Canvas>();
         myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
         myCanvas.worldCamera = Camera.main;
@@ -32,6 +33,7 @@ public class GamePauseOverlay : MonoBehaviour
         myCanvas.sortingOrder = 700; // VERY foreground
         Slider.onValueChanged.AddListener((float v) => volumeChange(v));
         Slider.value = AudioManager.i.VolumeModifier;
+        // Add listeners to the buttons
         Resume.onClick.AddListener(() =>
         {
             AudioManager.i.Play("UIClick");
@@ -61,17 +63,20 @@ public class GamePauseOverlay : MonoBehaviour
         UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
 
+    // The settings page is the pause page but with the save button removed
     public void RemoveSaveButton()
     {
         Save.SetActive(false);
     }
 
+    // Method called when the volume slider is changed by Unity
     void volumeChange(float x)
     {
         AudioManager.i.ChangeMasterVolume(x);
         UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
 
+    // Method to close the pause overlay
     public void CloseGUI()
     {
         //lean tween everything away
@@ -106,7 +111,7 @@ public class GamePauseOverlay : MonoBehaviour
         }
     }
 
-
+    // onclick method for the save and exit button.
     void OnExit()
     {
         AudioManager.i.Play("UIClick");
@@ -118,6 +123,5 @@ public class GamePauseOverlay : MonoBehaviour
         UnityUI.Interface.SaveAndExit();
         
     }
-
 
 }

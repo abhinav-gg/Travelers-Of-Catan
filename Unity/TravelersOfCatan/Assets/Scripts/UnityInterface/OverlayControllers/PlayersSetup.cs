@@ -7,16 +7,16 @@ using NEAGame;
 using TMPro;
 
 /// <summary>
-/// Class used to control the player setup scene
+/// <c>PlayersSetup</c> is the class that manages the player setup scene. It is used to display the player slots for the user to add or remove players.
 /// </summary>
 public class PlayersSetup : MonoBehaviour
 {
     public Button Remove;
 
     public PlayerSlot[] playerAdders;
-    [SerializeField] List<PlayerTemplate> players = new List<PlayerTemplate>();
-    [SerializeField] GameObject newPlayerGUI;
-    [SerializeField] GameObject ColorSelector;
+    [SerializeField] private List<PlayerTemplate> players = new List<PlayerTemplate>();
+    [SerializeField] private GameObject newPlayerGUI;
+    [SerializeField] private GameObject ColorSelector;
 
     public Button back;
     public Button cont;
@@ -25,16 +25,16 @@ public class PlayersSetup : MonoBehaviour
     public GameObject WinVPstr;
     public GameObject MaxTimestr;
 
-    Button AddPlayer;
-    PlayerNameInp overlay;
-    ColorChoiceControl colorChoice;
+    private Button AddPlayer;
+    private PlayerNameInp overlay;
+    private ColorChoiceControl colorChoice;
+    private List<string> colors = new List<string>();
 
-    List<string> colors = new List<string>();
-    float RemoveCD = 0.0f;
-    bool isGetting;
-    bool submittedName;
-    bool gettingColor;
-    int playerChangingColor;
+    private float RemoveCD = 0.0f;
+    private bool isGetting;
+    private bool submittedName;
+    private bool gettingColor;
+    private int playerChangingColor;
 
     // Start is called before the first frame update
     void Start()
@@ -220,6 +220,7 @@ public class PlayersSetup : MonoBehaviour
     public void Continue()
     {
         AudioManager.i.Play("UIClick");
+        // For now the user may not change the number of starting resources as it gives players and unfair advantage over the AI
         UnityUI.Interface.game = new TravelersOfCatan(UnityUI.Interface, (int)WinVP.value, 1, MaxTime.value);
         foreach (PlayerTemplate p in players) 
         { 

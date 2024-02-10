@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Class attached to each player slot in the game setup scene
+/// <c>PlayerSlot</c> is the class that stores references to the UI elements of a player slot in the player setup scene.
 /// </summary>
 public class PlayerSlot : MonoBehaviour
 {

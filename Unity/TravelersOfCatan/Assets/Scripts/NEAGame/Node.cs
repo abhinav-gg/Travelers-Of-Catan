@@ -1,19 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 
 namespace NEAGame
 {
-    [System.Serializable]
+    /// <summary>
+    /// A <c>Node</c> represents a single point on the graph where a player or building can be placed.
+    /// </summary>
     public class Node
     {
         public Vector3 position;
         public Building status = new Building();
-        //public Dictionary<Vector3, Connection> connections = new Dictionary<Vector3, Connection>();
 
         public Node(int x, int y, int z)
         {
@@ -27,17 +23,6 @@ namespace NEAGame
             position = new Vector3(node.position.x, node.position.y, node.position.z);
             status = new Building(node.status);
         }
-
-        /*public void RegisterConnections(Board gameBoard)
-        {
-            foreach (Vector3 v in GetNodeNeighbours())
-            {
-                if (gameBoard.GetNode(v) != null)
-                {
-                    connections.Add(v, new Connection());
-                }
-            }
-        }*/
 
         public IEnumerable<Vector3> GetNodeNeighbours()
         {

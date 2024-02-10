@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// Class that manages the victory screen
+/// <c>VictoryManager</c> is the class that manages the victory scene.
 /// </summary>
 public class VictoryManager : MonoBehaviour
 {

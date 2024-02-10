@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-using System.Diagnostics.Contracts;
 
 namespace NEAGame
 {
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
-    /// Class that inherits from Player and adds AI functionality
-    /// Skill A: Complex OOP - Inheritance
+    /// The <c>AI</c> class inherits from Player and is used to represent an AI player in the game. This contains all of the AI's logic and decision making. <br/>
+    /// Skill A: Complex User-Defined OOP - Inheritance
     /// </summary>
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class AI : Player
     {
         public enum Turn
@@ -20,7 +20,7 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         public Stack<GameAction> currentMove = new Stack<GameAction>();
-        private readonly int MaxDepth = 4;
+        private readonly int MaxDepth = 5;
         TravelersOfCatan gameRef;
 
         // Constructor for AI that creates a new player
@@ -69,6 +69,8 @@ namespace NEAGame
         /// Runs the Best Reply Search algorithm on the current game position to attempt to determine the best move to make.
         /// <br/>Skill A: Recursive Algorithm
         /// <br/>Skill A: Tree traversal
+        /// <br/>Skill A: Complex User-Defined Algorithm
+        /// <br/>Skill A: Stack Operations
         /// </summary>
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public int BRS(int alpha=int.MinValue + 1, int beta=int.MaxValue, int depth=-1, Turn turn=Turn.Max)
@@ -87,12 +89,13 @@ namespace NEAGame
 
             if (turn == Turn.Max)
             {
+                // if it is the AI's turn, generate all possible moves the AI has
                 AllMoves = GenerateMoves(this).ToList();
                 turn = Turn.Min;
             }
             else if (turn == Turn.Min)
             {
-                
+                // if it is the player's turn, generate all possible moves that any player has
                 foreach (Player pdl in gameRef.gamePlayers)
                 {
                     if (pdl.GetID() == playerNumber)
@@ -105,7 +108,8 @@ namespace NEAGame
                 
             }
 
-            // sort allmoves by count to optimise alpha beta pruning
+            // sort the moves by their length to optimise alpha beta pruning
+            // this means that the moves that are most likely to be good are evaluated first
             AllMoves.Sort((x, y) => y.Count.CompareTo(x.Count));
             
             foreach (var m in AllMoves)
@@ -142,25 +146,24 @@ namespace NEAGame
                 {
                     if (depth == MaxDepth)
                     {
+                        // if the move is the best move found so far, store it in the selectedMoves stack
                         selectedMoves = new Stack<GameAction>(m);
                     }
                     alpha = v;
                 }
-                
-
             }
-
             return alpha; // returns the evaluation of the position
-
         }
         ///////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// Method to generate possible good moves on the passed player's turn
         /// <br/>Skill A: Dynamic generation of class objects
+        /// <br/>Skill A: Stack Operations
         /// </summary>
         ///////////////////////////////////////////////////////////////////////////////////////////
         public IEnumerable<List<GameAction>> GenerateMoves(Player pdl)
         {
+            // get all combinations of making a purchase followed by moving to a new node
             int playerID = pdl.GetID();
             gameRef.UpdateCurrentPlayer(playerID);
             gameRef.gatherResources(playerID);
@@ -198,7 +201,6 @@ namespace NEAGame
                     };
                 }
             }
-
 
             foreach (Node n in gameRef.tryPurchaseWall())
             {

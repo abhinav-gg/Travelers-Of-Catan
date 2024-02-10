@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Class to control a save slot in the save menu
+/// <c>SaveSlot</c> is the class that stores references to the UI elements of a game save slot, along with the ID number.
 /// </summary>
 public class SaveSlot : MonoBehaviour
 {

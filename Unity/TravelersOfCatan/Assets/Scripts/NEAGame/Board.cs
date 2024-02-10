@@ -2,27 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Diagnostics;
 
 namespace NEAGame
 {
     /// <summary>
-    /// Class to represent the game board
+    /// The <c>Board</c> class is used to represent the graph of nodes and connections that make up the main game board.
     /// </summary>
-    [System.Serializable]
     public class Board // A graph of nodes and connections that makes up the main game board.
     {
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// nested dictionary for the connections between nodes in the board implementing an adjacency matrix
+        /// these data structures are also composed of other class objects
+        /// Skill A: Complex Data Structure 
+        /// Skill A: Complex User-Defined OOP: Composition
+        
         Dictionary<Vector3, Resource> board = new Dictionary<Vector3, Resource>();
         Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
         Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
-
-        // nested dictionary for the connections between nodes in the board with a default state of new Connection() which can be updated as the game progresses
-        // this acts as an adjacency matrix of the graph of nodes but omits all the null values
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Constructor for the <c>Board</c> class. This creates a new board with 19 hexagon cells and 54 nodes using a mathematical representation of the Catan board.
+        /// This is more efficient than creating a 2D array of hexagons and nodes and allows for easier calculations of the positions of nodes and connections.
+        /// Skill A: Complex Mathematical Model
+        /// </summary>
         public Board()
         {
             int i = 0;
@@ -37,12 +43,13 @@ namespace NEAGame
                             Resource unit;
                             if (x == 0 && y == 0 && z == 0)
                             {
-                                unit = new Resource(0); // center of board is Empty in classical Catan
+                                // center of board is Empty in classical Catan
+                                unit = new Resource(0); 
                             }
                             else
                             {
+                                // generate a random resource at each position in the hexagon grid
                                 unit = Resource.GetRandom();
-
                             }
                             board.Add(new Vector3(x, y, z), unit);
                             i++;
@@ -62,13 +69,15 @@ namespace NEAGame
                         {
                             Node n = new Node(x, y, z);
                             nodes.Add(new Vector3(x, y, z), n);
-                            i++; // create a node at each position on the board
+                            i++; 
+                            // create a node at each position on the board using cubic coordinates
                         }
                     }
                 }
             }
         }
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         // constructor to create a board from the loaded serialized data
         public Board (BoardWrapper board) : this()
         {
@@ -179,17 +188,14 @@ namespace NEAGame
             b.connections = new AdjMatrixWrapper(connections);
             b.nodes = new AllNodesWrapper(nodes);
 
-
             return b;
         }
-
 
     }
 
     /// <summary>
-    /// Minor classes for the game that are not worth their own file and are all serializable
+    /// A player may purchase a <c>Settlement</c> to place on the board. This is an abstract class which is inherited by <c>Building</c> and <c>Connnection</c>
     /// </summary>
-
     public abstract class Settlement
     {
         protected int id { get; set; }
@@ -197,12 +203,15 @@ namespace NEAGame
         protected int occupantID { get; set; }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
-    /// class to represent a building on the board
+    /// A <c>Building</c> represents the status of a node on the board. It can be empty, a village or a city.<br/>
+    /// Skill A: Complex User-Defined OOP - Inheritance
     /// </summary>
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public class Building : Settlement
     {
-        
+        // constructor for the building class
         public Building(string i = "Empty", int o = -1)
         {
             statuses = new string[] { "Empty", "Village", "City" };
@@ -211,6 +220,7 @@ namespace NEAGame
 
         }
 
+        // constructor to create a building from the loaded serialized data
         public Building(SettlementWrapper sw)
         {
             statuses = new string[] { "Empty", "Village", "City" };
@@ -218,7 +228,7 @@ namespace NEAGame
             id = Array.IndexOf(statuses, sw.status);
         }
 
-
+        // method to upgrade a village to a city
         public void UpgradeVillage()
         {
             if (id == 1)
@@ -227,10 +237,13 @@ namespace NEAGame
             }
         }
 
+        // method to check if a node is empty
         public bool IsEmpty()
         {
             return id == 0;
         }
+
+        // override the ToString method to return the status
         public override string ToString()
         {
             if (occupantID != -1)
@@ -243,16 +256,19 @@ namespace NEAGame
             }
         }
 
+        // method to get the status of the building
         public string GetStatus()
         {
             return statuses[id];
         }
 
+        // method to get the occupant of the building
         public int GetOccupant()
         {
             return occupantID;
         }
 
+        // method to undo the upgrade of a village to a city
         public void DowngradeVillage()
         {
             if (id == 2)
@@ -262,6 +278,9 @@ namespace NEAGame
         }
     }
 
+    /// <summary>
+    /// A <c>Resource</c> represents the type of resource that a hexagon cell on the board produces.
+    /// </summary>
     public class Resource
     {
         public static readonly string[] resources = { "Empty", "Brick", "Sheep", "Ore", "Wood", "Wheat" };
@@ -269,55 +288,34 @@ namespace NEAGame
         private static readonly Random rng = new Random();
 
 
-
+        // constructor for the resource class using the resource id
         public Resource(int i = 0)
         {
             id = i;
         }
 
-        public Resource(string name)
-        {
-            id = Array.IndexOf(resources, name);
-        }
-
+        // constructor to create a resource from the loaded serialized data
         public Resource(ResourceWrapper res)
         {
             id = res.id;
         }
 
-
+        // override the ToString method to return the name of the resource
         public override string ToString()
         {
             return resources[id];
         }
 
-
-        public void CreateRandomResource()
-        {
-            id = rng.Next(1, resources.Length);
-        }
-
-        public override bool Equals(System.Object otherItem)
-        {
-            if (otherItem == null)
-            {
-                return false;
-            }
-
-            Resource otherResource = otherItem as Resource;
-
-            return (id == otherResource.id);
-        }
-
+        // method to get the id of the resource
         public override int GetHashCode()
         {
             return id;
         }
 
+        // method to create a random resource
         public static Resource GetRandom()
         {
-            Resource temp = new Resource();
-            temp.CreateRandomResource();
+            Resource temp = new Resource(rng.Next(1, resources.Length));
             return temp;
         }
     }

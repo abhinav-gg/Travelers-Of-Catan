@@ -1,9 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
+/// <summary>
+/// <c>ColorChoiceControl</c> is the class that manages the overlay which allows players to choose their color.
+/// </summary>
 public class ColorChoiceControl : MonoBehaviour
 {
 
@@ -40,6 +42,7 @@ public class ColorChoiceControl : MonoBehaviour
         LeanTween.alphaCanvas(ColParent.GetComponent<CanvasGroup>(), 1, 0.5f).setEase(LeanTweenType.easeInSine).setDelay(0.5f);
     }
 
+    // function to close the color choice overlay and save the current color
     public void CloseGUI()
     {
         if (isClosing)
@@ -47,7 +50,7 @@ public class ColorChoiceControl : MonoBehaviour
         isClosing = true;
         FindObjectOfType<PlayersSetup>().NewColorSave(current);
         AudioManager.i.Play("UIClick");
-        // lean tween everything away
+        // Add a closing animation
         LeanTween.moveLocalY(ColParent, -1000f, 0.5f).setEase(LeanTweenType.easeOutSine).setDelay(0.1f);
         LeanTween.rotateAround(CloseBtn , Vector3.forward, 360, 0.5f).setEase(LeanTweenType.easeShake).setDelay(0.0f);
         LeanTween.scale(CloseBtn , new Vector3(), 0.25f).setEase(LeanTweenType.easeShake).setDelay(0.25f);
@@ -58,6 +61,7 @@ public class ColorChoiceControl : MonoBehaviour
         });
     }
 
+    // function to set up the color choice overlay with the available colors
     public void Setup(List<string> col, List<int> taken)
     {
         Assert.IsTrue(col.Count == colorChoiceBtns.Length);
@@ -80,6 +84,7 @@ public class ColorChoiceControl : MonoBehaviour
         }
     }
 
+    // onclick function to update the current color
     public void SetCurrent(string i)
     {
         AudioManager.i.Play("UIClick");

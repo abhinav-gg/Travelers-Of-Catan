@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// Class attached to the player game objects to animate them
+/// <c>PlayerAnimator</c> is the class that animates the player game object. This includes moving the player and bobbing the current player indicator.
 /// </summary>
 public class PlayerAnimator : MonoBehaviour
 {

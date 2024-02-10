@@ -5,7 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 
 /// <summary>
-/// 
+/// <c>PlayerUIOverlay</c> is the class that manages the overlay UI for the player. This includes the buttons for game actions and pausing along with elements to display the player's name, color, score, and time left.
 /// </summary>
 public class PlayerUIOverlay : MonoBehaviour
 {

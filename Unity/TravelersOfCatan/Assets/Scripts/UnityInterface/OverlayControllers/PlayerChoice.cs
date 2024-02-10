@@ -5,7 +5,9 @@ using UnityEngine.UI;
 using NEAGame;
 using TMPro;
 
-// Class that controls the player choice overlay
+/// <summary>
+/// <c>PlayerChoice</c> is the class that manages the overlay for selecting a player to trade with.
+/// </summary>
 public class PlayerChoice : MonoBehaviour
 {
     public GameObject ParentObj;
@@ -30,12 +32,6 @@ public class PlayerChoice : MonoBehaviour
         myCanvas.sortingLayerName = "UI";
         myCanvas.sortingOrder = 250;
         CloseBtn.GetComponent<Button>().onClick.AddListener(CloseGUI);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     // Setup the GUI with the list of players

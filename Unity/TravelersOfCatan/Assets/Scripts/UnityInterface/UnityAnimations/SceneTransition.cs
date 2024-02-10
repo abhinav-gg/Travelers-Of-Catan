@@ -2,7 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Class to control the scene transition animation
+/// <summary>
+/// <c>SceneTransition</c> is a singleton class that handles the transition between scenes, including the cloud transition animation.
+/// </summary>
 public class SceneTransition : MonoBehaviour
 {
     public static SceneTransition i { get; private set; }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Class to control the trading overlay between two players
+/// <c>TradingInterface</c> is the class that manages the trading overlay. It is used to display each resource along with the quantity to trade.
 /// </summary>
 public class TradingInterface : MonoBehaviour
 {

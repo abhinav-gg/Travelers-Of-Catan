@@ -1,14 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using NEAGame;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class to control the save selector GUI
+/// <c>SaveSelector</c> is the class that manages the game save selection overlay. It is used to display the save game slots for the user to load or create.
 /// </summary>
 public class SaveSelector : MonoBehaviour
 {
@@ -21,9 +17,7 @@ public class SaveSelector : MonoBehaviour
     [Header("Animation objs")]
     public GameObject panel;
     public GameObject cancelBtn;
-
-
-    MethodInfo callback;
+    public GameObject SaveBtnParent;
 
     // Start is called before the first frame update
     void Start()
@@ -49,8 +43,13 @@ public class SaveSelector : MonoBehaviour
 
     public void CloseGUI()
     {
-        // Lean tween here
-        Destroy(gameObject);
+        AudioManager.i.Play("UIClick");
+        
+        LeanTween.scale(cancelBtn, Vector3.zero, 0.3f).setEase(LeanTweenType.easeInCubic);
+        LeanTween.scale(SaveBtnParent, Vector3.zero, 0.5f).setEase(LeanTweenType.easeInCubic);
+        LeanTween.rotateAround(SaveBtnParent, Vector3.forward, 180, 0.25f).setEase(LeanTweenType.easeInCubic).setDelay(0.15f);
+        LeanTween.scale(panel, Vector3.zero, 0.6f).setEase(LeanTweenType.easeInCubic).setOnComplete(() => { Destroy(gameObject); });
+        
     }
 
 
@@ -94,7 +93,7 @@ public class SaveSelector : MonoBehaviour
 
     void BtnClick(int i, bool hasData)
     {
-        AudioManager.i.Play("UIClick");
+        
         if (hasData)
         {
             UnityUI.Interface.SelectGameToLoad(i);

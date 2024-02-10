@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Controls button inputs on the menu page
+/// <c>MenuPage</c> is the class that adds listeners to the buttons on the menu page.
 /// </summary>
 public class MenuPage : MonoBehaviour
 {
@@ -17,6 +15,7 @@ public class MenuPage : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Add listeners and sound effects to the buttons on the menu page
         about.onClick.AddListener(() => {
             AudioManager.i.Play("UIClick");
             UnityUI.Interface.AboutButton();
@@ -34,6 +33,5 @@ public class MenuPage : MonoBehaviour
             AudioManager.i.Play("UIClick");
             UnityUI.Interface.HomeScreenSettingsButton();
         });
-        // add listeners and sound effects to the buttons on the menu page
     }
 }

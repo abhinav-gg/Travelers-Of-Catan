@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Class to control the inventory overlay
+/// <c>InventoryPopup</c> is the class that manages the inventory overlay that displays the current player's resources.
 /// </summary>
 public class InventoryPopup : MonoBehaviour
 {

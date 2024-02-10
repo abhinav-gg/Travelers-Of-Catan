@@ -1,11 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 /// <summary>
-/// Animates a card on the screen for the collection and trading of resources
+/// <c>CardCollection</c> animates a card on the screen to indicate the collection or trading of a resource.
 /// </summary>
 public class CardCollection : MonoBehaviour
 {

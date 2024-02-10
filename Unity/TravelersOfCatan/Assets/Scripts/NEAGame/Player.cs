@@ -7,10 +7,11 @@ namespace NEAGame
 {
     
     /// <summary>
-    /// Class that represents a player in the game
+    /// A <c>Player</c> object represents a single player in the game.
     /// </summary>
     public class Player
     {
+
         // Unity static color options
         [System.Serializable]
         public enum PlayerColors
@@ -194,19 +195,5 @@ namespace NEAGame
             // int cast wealth 
             return wealth;
         }
-
-        // upgrades a village to a city
-        public void upgradeVillage(Node node)
-        {
-            addVictoryPoints(TravelersOfCatan.victoryPointConvertor["City"]);
-        }
-
-        // undoes the upgrade of a village to a city
-        public void undoUpgradeVillage(Node node)
-        {
-            addVictoryPoints(-TravelersOfCatan.victoryPointConvertor["City"]);
-        }
     }
-
-
 }

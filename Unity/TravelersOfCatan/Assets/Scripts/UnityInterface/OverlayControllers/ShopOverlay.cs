@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using NEAGame;
 
 /// <summary>
-/// Class to control the shop overlay
+/// <c>ShopOverlay</c> is the class that manages the shop overlay. It is used to display the shop items for the user to purchase.
 /// </summary>
 public class ShopOverlay : MonoBehaviour
 {

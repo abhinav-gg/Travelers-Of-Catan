@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class to control the player name input GUI
+/// <c>PlayerNameInp</c> is the class that manages the overlay for inputting the player's name and whether they are a bot.
 /// </summary>
 public class PlayerNameInp : MonoBehaviour
 {
@@ -85,7 +85,7 @@ public class PlayerNameInp : MonoBehaviour
         LeanTween.rotateAround(doneBox, Vector3.forward, 360, 1f).setEase(LeanTweenType.easeInSine).setDelay(0.25f);
     }
 
-    // Method to sanitize the player name
+    // Method to sanitize the player name. This is called every character change in the input field by Unity.
     public void TextChange()
     {
         // Func called from Unity Input Field UI element

@@ -6,7 +6,8 @@ using NEAGame;
 using System.Linq;
 
 /// <summary>
-/// Class to interface between the game and the Unity UI
+/// The <c>UnityUI</c> class is used to manage the Unity interface for the game. This class is used to manage the flow of the game and the user interface. 
+/// It is a singleton class that creates and updates the game, and interfaces with all of the other UI classes.
 /// </summary>
 public partial class UnityUI : MonoBehaviour, UI
 {

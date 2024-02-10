@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Class to control a player slot in the trading selection menu
+/// <c>PlayerTradeSlot</c> is the class that stores references to the UI elements of a player slot in the trade partner choice overlay.
 /// </summary>
 public class PlayerTradeSlot : MonoBehaviour
 {

@@ -3,16 +3,16 @@ using System;
 using System.IO;
 
 /// <summary>
-/// Class to handle the saving and loading of files from Unity's persistent data path
-/// <Br/>Credit to https://www.youtube.com/watch?v=KZft1p8t2lQ for the tutorial on implementing this concept 
+/// A <c>FileHandler</c> object is used to manage the saving and loading of data to and from files stored in the Unity persistent data path. This also has the option to encrypt the data before saving it to the file.
+/// <br/>Credit to <seealso href="https://www.youtube.com/watch?v=KZft1p8t2lQ"/> for the tutorial on implementing this concept 
 /// </summary>
 public class FileHandler 
 {
     private string filepath = "";
     public bool IsMade;
     private bool useEncryption = false;
-    // practically speaking, this is not easily crackable, but it's not perfect as the same key is repeated
     private readonly string encryptionCodeWord = "SomeRandomStringKeyToConvertIntoBinaryForXOR->aiuaeogmk3GJEK834FEJSAK->";
+    // practically speaking, this is not easily crackable, but it's not perfect as the same key is repeated and is not infinitely long
 
     public FileHandler(string filepath)
     {
@@ -60,7 +60,12 @@ public class FileHandler
         }
     }
 
-    // function to return the data from the file
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// function to load the data from the file
+    /// Skill B: File Read/Write
+    /// </summary>
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public string Load()
     {
 
@@ -93,15 +98,21 @@ public class FileHandler
         return dataToLoad;
     }
 
-    // method to save the data to the file
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// function to save the data to the file
+    /// Skill B: File Read/Write
+    /// </summary>
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void Save(string data)
     {
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+            Directory.CreateDirectory(Path.GetDirectoryName(filepath)); // create the directory if it doesn't exist
 
             if (useEncryption)
             {
+                // encrypt the data before saving it
                 data = EncryptDecrypt(data);
             }
 
@@ -120,8 +131,10 @@ public class FileHandler
         }
     }
 
-    // Perform XOR encryption/decryption on the data
-    // Credit to https://stackoverflow.com/questions/2532668/help-me-with-xor-encryption for the XOR encryption
+    /// <summary> 
+    /// Perform XOR encryption/decryption on the data<br/>
+    /// Credit to <seealso href="https://stackoverflow.com/questions/2532668/help-me-with-xor-encryption"/> for the XOR encryption algorithm
+    /// </summary>
     public string EncryptDecrypt(string data) 
     {
         string key = encryptionCodeWord;

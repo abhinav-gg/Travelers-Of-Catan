@@ -4,10 +4,12 @@ using System.Numerics;
 
 namespace NEAGame
 {
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
-    /// Interface to represent the UI for the game. This contains all the methods that the UI should implement to be able to interact with the game.
+    /// The <c>UI</c> interface is used to define the methods that the game will use to interact with the user.<br/>
+    /// Skill A: Complex OOP - Interface
     /// </summary>
+    /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public interface UI
     {
         // gets the current time of the game in seconds
@@ -33,8 +35,6 @@ namespace NEAGame
         // tests a condition and raises an error if it is not met
         void Assert(bool test);
     }
-
-
 
 
     /// <summary> 

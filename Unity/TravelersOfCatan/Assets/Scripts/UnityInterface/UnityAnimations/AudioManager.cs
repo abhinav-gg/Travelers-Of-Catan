@@ -2,12 +2,12 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Controls the audio for the game
+/// <c>AudioManager</c> is the class that controls all audio for the game.
 /// Credit to Brackeys for the tutorial on this script: <seealso href="https://www.youtube.com/watch?v=6OT43pvUyfY"/>
 /// </summary>
 public class AudioManager : MonoBehaviour
 {
-    // Singleton instance of the AudioManager class so that it can be accessed from other scripts
+    // Singleton instance of the AudioManager class so that it can be accessed from all other scripts
     public static AudioManager i;
     public Sound[] sounds;
     public Sound[] BackgroundMusic;
