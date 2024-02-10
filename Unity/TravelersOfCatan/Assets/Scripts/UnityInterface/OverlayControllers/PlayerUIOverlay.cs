@@ -9,6 +9,16 @@ using Unity.VisualScripting;
 /// </summary>
 public class PlayerUIOverlay : MonoBehaviour
 {
+    public bool isAI = false;
+    public bool isZoomed = true;
+    private float animationTimer;
+    private float zoomCD = 0.0f;
+    private float moveCD = 0.0f;
+    private float turnEndCD = 5f;
+    private bool isTryingToMove = false;
+    private Sprite buffer;
+
+    [Header("UI Elements")]
     public Button MoveInput;
     public Button ShopInput;
     public Button InventoryInput;
@@ -23,16 +33,6 @@ public class PlayerUIOverlay : MonoBehaviour
     public TextMeshProUGUI PlayerMoves;
     public Image ColorMe;
     public Sprite CancelImage;
-    public bool isAI = false;
-
-    
-    public bool isZoomed = true;
-    float animationTimer;
-    float zoomCD = 0.0f;
-    float moveCD = 0.0f;
-    float turnEndCD = 5f;
-    bool isTryingToMove = false;
-    Sprite buffer;
 
     // Start is called before the first frame update
     void Start()
@@ -52,7 +52,6 @@ public class PlayerUIOverlay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         TimerText.text = UnityUI.Interface.GetTime();
         if (!isAI)
         {
@@ -64,9 +63,7 @@ public class PlayerUIOverlay : MonoBehaviour
         zoomCD = Mathf.Clamp(zoomCD - Time.deltaTime, -5f, 5f);
         moveCD = Mathf.Clamp(moveCD - Time.deltaTime, -3f, 3f);
         turnEndCD = Mathf.Clamp(turnEndCD - Time.deltaTime, -3f, 3f);
-        
     }
-
 
     // called by the AI to set the UI to AI mode. this disables all buttons except for zooming and pausing
     public void SetAI()
@@ -82,8 +79,7 @@ public class PlayerUIOverlay : MonoBehaviour
 
     // method to handle a click on the move button
     public void MoveButton()
-    {
-        
+    {        
         AudioManager.i.Play("UIClick");
         if (LeanTween.isTweening(MoveInput.gameObject))
         {
@@ -124,13 +120,10 @@ public class PlayerUIOverlay : MonoBehaviour
             LeanTween.moveLocalY(EndTurnInput.gameObject, 10, 0.5f).setEase(LeanTweenType.easeInBack);
             LeanTween.scale(EndTurnInput.gameObject, new Vector3(0f, 0f, 0f), 0.5f).setEase(LeanTweenType.easeInOutBounce).setOnComplete(() => {
                 Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
-
                 UnityUI.Interface.EndTurn();
-
             });
         }
     }
-
 
     // method to handle finishing or cancelling a move
     public void FinishMove()

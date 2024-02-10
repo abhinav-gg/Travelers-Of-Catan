@@ -10,5 +10,4 @@ public class PlayerSlot : MonoBehaviour
     public GameObject Parent;
     public GameObject PlayerName;
     public GameObject Color;
-
 }

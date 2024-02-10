@@ -62,6 +62,7 @@ public class TradingInterface : MonoBehaviour
         
     }
 
+    // method to close the trading interface
     public void CloseGUI()
     {
         // tween everything out of existance
@@ -78,6 +79,7 @@ public class TradingInterface : MonoBehaviour
         LeanTween.alphaCanvas(PanelText.GetComponent<CanvasGroup>(), 0f, 0.5f).setEase(LeanTweenType.easeOutBack).setDelay(1f).setOnComplete(() => Destroy(gameObject));
     }
 
+    // method to setup the trade interface
     public void Setup(Player current, Player other)
     {
         this.other = other;
@@ -103,28 +105,33 @@ public class TradingInterface : MonoBehaviour
 
     }
 
+    // method to update all of the trade quantity information
     void UpdateGUI()
     {
         // tween the card around
         Card.GetComponent<Image>().sprite = Cards[currentResource];
         if (CurrentTrades[currentResource] > 0)
         {
+            // if the current player is gaining this resource
             PTrade1.GetComponent<TextMeshProUGUI>().text = "+" + CurrentTrades[currentResource].ToString();
             PTrade2.GetComponent<TextMeshProUGUI>().text = "-" + CurrentTrades[currentResource].ToString();
         }
         else if (CurrentTrades[currentResource] < 0)
         {
+            // if the current player is giving this resource
             PTrade2.GetComponent<TextMeshProUGUI>().text = "+" + Mathf.Abs(CurrentTrades[currentResource]).ToString();
             PTrade1.GetComponent<TextMeshProUGUI>().text = CurrentTrades[currentResource].ToString();
         }
         else
         {
+            // if the current player is not trading this resource
             PTrade1.GetComponent<TextMeshProUGUI>().text = "0";
             PTrade2.GetComponent<TextMeshProUGUI>().text = "0";
         }
 
         if (overallVal > 0)
         {
+            // if the current player is getting more than they are giving
             POverallVal1.GetComponent<TextMeshProUGUI>().text = "+" + overallVal.ToString();
             POverallVal1.GetComponent<TextMeshProUGUI>().color = Color.green;
             POverallVal2.GetComponent<TextMeshProUGUI>().text = "-" + overallVal.ToString();
@@ -132,6 +139,7 @@ public class TradingInterface : MonoBehaviour
         }
         else if (overallVal < 0)
         {
+            // if the current player is giving more than they are getting
             POverallVal2.GetComponent<TextMeshProUGUI>().text = "+" + Mathf.Abs(overallVal).ToString();
             POverallVal2.GetComponent<TextMeshProUGUI>().color = Color.green;
             POverallVal1.GetComponent<TextMeshProUGUI>().text = overallVal.ToString();
@@ -139,23 +147,18 @@ public class TradingInterface : MonoBehaviour
         }
         else
         {
+            // if the trade is even
             POverallVal1.GetComponent<TextMeshProUGUI>().text = "0";
             POverallVal1.GetComponent<TextMeshProUGUI>().color = Color.white;
             POverallVal2.GetComponent<TextMeshProUGUI>().text = "0";
             POverallVal2.GetComponent<TextMeshProUGUI>().color = Color.white;
-        }
-
-
-        
+        }        
         decrease.interactable = (-CurrentTrades[currentResource] < MaxLoss[currentResource]);
         increase.interactable = (CurrentTrades[currentResource] < MaxGain[currentResource]);
-        
-        
-        
     }
 
 
-    // referenced by Unity Button
+    // onclick on the add for current player
     void AddToCurrent()
     {
         AudioManager.i.Play("UIClick");
@@ -169,6 +172,7 @@ public class TradingInterface : MonoBehaviour
 
     }
 
+    // onclick on the add for the other player
     void GiveToEnemy()
     {
         AudioManager.i.Play("UIClick");
@@ -181,6 +185,7 @@ public class TradingInterface : MonoBehaviour
         UpdateGUI();
     }
 
+    // rotate carousel to the left
     void Left()
     {
         accept.interactable = false;
@@ -193,6 +198,8 @@ public class TradingInterface : MonoBehaviour
         currentResource--; if (currentResource == 0) { left.interactable = false; }
         UpdateGUI();
     }
+
+    // rotate carousel to the right
      void Right()
     {
         left.interactable = true;
@@ -205,6 +212,7 @@ public class TradingInterface : MonoBehaviour
         UpdateGUI();
     }
 
+    // onclick on the accept button
     void AcceptTrade()
     {
         AudioManager.i.Play("UIClick");
@@ -215,6 +223,4 @@ public class TradingInterface : MonoBehaviour
         StartCoroutine(UnityUI.Interface.RegisterTrade(CurrentTrades, other));
         CloseGUI();
     }
-
-
 }

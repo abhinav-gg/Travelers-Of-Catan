@@ -7,26 +7,22 @@ using UnityEngine.UI;
 /// </summary>
 public class PlayerNameInp : MonoBehaviour
 {
-
-
     public string FinalName;
     public bool IsBot = false;
-
-    public Toggle toggle;   
+    public Toggle toggle;
     public TMP_InputField inputField;
     public Button button;
 
-    [Space(1)]
     [Header("Tweening Object")]
-    [Space(1)]
-
     public GameObject panel;
     public GameObject banner;
     public GameObject input;
     public GameObject botImage;
     public GameObject checkbox;
     public GameObject doneBox;
-    int NameMaxLength = 10;
+    
+    private const int NAME_MAX_LENGTH = 10;
+    private const int NAME_MIN_LENGTH = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +32,7 @@ public class PlayerNameInp : MonoBehaviour
         myCanvas.worldCamera = Camera.main;
         myCanvas.sortingLayerName = "UI";
         myCanvas.sortingOrder = 1;
-
+        // animate the GUI to appear
         panel.transform.localScale = new Vector3(0, 0, 0);
         Vector3 bannerOG = banner.transform.localScale;
         banner.transform.localScale = new Vector3(0, 0, 0);
@@ -55,8 +51,6 @@ public class PlayerNameInp : MonoBehaviour
         LeanTween.scale(botImage, botOG, 1f).setEaseOutBack().setDelay(0.2f);
         LeanTween.scale(checkbox, checkOG, 1f).setEaseOutBack().setDelay(0.3f);
         LeanTween.scale(doneBox, doneOG, 1f).setEaseOutBack().setDelay(0.4f);
-
-
     }
 
     // Update is called once per frame
@@ -75,7 +69,7 @@ public class PlayerNameInp : MonoBehaviour
     // Method to close the GUI
     public void CloseGUI()
     {
-
+        // animate the GUI to close
         LeanTween.moveY(banner, banner.transform.position.y + 300f, 0.75f).setEaseInBack();
         LeanTween.scale(panel, new Vector3(), 1f).setEaseInBack().setOnComplete(() => { Destroy(gameObject); });
         LeanTween.scale(input, new Vector3(), 0.75f).setEaseInBack().setDelay(0.15f);
@@ -88,21 +82,21 @@ public class PlayerNameInp : MonoBehaviour
     // Method to sanitize the player name. This is called every character change in the input field by Unity.
     public void TextChange()
     {
-        // Func called from Unity Input Field UI element
         string name = inputField.text;
         button.interactable = true;
-        if (name.Length > NameMaxLength)
+        // ensure the name is not too long or too short
+        if (name.Length > NAME_MAX_LENGTH)
         {
-            name = name.Substring(0, NameMaxLength);
+            name = name.Substring(0, NAME_MAX_LENGTH);
             inputField.text = name;
-        } 
-        else if (name.Length < 3)
+        }
+        else if (name.Length < NAME_MIN_LENGTH)
         {
             button.interactable = false;
-        } 
-        
+        }
+
         string output = "";
-        
+        // sanitize the input to alphanumeric
         foreach (char x in name.ToCharArray())
         {
             if (char.IsLetterOrDigit(x))
@@ -111,8 +105,5 @@ public class PlayerNameInp : MonoBehaviour
             }
         }
         inputField.text = output;
-        // sanitize input
-
     }
-
 }

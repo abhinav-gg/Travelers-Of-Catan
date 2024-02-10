@@ -30,6 +30,7 @@ public class AudioManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
+        // load all sound effects
         foreach (Sound s in sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
@@ -37,9 +38,8 @@ public class AudioManager : MonoBehaviour
             s.source.volume = s.Vol * VolumeModifier;
             s.source.pitch = s.Pitch;
             s.source.loop = s.Loop;
-
         }
-
+        // load all background music
         foreach (Sound s in BackgroundMusic)
         {
             s.source = gameObject.AddComponent<AudioSource>();
@@ -47,7 +47,6 @@ public class AudioManager : MonoBehaviour
             s.source.volume = s.Vol * VolumeModifier;
             s.source.pitch = s.Pitch;
             s.source.loop = s.Loop;
-
         }
     }
 
@@ -108,7 +107,6 @@ public class AudioManager : MonoBehaviour
     public void ChangeMasterVolume(float vol)
     {
         VolumeModifier = vol;
-        
     }
 
     // Toggles the mute for SFX or background music depending on the bool parameter
@@ -149,8 +147,6 @@ public class AudioManager : MonoBehaviour
             return mutedSFX;
         }
     }
-
-
 }
 
 // Class that holds the information for a sound

@@ -13,7 +13,7 @@ public class CardCollection : MonoBehaviour
     public void SetCard(int resource, Vector3 Dest)
     {
         GetComponent<SpriteRenderer>().sprite = cards[resource];
-
+        // Animate the card to its destination. This is either the inventory button or the trading partner
         float delay = Random.Range(0.5f, 1f);
         float duration = Random.Range(0.7f, 1.1f);
         LeanTween.move(gameObject, Dest, duration).setEase(LeanTweenType.easeOutBounce).setDelay(delay).setOnComplete(() =>

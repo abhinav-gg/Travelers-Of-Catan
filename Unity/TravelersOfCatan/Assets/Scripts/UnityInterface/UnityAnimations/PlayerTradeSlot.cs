@@ -9,5 +9,4 @@ public class PlayerTradeSlot : MonoBehaviour
     public GameObject ButtonObj;
     public GameObject PlayerName;
     public GameObject PlayerColor;
-
 }

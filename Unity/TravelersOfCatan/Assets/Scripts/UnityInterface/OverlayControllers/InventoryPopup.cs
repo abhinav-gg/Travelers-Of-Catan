@@ -14,6 +14,7 @@ public class InventoryPopup : MonoBehaviour
     public TextMeshProUGUI Ore;
     public TextMeshProUGUI Wood;
     public TextMeshProUGUI Wheat;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,19 +29,13 @@ public class InventoryPopup : MonoBehaviour
         CloseButton.gameObject.LeanScale(new Vector3(0, 0, 0), 0);
         LeanTween.scale(Background, new Vector3(7.710301f, 2.923337f, 2.923337f), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.7f);
         LeanTween.scale(CloseButton.gameObject, new Vector3(1, 1, 1), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.7f);
-        }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void CloseGUI()
     {
         AudioManager.i.Play("UIClick");
+        // add a close animation
         LeanTween.scale(CloseButton.gameObject, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeInCubic).setDelay(0.1f);
-
         LeanTween.moveLocalY(Brick.gameObject, -1000, 0.75f).setEase(LeanTweenType.easeOutSine).setDelay(0.2f);
         LeanTween.moveLocalY(Sheep.gameObject, -1000, 0.75f).setEase(LeanTweenType.easeOutSine).setDelay(0.3f);
         LeanTween.moveLocalY(Ore.gameObject, -1000, 0.75f).setEase(LeanTweenType.easeOutSine).setDelay(0.4f);
@@ -56,6 +51,7 @@ public class InventoryPopup : MonoBehaviour
         Vector3 TextScale = new Vector3(0.1395292f, 0.53154f, 0.53154f);
         switch (Name)
         {
+            // display the resource count
             case ("Brick"):
                 Brick.gameObject.transform.localScale = new Vector3(0, 0, 0);
                 LeanTween.scale(Brick.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.1f);
@@ -64,31 +60,27 @@ public class InventoryPopup : MonoBehaviour
             case ("Sheep"):
                 Sheep.gameObject.transform.localScale = new Vector3(0, 0, 0);
                 LeanTween.scale(Sheep.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.15f);
-
                 Sheep.text = FormatInt(count);
                 break;
             case ("Ore"):
                 Ore.gameObject.transform.localScale = new Vector3(0, 0, 0);
                 LeanTween.scale(Ore.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.2f);
-
                 Ore.text = FormatInt(count);
                 break;
             case ("Wood"):
                 Wood.gameObject.transform.localScale = new Vector3(0, 0, 0);
                 LeanTween.scale(Wood.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.25f);
-
                 Wood.text = FormatInt(count);
                 break;
             case ("Wheat"):
                 Wheat.gameObject.transform.localScale = new Vector3(0, 0, 0);
                 LeanTween.scale(Wheat.gameObject, TextScale, 0.75f).setEase(LeanTweenType.easeOutElastic).setDelay(0.3f);
-
                 Wheat.text = FormatInt(count);
                 break;
         }
     }
 
-    string FormatInt(int count)
+    private string FormatInt(int count)
     {
         // return string in form XX
         if (count < 10)
@@ -100,6 +92,4 @@ public class InventoryPopup : MonoBehaviour
             return count.ToString();
         }
     }
-
-
 }

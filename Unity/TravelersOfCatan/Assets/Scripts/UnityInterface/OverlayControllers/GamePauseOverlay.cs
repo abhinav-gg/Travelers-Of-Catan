@@ -6,19 +6,15 @@ using UnityEngine.UI;
 /// </summary>
 public class GamePauseOverlay : MonoBehaviour
 {
-    // Start is called before the first frame update
     public Button Resume;
-    [SerializeField] Slider Slider;
-    [Space(10)]
+    public Slider Slider;
     public Button MuteBG;
     public Button MuteSFX;
-    [Space(10)]
     public GameObject Panel;
     public GameObject PauseBtn;
     public GameObject Display;
     public GameObject Save;
     public GameObject MusicParent;
-    [Space(10)]
     public Sprite MusicUnmuted;
     public Sprite MusicMuted;
 
@@ -38,28 +34,23 @@ public class GamePauseOverlay : MonoBehaviour
         {
             AudioManager.i.Play("UIClick");
             CloseGUI();
-
         });
         MuteBG.onClick.AddListener(() => 
         {
             AudioManager.i.ToggleMute(Background: true); // Mutes background music
             UpdateMusicBtn(true);
-
         });
-      
         MuteSFX.onClick.AddListener(() =>
         {
             AudioManager.i.ToggleMute(Background: false); // Mutes sound effects
             UpdateMusicBtn(false);
-
         });
-        
+        Save.GetComponent<Button>().onClick.AddListener(OnExit);
+        // Set the mute buttons to the correct initial state
         if (AudioManager.i.isMuted(Background: true))
         {
             MuteBG.GetComponent<Image>().sprite = MusicMuted;
         }
-        Save.GetComponent<Button>().onClick.AddListener(OnExit);
-
         UpdateMusicBtn(true); UpdateMusicBtn(false);
     }
 
@@ -94,6 +85,7 @@ public class GamePauseOverlay : MonoBehaviour
         });
     }
 
+    // Method to update the music buttons
     void UpdateMusicBtn(bool background)
     {
         Sprite img = AudioManager.i.isMuted(background) ? MusicMuted : MusicUnmuted;
@@ -120,8 +112,6 @@ public class GamePauseOverlay : MonoBehaviour
             LeanTween.scale(Save, Save.transform.localScale * 0.8f, 0.1f).setEase(LeanTweenType.easeInCubic).setLoopPingPong(1);
         }
         UnityUI.Interface.CloseAllGameUIs();
-        UnityUI.Interface.SaveAndExit();
-        
+        UnityUI.Interface.SaveAndExit();        
     }
-
 }

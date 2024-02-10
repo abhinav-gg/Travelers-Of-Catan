@@ -6,9 +6,7 @@ using NEAGame;
 /// </summary>
 public class ConnectionAnimator : MonoBehaviour
 {
-
     public Connection connection;
-
     public GameObject Road;
     public GameObject Wall;
 
@@ -34,8 +32,6 @@ public class ConnectionAnimator : MonoBehaviour
                 Road.transform.Rotate(0, 0, -60);
             }
         }
-
-
     }
 
     // Method to update the display of the connection
@@ -55,8 +51,5 @@ public class ConnectionAnimator : MonoBehaviour
                 LeanTween.scale(gameObject, new Vector3(0, 0, 0), 0.5f).setEase(LeanTweenType.easeOutBack).setOnComplete(() => { Destroy(gameObject); });
                 break;
         }   
-
     }
-
-
 }

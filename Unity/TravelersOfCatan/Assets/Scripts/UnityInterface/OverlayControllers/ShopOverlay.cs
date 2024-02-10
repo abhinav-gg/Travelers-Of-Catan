@@ -66,7 +66,6 @@ public class ShopOverlay : MonoBehaviour
     private void FixedUpdate()
     {
         Buffer = Mathf.Max(0, Buffer-Time.deltaTime);
-
     }
 
     // Attempt to purchase the item
@@ -76,14 +75,10 @@ public class ShopOverlay : MonoBehaviour
         CloseGUI();
     }
 
-
     // Close the GUI
     public void CloseGUI()
     {
-
-        LeanTween.scale(purchase.gameObject, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeOutCirc)
-            .setOnComplete(() => Destroy(gameObject));
-        
+        LeanTween.scale(purchase.gameObject, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeOutCirc).setOnComplete(() => Destroy(gameObject));
     }
 
     // Moves to the next item in the carousel
@@ -115,14 +110,14 @@ public class ShopOverlay : MonoBehaviour
 
         Vector3 startpos = purchase.gameObject.transform.position;
         int dir = right ? 1 : -1;
+        // animate the purchase image across the screen and update the costs.
         LeanTween.moveLocalX(purchase.gameObject, startpos.x + (dir*1000f), 0.5f).setDelay(0.1f).setEase(LeanTweenType.easeInCirc).setOnComplete(() =>
         {
             purchase.gameObject.transform.position = new Vector3(- (dir*2000), 0, 0) + startpos;
             purchase.gameObject.GetComponent<Image>().sprite = shoopingImages[currentID];
             UpdateDisplayCounts();
             LeanTween.move(purchase.gameObject, startpos, 0.5f).setEase(LeanTweenType.easeOutCirc);
-        }); // animate the purchase image across the screen and update the costs.
-
+        }); 
     }
 
     // Update the display counts
@@ -155,7 +150,5 @@ public class ShopOverlay : MonoBehaviour
         {
             purchase.interactable = false;
         }
-
     }
-
 }

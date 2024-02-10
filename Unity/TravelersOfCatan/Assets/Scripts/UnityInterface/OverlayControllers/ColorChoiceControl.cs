@@ -12,15 +12,14 @@ public class ColorChoiceControl : MonoBehaviour
     public GameObject[] colorChoiceBtns;
     public Sprite Taken;
     public Sprite NotTaken;
+    private string current = "clear";
+    private bool isClosing = false;
 
     [Header("Animation Objects")]
     public GameObject panel;
     public GameObject CloseBtn;
     public GameObject ColParent;
 
-    List<string> col;
-    string current = "clear";
-    bool isClosing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -107,5 +106,4 @@ public class ColorChoiceControl : MonoBehaviour
         }
         current = i;
     }
-
 }

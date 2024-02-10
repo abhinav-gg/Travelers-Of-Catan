@@ -22,14 +22,12 @@ public class SaveSelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-
         Canvas myCanvas = GetComponent<Canvas>();
         myCanvas.renderMode = RenderMode.ScreenSpaceCamera;
         myCanvas.worldCamera = Camera.main;
         myCanvas.sortingLayerName = "UI";
         myCanvas.sortingOrder = 800;
-
+        // add listener for close button click
         cancelBtn.GetComponent<Button>().onClick.AddListener(() => {
             AudioManager.i.Play("UIClick");
             if (!LeanTween.isTweening(cancelBtn))
@@ -40,7 +38,7 @@ public class SaveSelector : MonoBehaviour
         });
     }
 
-
+    // method to close the save selector
     public void CloseGUI()
     {
         AudioManager.i.Play("UIClick");
@@ -52,7 +50,7 @@ public class SaveSelector : MonoBehaviour
         
     }
 
-
+    // method to setup the save selector
     public void Setup()
     {
         panel.SetActive(true);
@@ -65,11 +63,13 @@ public class SaveSelector : MonoBehaviour
             slot.ID = i;
             if (hasData)
             {
+                // allows the user to load the save
                 slot.StatusText.GetComponent<TextMeshProUGUI>().text = "Load Save";
                 slot.SlotText.GetComponent<TextMeshProUGUI>().text = "Save " + (i + 1);
             }
             else
             {
+                // allows the user to create a new save
                 slot.StatusText.GetComponent<TextMeshProUGUI>().text = "Create New";
                 slot.SlotText.GetComponent<TextMeshProUGUI>().text = "Save " + (i + 1);
                 slot.Reset.SetActive(false);
@@ -81,6 +81,7 @@ public class SaveSelector : MonoBehaviour
         }
     }
 
+    // onclick for the reset button
     void ResetClick(int i)
     {
         AudioManager.i.Play("UIClick");
@@ -89,11 +90,9 @@ public class SaveSelector : MonoBehaviour
         Setup();
     }
 
-
-
+    // onclick for the save slots
     void BtnClick(int i, bool hasData)
     {
-        
         if (hasData)
         {
             UnityUI.Interface.SelectGameToLoad(i);
@@ -104,5 +103,4 @@ public class SaveSelector : MonoBehaviour
         }
         CloseGUI();
     }
-
 }

@@ -13,7 +13,7 @@ public class PopupController : MonoBehaviour
     public GameObject TextBG;
     public GameObject Header;
 
-
+    // Start is called before the first frame update
     void Start()
     {
         Canvas myCanvas = GetComponent<Canvas>();
@@ -22,7 +22,7 @@ public class PopupController : MonoBehaviour
         myCanvas.sortingLayerName = "UI";
         myCanvas.sortingOrder = 900;
         CancelBtn.GetComponent<Button>().onClick.AddListener(CloseGUI);
-        // do some tweening
+        // do some animation for the popup to appear
         Vector3 init;
         init = TextBG.transform.localScale;
         TextBG.transform.localScale = new Vector3(0, 0, 0);
@@ -37,6 +37,8 @@ public class PopupController : MonoBehaviour
         LeanTween.rotateAround(Header, Vector3.forward, 360f, 0.5f).setEase(LeanTweenType.easeOutSine);
 
     }
+
+    // method to close the popup
     public void CloseGUI()
     {
         // do some tweening
@@ -48,11 +50,9 @@ public class PopupController : MonoBehaviour
         LeanTween.scale(TextBG, new Vector3(0, 0, 0), 0.75f).setEase(LeanTweenType.easeInElastic).setDelay(0.15f).setOnComplete(() => Destroy(gameObject));
     }
 
+    // method to update the text of the popup
     public void Setup(string content)
     {
         MainText.GetComponent<TextMeshProUGUI>().text = content;
     }
-    
-
-
 }

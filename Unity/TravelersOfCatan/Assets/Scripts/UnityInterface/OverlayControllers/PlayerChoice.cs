@@ -13,10 +13,9 @@ public class PlayerChoice : MonoBehaviour
     public GameObject ParentObj;
     public GameObject CloseBtn;
     public GameObject PlayerSlotPrefab;
+    private List<Player> options;
+    private bool found = false;
 
-    List<Player> options;
-    bool found = false;
-    
     // Close the GUI
     public void CloseGUI()
     {
@@ -52,7 +51,6 @@ public class PlayerChoice : MonoBehaviour
             go.ButtonObj.GetComponent<Button>().onClick.AddListener(() => Selected(p));
             yield return new WaitForSeconds(0.1f);
         }
-
     }
 
     // Called when a player is selected
@@ -67,5 +65,4 @@ public class PlayerChoice : MonoBehaviour
         UnityUI.Interface.SelectPartner(pl);
         CloseGUI();
     }
-
 }
