@@ -283,7 +283,7 @@ namespace NEAGame
     /// </summary>
     public class Resource
     {
-        public static readonly string[] resources = { "Empty", "Brick", "Sheep", "Ore", "Wood", "Wheat" };
+        public static readonly string[] RESOURCES = { "Empty", "Brick", "Sheep", "Ore", "Wood", "Wheat" };
         private int id;
         private static readonly Random rng = new Random();
 
@@ -303,7 +303,7 @@ namespace NEAGame
         // override the ToString method to return the name of the resource
         public override string ToString()
         {
-            return resources[id];
+            return RESOURCES[id];
         }
 
         // method to get the id of the resource
@@ -315,8 +315,20 @@ namespace NEAGame
         // method to create a random resource
         public static Resource GetRandom()
         {
-            Resource temp = new Resource(rng.Next(1, resources.Length));
+            Resource temp = new Resource(rng.Next(1, RESOURCES.Length));
             return temp;
+        }
+
+        // override the Equals method to compare two resources
+        public override bool Equals(object obj)
+        {
+            // used in comparisons to check if two resources are the same in dictionary lookups
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            Resource r = (Resource)obj;
+            return r.id == id;
         }
     }
 }

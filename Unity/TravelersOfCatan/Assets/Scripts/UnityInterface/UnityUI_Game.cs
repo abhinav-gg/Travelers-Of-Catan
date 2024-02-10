@@ -237,7 +237,7 @@ public partial class UnityUI
         foreach (var entry in game.board.GetResourcesOnBoard())
         {
 
-            resourceID = Array.IndexOf(Resource.resources, entry.Value.ToString());// is the index of the resource in the list of resources
+            resourceID = Array.IndexOf(Resource.RESOURCES, entry.Value.ToString());// is the index of the resource in the list of resources
             gridPos = CubicToOddRow(entry.Key);
             tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
 

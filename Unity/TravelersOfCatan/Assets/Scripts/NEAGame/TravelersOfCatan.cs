@@ -192,9 +192,8 @@ namespace NEAGame
 
                 // give every player their starting resources
 
-                for (int i = 1; i < Resource.resources.Length; i++)
+                for (int i = 1; i < Resource.RESOURCES.Length; i++)
                 {
-
                     current.addResource(new Resource(i), StartingResourceCount);
                 }
 
@@ -901,8 +900,6 @@ namespace NEAGame
         // method to perform the given game action
         public void DoAction(GameAction a)
         {
-           // This is only ever called by the AI calculations
-           UserInterface.Assert(isAICalculation);
 
             if (a.type == typeof(PlayerMove))
             {
