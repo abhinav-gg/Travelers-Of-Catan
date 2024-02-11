@@ -20,8 +20,8 @@ namespace NEAGame
         }
         public Stack<GameAction> selectedMoves = new Stack<GameAction>();
         public Stack<GameAction> currentMove = new Stack<GameAction>();
-        private readonly int MaxDepth = 5;
-        TravelersOfCatan gameRef;
+        private readonly int MAX_DEPTH = 4;
+        private TravelersOfCatan gameRef;
 
         // Constructor for AI that creates a new player
         public AI(int playerID, string name, string playerColor, Vector3 home, TravelersOfCatan reference) : base(playerNumber: playerID, playerName:name, color: playerColor, origin:home)
@@ -77,14 +77,15 @@ namespace NEAGame
         {
             if (depth == -1)
             {
-                depth = MaxDepth;
+                depth = MAX_DEPTH;
             }
 
             List<List<GameAction>> AllMoves = new List<List<GameAction>>();
             
             if (depth == 0)
             {
-                return (int)Math.Pow(-1, MaxDepth) * StaticEval();
+                // this line was altered from the original code to fix a bug where the AI returns the negative of the static evaluation on all even depths
+                return (int)Math.Pow(-1, MAX_DEPTH) * StaticEval();
             }
 
             if (turn == Turn.Max)
@@ -105,7 +106,6 @@ namespace NEAGame
                     AllMoves.AddRange(GenerateMoves(pdl));
                 }
                 turn = Turn.Max;
-                
             }
 
             // sort the moves by their length to optimise alpha beta pruning
@@ -144,7 +144,7 @@ namespace NEAGame
                 }
                 if (v > alpha)
                 {
-                    if (depth == MaxDepth)
+                    if (depth == MAX_DEPTH)
                     {
                         // if the move is the best move found so far, store it in the selectedMoves stack
                         selectedMoves = new Stack<GameAction>(m);
@@ -212,7 +212,6 @@ namespace NEAGame
                     };
                 }
             }
-
 
             foreach (Node end in allMoves)
             {

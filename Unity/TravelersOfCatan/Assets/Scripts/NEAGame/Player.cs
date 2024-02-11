@@ -5,13 +5,11 @@ using System.Linq;
 
 namespace NEAGame
 {
-    
     /// <summary>
     /// A <c>Player</c> object represents a single player in the game.
     /// </summary>
     public class Player
     {
-
         // Unity static color options
         [System.Serializable]
         public enum PlayerColors
@@ -25,7 +23,7 @@ namespace NEAGame
             white,
             yellow
         }
-
+        
         private int victoryPoints;
         private Dictionary<Resource, int> resources = new Dictionary<Resource, int>() {
             { new Resource(1), 0 },
@@ -38,7 +36,7 @@ namespace NEAGame
         private List<Node> buildings = new List<Node>(); 
         private List<Connection> connections = new List<Connection>();
 
-        protected int playerNumber; // useful as a UID for the player allowing the same name in testing
+        protected int playerNumber; // used as a UID for the player allowing the same name
         public readonly string playerName;
         public readonly Vector3 origin;
         public int moves;
@@ -179,10 +177,7 @@ namespace NEAGame
             return playerName;
         }
 
-
-        /// <summary>
-        /// Used to calculate the wealth of a player for the AI static state evaluation function
-        /// </summary>
+        // Used to calculate the wealth of a player for the AI static state evaluation function
         public int GetWealth()
         {
             int wealth = 0;
@@ -190,6 +185,7 @@ namespace NEAGame
             {
                 wealth += resource.Value;
             }
+            // victory points are weighted as they indicate resource have been spent
             wealth += victoryPoints * 5;
             
             // int cast wealth 

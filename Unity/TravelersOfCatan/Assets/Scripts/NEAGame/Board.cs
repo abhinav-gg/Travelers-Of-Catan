@@ -15,11 +15,11 @@ namespace NEAGame
         /// nested dictionary for the connections between nodes in the board implementing an adjacency matrix
         /// these data structures are also composed of other class objects
         /// Skill A: Complex Data Structure 
-        /// Skill A: Complex User-Defined OOP: Composition
+        /// Skill A: Complex User-Defined OOP: Composition + Encapsulation
         
-        Dictionary<Vector3, Resource> board = new Dictionary<Vector3, Resource>();
-        Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
-        Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
+        private Dictionary<Vector3, Resource> board = new Dictionary<Vector3, Resource>();
+        private Dictionary<Vector3, Node> nodes = new Dictionary<Vector3, Node>();
+        private Dictionary<Vector3, Dictionary<Vector3, Connection>> connections = new Dictionary<Vector3, Dictionary<Vector3, Connection>>();
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         

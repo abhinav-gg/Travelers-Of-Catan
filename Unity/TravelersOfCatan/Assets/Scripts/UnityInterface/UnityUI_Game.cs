@@ -26,20 +26,18 @@ public partial class UnityUI
     public GameObject CardObj;
     public GameObject GameSavePopup;
     public Tile[] resources = new Tile[6];
-    [Space(10)]
 
     public GridLayout gridLayout;
     public Tilemap tilemap;
     public List<NodeButton> nodes;
 
-    [Space(10)]
     public float Timer = 0.0f;
     public bool TimerActive = false;
 
 
-    PlayerUIOverlay overlay;
-    NodeButton SelectedNode;
-    IEnumerator coroutine;
+    private PlayerUIOverlay overlay;
+    private NodeButton SelectedNode;
+    private IEnumerator coroutine;
 
     // Update is called once per frame
     void Update()
@@ -56,6 +54,7 @@ public partial class UnityUI
         AudioManager.i.Play("Success");
         Timer = time;
         TimerActive = true;
+        // setup the player's main overlay
         overlay = Instantiate(PlayerUI).GetComponent<PlayerUIOverlay>();
         if (game.GetCurrentPlayer().isPlayerAI())
         {
@@ -74,7 +73,6 @@ public partial class UnityUI
         overlay.PlayerScore.text = game.GetCurrentPlayer().getVictoryPoints().ToString();
         overlay.PlayerName.text = game.GetCurrentPlayer().playerName;
         GetPlayerGameObject(game.GetCurrentPlayer().GetID()).isCurrentPlayer = true;
-        // setup the player's main overlay
 
         // set camera position to player position on board!
         LeanTween.cancel(Camera.main.gameObject);
@@ -167,7 +165,7 @@ public partial class UnityUI
     // method for ending the player's turn
     public void EndTurn()
     {
-        AudioManager.i.Stop("Countdown");
+        AudioManager.i.StopAll();
         if (!overlay.isZoomed)
         {
             overlay.ZoomButton();
@@ -189,7 +187,6 @@ public partial class UnityUI
         FindAnyObjectByType<TradingInterface>()?.CloseGUI();
         FindAnyObjectByType<PlayerChoice>()?.CloseGUI();
         FindAnyObjectByType<PopupController>()?.CloseGUI();
-
         if (FindAnyObjectByType<PlayerUIOverlay>())
             Destroy(FindObjectOfType<PlayerUIOverlay>().gameObject);
     }
@@ -231,7 +228,6 @@ public partial class UnityUI
     // method to initialise the game board on the screen
     public void DisplayBoard()
     {
-       
         int resourceID;
         Vector3Int gridPos;
         foreach (var entry in game.board.GetResourcesOnBoard())
@@ -240,7 +236,6 @@ public partial class UnityUI
             resourceID = Array.IndexOf(Resource.RESOURCES, entry.Value.ToString());// is the index of the resource in the list of resources
             gridPos = CubicToOddRow(entry.Key);
             tilemap.SetTile(new Vector3Int(gridPos.x, gridPos.y), resources[resourceID]);
-
         }
 
         foreach (Node n in game.board.GetAllNodes())
@@ -304,7 +299,6 @@ public partial class UnityUI
         }
         conui.connection = con;
         conui.UpdateDisplay();
-        
     }
 
     // method to get the color of the specified player
@@ -347,8 +341,8 @@ public partial class UnityUI
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Skill A: Use of Complex Mathematical Model
     // Used to represent and convert hexagonal grid of nodes and connection between cubic coordinates, odd row coordinates and global positions
+    // Skill A: Use of Complex Mathematical Model
     
     public Vector3 GetConnectionGlobalPos(Node v1, Node v2)
     {
@@ -418,7 +412,6 @@ public partial class UnityUI
         int row = (int)vec.X;
         return new Vector3Int(col, row, 0);
     }
-    
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // convert a string to a color
@@ -443,7 +436,7 @@ public partial class UnityUI
             case "yellow":
                 return Color.yellow;
             default:
-                return Color.white;
+                return Color.clear;
         }
     }
 
@@ -497,6 +490,7 @@ public partial class UnityUI
         coroutine = WaitForNodeChoice(callback);
         StartCoroutine(coroutine);
     }
+
     // method to wait for the user to choose a node
     IEnumerator WaitForNodeChoice(Action<Node> callback) // pass in function for moving vs buying
     {
@@ -507,6 +501,7 @@ public partial class UnityUI
         callback(SelectedNode.node);
         SelectedNode = null;
     }
+
     // method to handle the user clicking on a node option
     public void OnNodeClick(NodeButton node)
     {
@@ -524,12 +519,10 @@ public partial class UnityUI
         {
             n.DisableButton();
         }
-
         if (coroutine != null)
         {
             StopCoroutine(coroutine);
         }
-
     }
 
     // method to display the inventory of the current player
@@ -566,7 +559,6 @@ public partial class UnityUI
     // method called when the player selects a partner to trade with
     public void SelectPartner(Player pl)
     {
-        
         StartCoroutine(DisplayTrade(pl));
     }
 
@@ -633,10 +625,9 @@ public partial class UnityUI
     // interface method to handle the end of the game
     void UI.HandleWinner(Player winner)
     {
-        AudioManager.i.Stop("Countdown"); // in case they won in the last few seconds of the turn
+        AudioManager.i.StopAll();
         AudioManager.i.Play("Victory");
         CloseAllGameUIs();
         SceneTransition.i.SendToScene("Victory");
     }
-
 }

@@ -36,7 +36,6 @@ namespace NEAGame
         void Assert(bool test);
     }
 
-
     /// <summary> 
     /// Discontinued when project became entirely Unity event-based
     /// </summary>

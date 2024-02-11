@@ -88,7 +88,6 @@ public class FileHandler
                 {
                     dataToLoad = EncryptDecrypt(dataToLoad);
                 }
-
             }
             catch (Exception e)
             {
@@ -149,5 +148,4 @@ public class FileHandler
 
         return new string(output);
     }
-
 }

@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 using NEAGame;
 using System.Linq;
 
+// First half of the UnityUI partial class which controls the overall flow of the game
+
 /// <summary>
 /// The <c>UnityUI</c> class is used to manage the Unity interface for the game. This class is used to manage the flow of the game and the user interface. 
 /// It is a singleton class that creates and updates the game, and interfaces with all of the other UI classes.

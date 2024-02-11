@@ -24,6 +24,8 @@ namespace NEAGame
             {"City", 5 }
         };
 
+        private static readonly int MAX_MOVES = 3;
+
         private static readonly Dictionary<string, Dictionary<Resource, int>> PURCHASE_COST = new Dictionary<string, Dictionary<Resource, int>>()
             {
                 {"Road", new Dictionary<Resource, int>()     { { new Resource(1), 1 }, { new Resource(2), 1 }, { new Resource(3), 0 }, { new Resource(4), 1 }, { new Resource(5), 0 } } },
@@ -168,7 +170,7 @@ namespace NEAGame
                     currentPlayer = pdl;
                 }
             }
-            currentPlayer.moves = 3;            
+            currentPlayer.moves = MAX_MOVES;            
         }
 
         // get the cost of a structure
@@ -201,7 +203,7 @@ namespace NEAGame
 
             turn = 0;
             currentPlayer = gamePlayers[0];
-            currentPlayer.moves = 3;
+            currentPlayer.moves = MAX_MOVES;
             UserInterface.BeginGame(-1f);
             UserInterface.CreatePopup(gamePlayers.Count.ToString() + " players have joined the game");
 
@@ -272,10 +274,8 @@ namespace NEAGame
             {
                 DoAction(temp.Pop());
             }
-            
         }
         
-
         // function to end the current player's turn and continue the game
         public void EndTurn()
         {
@@ -287,7 +287,7 @@ namespace NEAGame
                 turn = 0;
             }
             currentPlayer = gamePlayers[turn];
-            currentPlayer.moves = 3; // Allow this to change as a gamemode
+            currentPlayer.moves = MAX_MOVES;
             StartTurn();
         }
 
@@ -342,7 +342,6 @@ namespace NEAGame
                     }
                 }
             }   
-
         }
         
         // Undo the resources gathered by the player with the given ID
@@ -373,7 +372,6 @@ namespace NEAGame
                     }
                 }
             }   
-
         }
 
         // complete the trade between the current player and the other player
@@ -402,7 +400,6 @@ namespace NEAGame
         // method to deduct the cost of a settlement from the player's inventory
         public void ChargePlayer(string structure)
         {
-
             Dictionary<Resource, int> cost = GetCostOfUpgrade(structure);
             foreach (var entry in cost)
             {
@@ -418,9 +415,7 @@ namespace NEAGame
                 {
                     UserInterface.CreatePopup("Purchase Successful");
                 }
-
             }
-
         }
 
         // method used in the UI to show the player what they need to buy a settlement
@@ -505,7 +500,6 @@ namespace NEAGame
                 }
             }
             return viableLocations;
-        
         }
 
         // method to get possible locations for a player to build a wall
@@ -669,7 +663,6 @@ namespace NEAGame
             ChargePlayer("Wall");
             if (!isAICalculation)
                 UserInterface.UpdateConnection(other, board.GetNode(currentPlayer.position), con);
-
         }
 
         // method to complete the purchase of a village 
@@ -707,7 +700,7 @@ namespace NEAGame
             // sort viable locations by distance descending (AI optimisation)
             viableLocations = viableLocations.OrderByDescending(x => distance[x]).ToList();
 
-            if (viableLocations.Count == 0 && currentPlayer.moves == 3 && !isAICalculation)
+            if (viableLocations.Count == 0 && currentPlayer.moves == MAX_MOVES && !isAICalculation)
             {
                 UserInterface.CreatePopup("Something went wrong... Sending you to your capital");
                 currentPlayer.position = currentPlayer.GetCapital();
@@ -724,7 +717,6 @@ namespace NEAGame
         // method to move the player to the given location
         private void MovePlayer(Node otherpos)
         {
-
             if (!isAICalculation)
             {
                 Dijkstra(board, currentPlayer.position);
@@ -812,7 +804,6 @@ namespace NEAGame
                         previous[neighbour] = current;
                     }
                 }
-
             }
 
             // Prevent the player from moving onto their current position
@@ -829,7 +820,6 @@ namespace NEAGame
         // method to undo the given game action
         public void UndoAction(GameAction a)
         {
-
             if (a.type == typeof(PlayerMove))
             {
                 PlayerMove move = (PlayerMove)a;
@@ -856,7 +846,6 @@ namespace NEAGame
             else if (a.type == typeof(PlayerPurchase))
             {
                 PlayerPurchase purchase = (PlayerPurchase)a;
-
 
                 if (purchase.status == "Road" || purchase.status == "Wall")
                 {
@@ -900,7 +889,6 @@ namespace NEAGame
         // method to perform the given game action
         public void DoAction(GameAction a)
         {
-
             if (a.type == typeof(PlayerMove))
             {
                 // move the player
@@ -943,7 +931,6 @@ namespace NEAGame
         public int playerID; 
         public Vector3 position;
         public Type type;
-
     }
 
     /// <summary>
@@ -967,8 +954,6 @@ namespace NEAGame
         {
             return $"player {playerID} moved from {position} to {newpos}";
         }
-
-
     }
 
     /// <summary>
@@ -1001,9 +986,5 @@ namespace NEAGame
                 return $"player {playerID} Purchasing a {status} from {position} to {otherpos}";
             }
         }
-
-
-
     }
-
 }

@@ -10,7 +10,7 @@ namespace NEAGame
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public class Connection : Settlement
     {   
-
+        // Constructor to create a connection from an id
         public Connection( int i = 0, string status = "", int occupant = -1)
         {
             statuses = new string[] { "Empty", "Road", "Wall" };
@@ -22,6 +22,7 @@ namespace NEAGame
             occupantID = occupant;
         }
 
+        // Constructor to create a connection from a settlement wrapper
         public Connection(SettlementWrapper settlementWrapper)
         {
             statuses = new string[] { "Empty", "Road", "Wall" };
@@ -30,26 +31,31 @@ namespace NEAGame
             SetStatus(settlementWrapper.status);
         }
 
+        // Method to get the occupant of the connection
         public int GetOccupant()
         {
             return occupantID;
         }
 
+        // Method to set the occupant of the connection
         public void SetOccupant(Player p)
         {
             occupantID = p.GetID();
         }
 
+        // Method to get the status of the connection
         public string GetStatus()
         {
             return statuses[id];
         }
 
+        // Method to set the status of the connection
         public void SetStatus(string status)
         {
             id = Array.IndexOf(statuses, status);
         }
 
+        // Method to get the cost of walking on this connection
         public int GetWalkingCost(Player otherPlayer)
         {
             if (id == 0)
@@ -74,14 +80,10 @@ namespace NEAGame
             throw new Exception("Invalid Player Number");
         }
 
-
+        // override the ToString method to return a string representation of the connection
         public override string ToString()
         {
             return $"{statuses[id]} Owned by {occupantID}";
         }
-
-
-
     }
-
 }

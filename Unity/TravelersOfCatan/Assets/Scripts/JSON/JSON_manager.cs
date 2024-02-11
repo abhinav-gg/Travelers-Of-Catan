@@ -9,16 +9,13 @@ namespace NEAGame
     /// </summary>
     class JSON_manager
     {
-
-        public readonly string[] SaveFiles = { "Save1", "Save2", "Save3", "Save4" };
-        int Save;
-        FileHandler fileHandler;
+        public readonly string[] SAVE_FILES = { "Save1", "Save2", "Save3", "Save4" };
+        private FileHandler fileHandler;
 
         // Constructor for the JSON manager that takes in the save file number
         public JSON_manager(int Save)
         {
-            this.Save = Save;
-            string fullpath = Application.persistentDataPath + "/" + SaveFiles[Save];
+            string fullpath = Application.persistentDataPath + "/" + SAVE_FILES[Save];
             fileHandler = new FileHandler(fullpath);
         }
 
@@ -74,17 +71,17 @@ namespace NEAGame
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class Wrappers
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Serializable Class Wrappers to be used for JSON Serialization and Deserialization
     
     
     [Serializable]
     public class ResourceWrapper : JSONWrapper<ResourceWrapper>
     {
-
         public int id;
 
         public ResourceWrapper() { }
+
         public ResourceWrapper(Resource resource)
         {
             id = resource.GetHashCode();
@@ -214,7 +211,6 @@ namespace NEAGame
                 _Values.Add(entry.Value);
             }
         }
-
     }
 
     [Serializable]
@@ -249,7 +245,6 @@ namespace NEAGame
         }
     }
 
-
     [Serializable]
     public class BoardWrapper : JSONWrapper<BoardWrapper>
     {
@@ -273,7 +268,6 @@ namespace NEAGame
         public List<PlayerWrapper> allPlayers = new List<PlayerWrapper>();
         public BoardWrapper board;
 
-
         public GameWrapper() { }
 
         public GameWrapper(TravelersOfCatan game)
@@ -287,11 +281,6 @@ namespace NEAGame
                 allPlayers.Add(new PlayerWrapper(player));
             }
             board = game.board.SoftSerialize();
-
         }
-
     }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 }
